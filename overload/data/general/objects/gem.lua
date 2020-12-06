@@ -80,6 +80,8 @@ local function newGem(name, image, cost, rarity, color, min_level, max_level, ti
 		color_attributes = gem_color_attributes[color],
 		alchemist_power = power,
 		alchemist_bomb = bomb,
+    	require = { flag = {"gem related talents"}, },
+    	slot = "QUIVER",
 	}
 	-- Alchemist gems, not lootable, only created by talents
 	newEntity{ base = "BASE_GEM", define_as = "ALCHEMIST_GEM_"..name:gsub(" ", "_"):upper(),		name = "alchemist "..name:lower(), type='alchemist-gem', subtype = color,

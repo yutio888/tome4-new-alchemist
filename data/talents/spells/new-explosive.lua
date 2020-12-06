@@ -39,6 +39,12 @@ newTalent{
 		if not ammo then return end
 		return {type="ball", range=self:getTalentRange(t)+(ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius=self:getTalentRadius(t), talent=t}
 	end,
+    on_learn = function(self, t)
+        self:checkCanWearGem()
+    end,
+    on_unlearn = function(self, t)
+        self:checkCanWearGem()
+    end,
 	tactical = { ATTACKAREA = function(self, t, target)
 		if self:knowTalent(self.T_ELEMENTAL_INFUSION) then
 		    local type = self.elemental_infusion

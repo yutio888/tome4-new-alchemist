@@ -42,6 +42,12 @@ newTalent {
 		game:playSoundNear(self, "talents/water")
 		return true
     end,
+    on_learn = function(self, t)
+        self:checkCanWearGem()
+    end,
+    on_unlearn = function(self, t)
+        self:checkCanWearGem()
+    end,
     info = function(self, t)
         return([[Deals %0.2f %s damage.
         If this attack hits, it will trigger the special effect of gem.
@@ -72,6 +78,12 @@ newTalent {
     cooldown = 20,
     getDamage = function(self, t)
         return self:combatTalentGemDamage(t, 100, 320)
+    end,
+    on_learn = function(self, t)
+        self:checkCanWearGem()
+    end,
+    on_unlearn = function(self, t)
+        self:checkCanWearGem()
     end,
     action = function(self, t)
         local gem = self:hasAlchemistWeapon()
@@ -122,6 +134,12 @@ newTalent {
     radius = 10,
     getSummonNb = function(self, t) return self:combatTalentScale(t, 1, 3) end,
     getDuration = function(self, t) return self:combatTalentGemDamage(t, 5, 12) end,
+    on_learn = function(self, t)
+        self:checkCanWearGem()
+    end,
+    on_unlearn = function(self, t)
+        self:checkCanWearGem()
+    end,
     action = function(self, t)
         local gem = self:hasAlchemistWeapon()
         if not gem then
@@ -186,6 +204,12 @@ newTalent {
 	no_npc_use = true,
 	mode = "sustained",
     cooldown = 1,
+    on_learn = function(self, t)
+        self:checkCanWearGem()
+    end,
+    on_unlearn = function(self, t)
+        self:checkCanWearGem()
+    end,
     callbackOnDealDamage = function(self, t, val, target, dead, death_note)
         if death_note.damtype ~= self:getGemDamageType() then return end
         local gem = self:hasAlchemistWeapon()

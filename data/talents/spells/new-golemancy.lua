@@ -214,6 +214,7 @@ newTalent{
 		return healbase + self:combatTalentSpellDamage(self.T_GOLEM_POWER_NEW, 15, 550, self:combatSpellpower(1, (ammo and (ammo.material_level or 1) * 20))) --I5
 	end,
 	on_learn = function(self, t)
+	    self:checkCanWearGem()
 		if self:getTalentLevelRaw(t) == 1 and not self.innate_alchemy_golem then
 			t.invoke_golem(self, t)
 		end
@@ -224,6 +225,7 @@ newTalent{
 			self.alchemy_golem:disappear()
 			self.alchemy_golem = nil
 		end
+		self:checkCanWearGem()
 	end,
 	invoke_golem = function(self, t)
 		self.alchemy_golem = game.zone:finishEntity(game.level, "actor", makeAlchemistGolem(self))
