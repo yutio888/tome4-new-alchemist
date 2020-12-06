@@ -95,98 +95,98 @@ local function newGem(name, image, cost, rarity, color, min_level, max_level, ti
 end
 
 newGem("Diamond",	"object/diamond.png",5,		18,	"white",	40,	50, 5, 70,
-	{ inc_stats = { [Stats.STAT_STR] = 5, [Stats.STAT_DEX] = 5, [Stats.STAT_MAG] = 5, [Stats.STAT_WIL] = 5, [Stats.STAT_CUN] = 5, [Stats.STAT_CON] = 5, } },
+	{ inc_stats = { [Stats.STAT_STR] = 10, [Stats.STAT_DEX] = 10, [Stats.STAT_MAG] = 10, [Stats.STAT_WIL] = 10, [Stats.STAT_CUN] = 10, [Stats.STAT_CON] = 10, } },
 	{ power=25 }
 )
 newGem("Pearl",	"object/pearl.png",	5,		18,	"white",	40,	50, 5, 70,
-	{ resists = {all=5}, combat_armor = 5 },
+	{ resists = {all=5}, combat_armor = 10 },
 	{ splash={type="LITE", dam=100, desc = _t"Lights terrain (power 100)"} }
 )
 newGem("Moonstone",	"object/moonstone.png",5,	18,	"white",	40,	50, 5, 70,
-	{ combat_def=10, combat_mentalresist=10, combat_spellresist=10, combat_physresist=10, },
-	{ stun={chance=20, dur=3} }
+	{ combat_def=20, combat_mentalresist=20, combat_spellresist=20, combat_physresist=20, },
+	{ stun={chance=30, dur=4} }
 )
 newGem("Fire Opal",	"object/fireopal.png",5,	18,	"red",		40,	50, 5, 70,
-	{ inc_damage = {all=10}, combat_physcrit=5, combat_mindcrit=5, combat_spellcrit=5,  },
-	{ splash={type="FIRE", dam=40} }
+	{ inc_damage = {all=15}, combat_physcrit=5, combat_mindcrit=5, combat_spellcrit=5,  },
+	{ splash={type="FIRE", dam=30} }
 )
 newGem("Bloodstone",	"object/bloodstone.png",5,	18,	"red",		40,	50, 5, 70,
 	{ stun_immune=0.6 },
 	{ leech=10 }
 )
 newGem("Ruby",		"object/ruby.png",	4,	16,	"red",		30,	40, 4, 65,
-	{ inc_stats = { [Stats.STAT_STR] = 4, [Stats.STAT_DEX] = 4, [Stats.STAT_MAG] = 4, [Stats.STAT_WIL] = 4, [Stats.STAT_CUN] = 4, [Stats.STAT_CON] = 4, } },
+	{ inc_stats = { [Stats.STAT_STR] = 8, [Stats.STAT_DEX] = 8, [Stats.STAT_MAG] = 8, [Stats.STAT_WIL] = 8, [Stats.STAT_CUN] = 8, [Stats.STAT_CON] = 8, } },
 	{ power=20 }
 )
 newGem("Amber",		"object/amber.png",	4,	16,	"yellow",	30,	40, 4, 65,
-	{ inc_damage = {all=8}, combat_physcrit=4, combat_mindcrit=4, combat_spellcrit=4, },
-	{ stun={chance=10, dur=2} }
+	{ inc_damage = {all=12}, combat_physcrit=4, combat_mindcrit=4, combat_spellcrit=4, },
+	{ stun={chance=20, dur=3} }
 )
 newGem("Turquoise",	"object/turquoise.png",4,	16,	"green",	30,	40, 4, 65,
-	{ resists_pen = {all=10}, combat_atk = 10 },
-	{ splash={type="ACID", dam=30} }
+	{ resists_pen = {all=12}, combat_atk = 12 },
+	{ splash={type="ACID_DISARM", dam= { dam = 30, chance = 15},  desc = _t"15% chance to disarm" }}
 )
 newGem("Jade",		"object/jade.png",	4,	16,	"green",	30,	40, 4, 65,
-	{ resists = {all=4}, combat_armor = 4 },
+	{ resists = {all=4}, combat_armor = 8 },
 	{ splash={type="SLOW", dam= 1 - 1 / (1 + 0.20), desc = _t"Slows by 17%"} }
 )
 newGem("Sapphire",	"object/sapphire.png",4,	16,	"blue",		30,	40, 4, 65,
-	{ combat_def=8, combat_mentalresist=8, combat_spellresist=8, combat_physresist=8, },
-	{ splash={type="ICE", dam=30} }
+	{ combat_def=16, combat_mentalresist=16, combat_spellresist=16, combat_physresist=16, },
+	{ splash={type="ICE", dam=10} }
 )
 newGem("Quartz",	"object/quartz.png",3,	12,	"white",	20,	30, 3, 50,
 	{ stun_immune=0.3 },
 	{ splash={type="SPELLKNOCKBACK", dam=10} }
 )
 newGem("Emerald",	"object/emerald.png",3,	12,	"green",	20,	30, 3, 50,
-	{ resists = {all=3}, combat_armor = 3 },
-	{ splash={type="POISON", dam=50} }
+	{ resists = {all=3}, combat_armor = 6 },
+	{ splash={type="POISON", dam=40} }
 )
 newGem("Lapis Lazuli",	"object/lapis_lazuli.png",3,	12,	"blue",		20,	30, 3, 50,
-	{ combat_def=6, combat_mentalresist=6, combat_spellresist=6, combat_physresist=6, },
-	{ mana=30 }
+	{ combat_def=12, combat_mentalresist=12, combat_spellresist=12, combat_physresist=12, },
+	{ mana=40 }
 )
 newGem("Garnet",	"object/garnet.png",3,	12,	"red",		20,	30, 3, 50,
-	{ inc_damage = {all=6}, combat_physcrit=3, combat_mindcrit=3, combat_spellcrit=3, },
+	{ inc_damage = {all=9}, combat_physcrit=3, combat_mindcrit=3, combat_spellcrit=3, },
 	{ leech=5 }
 )
 newGem("Onyx",		"object/onyx.png",	3,	12,	"black",	20,	30, 3, 50,
-	{ inc_stats = { [Stats.STAT_STR] = 3, [Stats.STAT_DEX] = 3, [Stats.STAT_MAG] = 3, [Stats.STAT_WIL] = 3, [Stats.STAT_CUN] = 3, [Stats.STAT_CON] = 3, } },
+	{ inc_stats = { [Stats.STAT_STR] = 6, [Stats.STAT_DEX] = 6, [Stats.STAT_MAG] = 6, [Stats.STAT_WIL] = 6, [Stats.STAT_CUN] = 6, [Stats.STAT_CON] = 6, } },
 	{ power=15 }
 )
 newGem("Amethyst",	"object/amethyst.png",2,	10,	"violet",	10,	20, 2, 35,
-	{ inc_damage = {all=4}, combat_physcrit=2, combat_mindcrit=2, combat_spellcrit=2, },
-	{ splash={type="ARCANE", dam=25}}
+	{ inc_damage = {all=6}, combat_physcrit=2, combat_mindcrit=2, combat_spellcrit=2, },
+	{ splash={type="ARCANE", dam=12}}
 )
 newGem("Opal",		"object/opal.png",	2,	10,	"blue",		10,	20, 2, 35,
-	{ inc_stats = { [Stats.STAT_STR] = 2, [Stats.STAT_DEX] = 2, [Stats.STAT_MAG] = 2, [Stats.STAT_WIL] = 2, [Stats.STAT_CUN] = 2, [Stats.STAT_CON] = 2, } },
+	{ inc_stats = { [Stats.STAT_STR] = 4, [Stats.STAT_DEX] = 4, [Stats.STAT_MAG] = 4, [Stats.STAT_WIL] = 4, [Stats.STAT_CUN] = 4, [Stats.STAT_CON] = 4, } },
 	{ power=10 }
 )
 newGem("Topaz",		"object/topaz.png",	2,	10,	"blue",		10,	20, 2, 35,
-	{ combat_def=4, combat_mentalresist=4, combat_spellresist=4, combat_physresist=4, },
-	{ range=3 }
+	{ combat_def=8, combat_mentalresist=8, combat_spellresist=8, combat_physresist=8, },
+	{ range=4 }
 )
 newGem("Aquamarine",	"object/aquamarine.png",2,	10,	"blue",		10,	20, 2, 35,
-	{ resists = {all=2}, combat_armor = 2 },
-	{ mana=20 }
+	{ resists = {all=2}, combat_armor = 4 },
+	{ mana=25 }
 )
 newGem("Ametrine",	"object/ametrine.png",1,	8,	"yellow",	1,	10, 1, 20,
-	{ inc_damage = {all=2}, combat_physcrit=1, combat_mindcrit=1, combat_spellcrit=1, },
-	{ splash={type="LITE", dam=10, desc = _t"Lights terrain (power 10)"} }
+	{ inc_damage = {all=3}, combat_physcrit=1, combat_mindcrit=1, combat_spellcrit=1, },
+	{ splash={type="LITE", dam=1, desc = _t"Lights terrain (power 1)"} }
 )
 newGem("Zircon",	"object/zircon.png",1,	8,	"yellow",	1,	10, 1, 20,
-	{ resists = {all=1}, combat_armor = 1 },
+	{ resists = {all=1}, combat_armor = 2 },
 	{ daze={chance=20, dur=3} }
 )
 newGem("Spinel",	"object/spinel.png",1,	8,	"green",	1,	10, 1, 20,
-	{ combat_def=2, combat_mentalresist=2, combat_spellresist=2, combat_physresist=2, },
-	{ mana=10 }
+	{ combat_def=4, combat_mentalresist=4, combat_spellresist=4, combat_physresist=4, },
+	{ mana=12 }
 )
 newGem("Citrine",	"object/citrine.png",1,	8,	"yellow",	1,	10, 1, 20,
 	{ lite=4, infravision=4, },
-	{ range=1 }
+	{ range=2 }
 )
 newGem("Agate",		"object/agate.png",	1,	8,	"black",	1,	10, 1, 20,
-	{ inc_stats = { [Stats.STAT_STR] = 1, [Stats.STAT_DEX] = 1, [Stats.STAT_MAG] = 1, [Stats.STAT_WIL] = 1, [Stats.STAT_CUN] = 1, [Stats.STAT_CON] = 1, } },
+	{ inc_stats = { [Stats.STAT_STR] = 2, [Stats.STAT_DEX] = 2, [Stats.STAT_MAG] = 2, [Stats.STAT_WIL] = 2, [Stats.STAT_CUN] = 2, [Stats.STAT_CON] = 2, } },
 	{ power=5 }
 )

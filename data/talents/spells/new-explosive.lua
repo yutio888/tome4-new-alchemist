@@ -64,7 +64,7 @@ newTalent{
         	end
         end
 		inc_dam = inc_dam + (ammo.alchemist_bomb and ammo.alchemist_bomb.power or 0) / 100
-		local dam = self:combatTalentSpellDamage(t, 50, 220, (getAlchemistPower(ammo) + self:combatSpellpower()) / 2)
+		local dam = self:combatTalentSpellDamage(t, 40, 200, (getAlchemistPower(ammo) + self:combatSpellpower()) / 2)
 		dam = dam * (1 + inc_dam)
 		return dam, damtype, particle
 	end,
@@ -209,10 +209,10 @@ newTalent {
     getChance = function(self, t)
         local ammo = self:hasAlchemistWeapon()
         local power = getAlchemistPower(ammo)
-        return self:combatTalentLimit(t, 40, 10, 25) * (1 + power*0.01)
+        return self:combatTalentLimit(t, 35, 5, 25) * (1 + power * 0.01)
     end,
     info = function(self, t)
-        return ([[Your alchemist bombs now have %d%% chance to has no cooldown when used.
+        return ([[Your alchemist bombs now have %d%% chance to not go on cooldown.
         Chances increases with your gem tier.]])
         :tformat(t.getChance(self, t))
     end,

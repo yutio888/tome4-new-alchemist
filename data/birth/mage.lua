@@ -28,7 +28,16 @@ newBirthDescriptor{
 	talents_types = {
 		["spell/new-explosive"]={true, 0.3},
 		["spell/new-golemancy"]={true, 0.3},
+		["spell/gem-spell"]={true, 0.3},
+		["spell/alchemy-potion"] = {true, 0.3},
+
+		["spell/new-advanced-golemancy"]={false, 0.3},
 		["spell/elemental-alchemy"]={false, 0.3},
+
+        ["spell/stone-alchemy"]={true, 0.3},
+		["spell/staff-combat"]={true, 0.3},
+		["cunning/survival"] = {true, 0},
+		["spell/divination"] = {false, 0},
 	},
 	talents = {
 	    [ActorTalents.T_GOLEM_POWER_NEW] = 1,
