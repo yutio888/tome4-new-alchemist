@@ -471,7 +471,7 @@ newTalent{
 		return ([[Insert a pair of gems into your golem, providing it with the gem bonuses and changing its melee attack damage type. You may remove the gems and insert different ones; this does not destroy the gems you remove.
         Gem level usable: %d
         Gem changing is done in the golem's inventory.
-        Each gem will proivide extra armour and all daamge resistance which increases with tier.
+        Each gem will proivide extra armour and all damage resistance which increases with tier.
         Increases your golem's life, mana and stamina regeneration rates by %0.2f.
         At level 1, 3 and 5, the golem also gains a new rune slot.
         Even without this talent, Golems start with three rune slots.]]):

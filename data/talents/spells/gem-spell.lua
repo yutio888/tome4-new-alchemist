@@ -14,6 +14,9 @@ newTalent {
 	end,
 	no_npc_use = true,
     cooldown = 6,
+    on_pre_use = function(self, t)
+        return self:hasAlchemistWeapon()
+    end,
     getDamage = function(self, t)
         return self:combatTalentGemDamage(t, 120, 500)
     end,
@@ -78,6 +81,9 @@ newTalent {
     end,
 	no_npc_use = true,
     cooldown = 12,
+    on_pre_use = function(self, t)
+        return self:hasAlchemistWeapon()
+    end,
     getDamage = function(self, t)
         return self:combatTalentGemDamage(t, 100, 320)
     end,
@@ -141,6 +147,9 @@ newTalent {
     end,
     on_unlearn = function(self, t)
         self:checkCanWearGem()
+    end,
+    on_pre_use = function(self, t)
+        return self:hasAlchemistWeapon()
     end,
     action = function(self, t)
         local gem = self:hasAlchemistWeapon()

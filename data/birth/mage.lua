@@ -60,13 +60,13 @@ newBirthDescriptor{
 		resolvers.generic(function(self) self:birth_create_alchemist_golem() end),
 		innate_alchemy_golem = true,
 		birth_create_alchemist_golem = function(self)
-			-- Make and wield some alchemist gems
-			-- local t = self:getTalentFromId(self.T_CREATE_ALCHEMIST_GEMS)
-			-- local gem = t.make_gem(self, t, "GEM_AGATE")
-			-- self:wearObject(gem, true, true)
-			-- self:sortInven()
-
-			-- Invoke the golem
+			local g1 = nil
+			local list = mod.class.Object:loadList("/data/general/objects/gem.lua")
+			while g1 == nil do
+				local g2 = rng.tableRemove(list)
+				if g2.material_level == 1 then g1 = g2 end
+			end
+			self:addObject(self:getInven("QUIVER"), g1)
 			if not self.alchemy_golem then
 				local t = self:getTalentFromId(self.T_REFIT_GOLEM_NEW)
 				t.invoke_golem(self, t)

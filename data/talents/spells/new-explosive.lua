@@ -75,6 +75,9 @@ newTalent{
 		dam = dam * (1 + inc_dam)
 		return dam, damtype, particle
 	end,
+	on_pre_use = function(self, t)
+		return self:hasAlchemistWeapon()
+	end,
 	action = function(self, t)
 		local ammo = self:hasAlchemistWeapon()
 		if not ammo then
