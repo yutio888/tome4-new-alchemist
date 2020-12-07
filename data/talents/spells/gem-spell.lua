@@ -201,6 +201,7 @@ newTalent {
     info = function(self, t)
         return([[Invoke the power of your gem, summon %d crystal around you for %d turns.
         Then randomly select target in radius 10 and trigger the special effect of gem.
+        This talent can be activated even in silence.
         Using this talent will disable One with Gem for 5 turns.
         Summon duration scales with your gem.
         ]]):tformat(t.getSummonNb(self, t), t.getDuration(self, t))
