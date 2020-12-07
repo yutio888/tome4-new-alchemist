@@ -54,7 +54,7 @@ newTalent {
         self:checkCanWearGem()
     end,
     info = function(self, t)
-        return([[Deals %0.2f %s damage.
+        return([[Deals %0.2f %s damage to target.
         If this attack hits, it will trigger the special effect of gem.
         This talent can be activated even in silence.
         Using this talent will disable One with Gem for 5 turns.
