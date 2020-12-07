@@ -1,5 +1,5 @@
 newTalent{
-	name = "Supercharge Golem", short_name = "SUPERCHARGE_GOLEM_NEW", image = "talents/supercharge_golem.png",
+	name = "Supercharge Golem", short_name = "SUPERCHARGE_GOLEM_NEW",
 	type = {"spell/new-advanced-golemancy", 1},
 	require = spells_req_high1,
 	points = 5,
@@ -39,7 +39,7 @@ newTalent{
 }
 
 newTalent{
-	name = "Golem Portal", short_name = "GOLEM_PORTAL_NEW", image = "talents/golem_portal.png",
+	name = "Golem Portal", short_name = "GOLEM_PORTAL_NEW",
 	type = {"spell/new-advanced-golemancy",2},
 	require = spells_req_high2,
 	points = 5,
@@ -87,7 +87,7 @@ newTalent{
 }
 
 newTalent {
-    name = "Disruption Rune", image = "talents/rune__vision.png",
+    name = "Disruption Rune",
     type = {"spell/new-advanced-golemancy", 3},
     require = spells_req_high3,
     points = 5,
@@ -125,7 +125,7 @@ newTalent {
 }
 
 newTalent {
-    name = "Golem's Fury", image = "talents/arcane_vortex.png",
+    name = "Golem's Fury",
     type = {"spell/new-advanced-golemancy", 4},
     require = spells_req_high4,
     points = 5,

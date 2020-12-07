@@ -1,5 +1,5 @@
 newTalent {
-    name = "Gem Blast", image = "talents/bone_nova.png",
+    name = "Gem Blast",
     type = {"spell/gem-spell", 1},
     require = spells_req1,
     points = 5,
@@ -60,7 +60,7 @@ newTalent {
 }
 
 newTalent {
-    name = "Gem's Radience", image = "talents/neverending_peril.png",
+    name = "Gem's Radiance",
     type = {"spell/gem-spell", 2},
     require = spells_req2,
     points = 5,
@@ -125,7 +125,7 @@ newTalent {
 }
 
 newTalent {
-    name = "Flickering Gem", image = "shockbolt/npc/crystal_npc.png",
+    name = "Flickering Gem",
     type = {"spell/gem-spell", 3},
     require = spells_req3,
     points = 5,
@@ -197,7 +197,7 @@ newTalent {
 }
 
 newTalent {
-    name = "One with Gem", image = "talents/disperse_magic.png",
+    name = "One with Gem",
     type = {"spell/gem-spell", 4},
     require = spells_req4,
     points = 5,

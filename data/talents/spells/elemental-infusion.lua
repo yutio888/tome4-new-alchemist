@@ -12,7 +12,7 @@ local function getElementalInsufionType(self)
 end
 
 newTalent{
-	name = "Manage Elemental Infusion", image = "talents/fire_infusion.png",
+	name = "Manage Elemental Infusion", image = "talents/elemental_infusion.png",
 	type = {"spell/other", 1},
 	points = 1,
 	cooldown = 5,
@@ -30,7 +30,7 @@ newTalent{
 }
 
 newTalent {
-    name = "Elemental Infusion", image = "talents/fire_infusion.png",
+    name = "Elemental Infusion",
 	type = {"spell/elemental-alchemy", 1},
 	mode = "passive",
 	require = spells_req_high1,
@@ -67,7 +67,7 @@ newTalent {
 }
 
 newTalent {
-    name = "Infusion Enchantment", image = "talents/frost_infusion.png",
+    name = "Infusion Enchantment",
     type = {"spell/elemental-alchemy", 2},
     mode = "passive",
     require = spells_req_high2,
@@ -117,7 +117,7 @@ newTalent {
 }
 
 newTalent {
-    name = "Elemental Fury", image = "talents/living_lightning.png",
+    name = "Energy Recycle",
     type = {"spell/elemental-alchemy", 3},
     mode = "sustained",
     require = spells_req_high3,
@@ -166,7 +166,7 @@ newTalent {
 
 
 newTalent {
-    name = "Body of Element", image = "talents/body_of_fire.png",
+    name = "Body of Element",
     type = {"spell/elemental-alchemy", 4},
     mode = "sustained",
     require = spells_req_high4,

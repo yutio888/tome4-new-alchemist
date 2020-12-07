@@ -370,7 +370,7 @@ newTalent {
 }
 
 newTalent{
-	name = "Golem Power", short_name = "GOLEM_POWER_NEW", image = "talents/golem_power.png",
+	name = "Golem Power", short_name = "GOLEM_POWER_NEW",
 	type = {"spell/new-golemancy", 1},
 	mode = "passive",
 	require = spells_req1,
@@ -432,7 +432,7 @@ newTalent{
 }
 
 newTalent{
-	name = "Runic Golem", short_name = "RUNIC_GOLEM_NEW", image = "talents/runic_golem.png",
+	name = "Runic Golem", short_name = "RUNIC_GOLEM_NEW",
 	type = {"spell/new-golemancy", 2},
 	require = spells_req2,
 	mode = "passive",
@@ -481,7 +481,7 @@ newTalent{
 }
 
 newTalent{
-	name = "Double Heal", short_name = "INVOKE_GOLEM_NEW", image = "talents/invoke_golem.png",
+	name = "Double Heal",
 	type = {"spell/new-golemancy",3},
 	require = spells_req3,
 	points = 5,
@@ -536,7 +536,7 @@ newTalent{
 }
 
 newTalent{
-	name = "Dynamic Recharge", short_name = "DYNAMIC_RECHARGE_NEW", image = "talents/dynamic_recharge.png",
+	name = "Dynamic Recharge", short_name = "DYNAMIC_RECHARGE_NEW",
 	type = {"spell/new-golemancy",4},
 	require = spells_req4,
     mode = "passive",
