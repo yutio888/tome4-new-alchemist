@@ -17,7 +17,7 @@ newEffect{
 }
 
 newEffect{
-	name = "SUPERCHARGE_GOLEM_NEW", image = "talents/supercharge_golem.png",
+	name = "SUPERCHARGE_GOLEM_NEW", image = "talents/supercharge_golem_new.png",
 	desc = _t"Supercharge Golem",
 	long_desc = function(self, eff) return ("The target is supercharged, increasing speed by %d%% and damage done by %d%%."):tformat(eff.speed, eff.power) end,
 	type = "magical",
@@ -41,7 +41,7 @@ newEffect{
 }
 
 newEffect{
-	name = "ULTIMATE_POWER", image = "talents/supercharge_golem.png",
+	name = "ULTIMATE_POWER", image = "talents/supercharge_golem_new.png",
 	desc = _t"Ultimate power",
 	long_desc = function(self, eff) return ("The target gains ultimate power, increasing stats by %d and damage done by %d%%, and dealing %0.2f elemental damage in radius 6 each turn."):tformat(eff.stats, eff.power, eff.dam) end,
 	type = "magical",
@@ -80,4 +80,46 @@ newEffect{
 
         game:playSoundNear(self, "talents/lightning")
     end,
+}
+
+newEffect {
+	name = "FIRE_BURNT", image = "talents/flame.png",
+	desc = _t"Fire Burnt",
+	long_desc = function(self, eff)
+		return ("The target is burnt by the fiery fire, reducing damage dealt by %d%%"):tformat(eff.reduce)
+	end,
+	type = "physical",
+	subtype = { fire=true }, no_ct_effect = true,
+	status = "detrimental",
+	parameters = { reduce = 1 },
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "numbed", eff.reduce)
+	end,
+}
+
+newEffect {
+	name = "FROST_SHIELD", image = "talents/frost_shield.png",
+	desc = _t"Frost Shield",
+	long_desc = function(self, eff)
+		return ("The target is protected by the frost, reducing all damage except fire by %d%%, and reducing critical damage received by %d%%."):tformat(eff.power, eff.critdown or 0)
+	end,
+	type = "magical",
+	subtype = { ice = true },
+	status = "beneficial",
+	parameters = {},
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "ignore_direct_crits", eff.critdown or 0)
+	end,
+	callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, state)
+		if type == DamageType.FIRE then return end
+		local d_color = DamageType:get(type).text_color or "#ORCHID#"
+		local reduce = dam * util.bound(eff.power, 0, 1)
+		if reduce > 0 then
+			game:delayedLogDamage(src, self, 0, ("%s(%d frost reduce#LAST#%s)#LAST#"):tformat(d_color, reduce, d_color), false)
+		else
+			reduce = 0
+		end
+		return {dam = dam - reduce}
+	end,
+
 }

@@ -133,9 +133,9 @@ You cannot change your potions in combat. Potions have limited use and can be re
 
 newTalent {
     name = "Exlir Potion", image = "talents/health.png",
-    type = { "spell/alchemy-potion", 1 },
+    type = { "spell/alchemy-potion", 2 },
     points = 5,
-    require = spells_req_high1,
+    require = spells_req_high2,
     cooldown = 15,
     no_unlearn_last = true,
     on_pre_use = alchemy_potions_adjust_pre_use,
@@ -165,9 +165,9 @@ You cannot change your potions in combat. Potions have limited use and can be re
 
 newTalent {
     name = "Magical Potion", image = "talents/heal_nature.png",
-    type = { "spell/alchemy-potion", 1 },
+    type = { "spell/alchemy-potion", 3 },
     points = 5,
-    require = spells_req_high1,
+    require = spells_req_high3,
     cooldown = 15,
     no_unlearn_last = true,
     on_pre_use = alchemy_potions_adjust_pre_use,
@@ -196,51 +196,34 @@ You cannot change your potions in combat. Potions have limited use and can be re
 }
 
 newTalent {
-    name = "Smoke Potion",
-    type = { "spell/alchemy-potions", 1 },
-    short_info = function(self, t)
-        return "This is Smoke Potion"
+    name = "Ingredient Recycle",
+    type = { "spell/alchemy-potion", 4 },
+    points = 5,
+    require = spells_req_high4,
+    mode = "passive",
+    getChance = function(self, t) return self:combatTalentScale(t, 10, 25) end,
+    callbackOnAlchemistBomb = function(self, t)
+        local chance = t.getChance(self, t)
+        if rng.percent(chance) then
+            local avail = {}
+            for _, tid in pairs(alchemy_potion_tids) do
+                if self:knowTalent(tid) then
+                    if self:callTalent(tid, "charge") < self:callTalent(tid, "max_charge") then
+                        avail[#avail+1] = tid
+                    end
+                end
+            end
+            if #avail > 0 then
+                local potion = rng.tableRemove(avail)
+                if potion then
+                    self:callTalent(potion, "recharge", 1)
+                end
+            end
+        end
     end,
-    info = "This is Smoke Potion",
-}
-newTalent {
-    name = "Healing Potion",
-    type = { "spell/alchemy-potions", 1 },
-    short_info = function(self, t)
-        return "This is Healing Potion"
+    info = function(self, t)
+        return ([[You know how to reuse the remain of your potions.
+        After throwing bomb, you have %d%% chance to reproduce a random potion.]]):tformat(t.getChance(self, t))
     end,
-    info = "This is Healing Potion",
-}
-newTalent {
-    name = "Fire Potion",
-    type = { "spell/alchemy-potions", 1 },
-    short_info = function(self, t)
-        return "This is Fire Potion"
-    end,
-    info = "This is Fire Potion",
-}
-newTalent {
-    name = "Acid Potion",
-    type = { "spell/alchemy-potions", 1 },
-    short_info = function(self, t)
-        return "This is Acid Potion"
-    end,
-    info = "This is Acid Potion",
-}
-newTalent {
-    name = "Frost Potion",
-    type = { "spell/alchemy-potions", 1 },
-    short_info = function(self, t)
-        return "This is Frost Potion"
-    end,
-    info = "This is Frost Potion",
-}
-newTalent {
-    name = "Lightning Potion",
-    type = { "spell/alchemy-potions", 1 },
-    short_info = function(self, t)
-        return "This is Lightning Potion"
-    end,
-    info = "This is Lightning Potion",
-}
 
+}
