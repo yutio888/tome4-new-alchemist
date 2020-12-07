@@ -25,10 +25,7 @@ local function generate_tools()
 	local answers = {{_t"[Cancel]"}}
 	local tool_ids = tool_ids or player.main_env.alchemy_potion_tids or Talents.alchemy_potion_tids
 	player.alchemy_potions = player.alchemy_potions or {}
-	game.logPlayer(game.player, "tools: %d", #tool_ids)
-	print("XSYTEST", #tool_ids)
 	for _, tid in pairs(tool_ids) do
-	    print("XSYTEST", tid)
 		local t = player:getTalentFromId(tid)
 		if t then
 

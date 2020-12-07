@@ -52,7 +52,6 @@ function alchemy_potions_get_descs(self, t)
         alchemy_potions_setup(self, t)
     end
     local tool_descs = {}
-    game.logPlayer(self, "potion nb: %d", #alchemy_potion_tids)
     for _, tool_id in pairs(alchemy_potion_tids) do
         local tool, desc = self:getTalentFromId(tool_id)
         local prepped = self.alchemy_potions[t.id] == tool_id
@@ -100,10 +99,10 @@ function alchemy_potions_npc_select(self, t, silent, fake)
 end
 
 newTalent {
-    name = "Alchemy Potion", image = "talents/healing_light.png",
+    name = "Alchemy Potion", short_name = "MANAGE_POTION_1",
     type = { "spell/alchemy-potion", 1 },
     points = 5,
-    require = spells_req_high1,
+    require = spells_req1,
     cooldown = 15,
     no_unlearn_last = true,
     on_pre_use = alchemy_potions_adjust_pre_use,
@@ -127,15 +126,15 @@ newTalent {
 %s
 Preparing a tool sets its talent level and puts it on cooldown.
 You cannot change your potions in combat. Potions have limited use and can be restored after combat.
-]]):tformat(self:getTalentLevel(t), descs)
+]]):tformat(self:getTalentLevelRaw(t), descs)
     end,
 }
 
 newTalent {
-    name = "Exlir Potion", image = "talents/health.png",
+    name = "Exlir Potion", short_name = "MANAGE_POTION_2",
     type = { "spell/alchemy-potion", 2 },
     points = 5,
-    require = spells_req_high2,
+    require = spells_req2,
     cooldown = 15,
     no_unlearn_last = true,
     on_pre_use = alchemy_potions_adjust_pre_use,
@@ -159,15 +158,15 @@ newTalent {
 %s
 Preparing a tool sets its talent level and puts it on cooldown.
 You cannot change your potions in combat. Potions have limited use and can be restored after combat.
-]]):tformat(self:getTalentLevel(t), descs)
+]]):tformat(self:getTalentLevelRaw(t), descs)
     end,
 }
 
 newTalent {
-    name = "Magical Potion", image = "talents/heal_nature.png",
+    name = "Magical Potion", short_name = "MANAGE_POTION_3",
     type = { "spell/alchemy-potion", 3 },
     points = 5,
-    require = spells_req_high3,
+    require = spells_req3,
     cooldown = 15,
     no_unlearn_last = true,
     on_pre_use = alchemy_potions_adjust_pre_use,
@@ -191,7 +190,7 @@ newTalent {
 %s
 Preparing a tool sets its talent level and puts it on cooldown.
 You cannot change your potions in combat. Potions have limited use and can be restored after combat.
-]]):tformat(self:getTalentLevel(t), descs)
+]]):tformat(self:getTalentLevelRaw(t), descs)
     end,
 }
 
@@ -199,7 +198,7 @@ newTalent {
     name = "Ingredient Recycle",
     type = { "spell/alchemy-potion", 4 },
     points = 5,
-    require = spells_req_high4,
+    require = spells_req4,
     mode = "passive",
     getChance = function(self, t) return self:combatTalentScale(t, 10, 25) end,
     callbackOnAlchemistBomb = function(self, t)

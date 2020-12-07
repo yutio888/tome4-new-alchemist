@@ -31,11 +31,13 @@ newTalent {
 		local damtype = self:getGemDamageType()
 		self:projectApply(tg, x, y, Map.ACTOR, function(target)
 		    if self:reactionToward(target) >= 0 then return end
-		    self:setProc("trigger_gem", true, 3)
+		    self:setProc("trigger_gem", true, 5)
 		    if gem.alchemist_bomb and gem.alchemist_bomb.power then
                 dam = dam * (1 + gem.alchemist_bomb.power * 0.01)
             end
             DamageType:get(damtype).projector(self, target.x, target.y, damtype, dam)
+            local _ _, x, y = self:canProject(tg, x, y)
+            game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "light_beam", {tx=x-self.x, ty=y-self.y})
             self:triggerGemEffect(target, gem, dam)
         end)
 
@@ -52,7 +54,7 @@ newTalent {
         return([[Deals %0.2f %s damage.
         If this attack hits, it will trigger the special effect of gem.
         This talent can be activated even in silence.
-        Using this talent will disable One with Gem for 3 turns.
+        Using this talent will disable One with Gem for 5 turns.
         The damage scales with your gem tier, and the damage type changes with your gem.
         This spell cannot crit.
         ]]):tformat(damDesc(self,self:getGemDamageType(), t.getDamage(self, t)), _t(self:getGemDamageType():lower()))
@@ -75,7 +77,7 @@ newTalent {
     	return {type="ball", range=self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius=self:getTalentRadius(t), talent=t}
     end,
 	no_npc_use = true,
-    cooldown = 20,
+    cooldown = 12,
     getDamage = function(self, t)
         return self:combatTalentGemDamage(t, 100, 320)
     end,
@@ -99,7 +101,7 @@ newTalent {
 		local damtype = self:getGemDamageType()
 		self:projectApply(tg, x, y, Map.ACTOR, function(target)
 		    if self:reactionToward(target) >= 0 then return end
-		    self:setProc("trigger_gem", true, 10)
+		    self:setProc("trigger_gem", true, 5)
 		    local tdam =dam
 		    if gem.alchemist_bomb and gem.alchemist_bomb.power then
                 tdam = tdam * (1 + gem.alchemist_bomb.power * 0.01)
@@ -109,7 +111,7 @@ newTalent {
         end)
 
         local _ _, x, y = self:canProject(tg, x, y)
-		game.level.map:particleEmitter(x, y, tg.radius, "ball_ice", {radius=tg.radius, tx=x, ty=y})
+		game.level.map:particleEmitter(x, y, tg.radius, "ball_physical", {radius=tg.radius, tx=x, ty=y})
 		game:playSoundNear(self, "talents/arcane")
 		return true
     end,
@@ -117,7 +119,7 @@ newTalent {
         return([[Deals %0.2f %s damage to all targets in radius %d.
         If this attack hits, it will trigger the special effect of gem.
         This talent can be activated even in silence.
-        Using this talent will disable One with Gem for 10 turns.
+        Using this talent will disable One with Gem for 5 turns.
         The damage scales with your gem tier, and the damage type changes with your gem.
         This spell cannot crit.
         ]]):tformat(damDesc(self,self:getGemDamageType(), t.getDamage(self, t)), _t(self:getGemDamageType():lower()), t.radius(self, t))
@@ -210,12 +212,15 @@ newTalent {
     on_unlearn = function(self, t)
         self:checkCanWearGem()
     end,
+    getTurn = function(self, t)
+        return math.max(1, math.ceil(self:combatTalentScale(t, 5, 2.2)))
+    end,
     callbackOnDealDamage = function(self, t, val, target, dead, death_note)
         if death_note.damtype ~= self:getGemDamageType() then return end
         local gem = self:hasAlchemistWeapon()
         if not gem then return end
         if self:hasProc("trigger_gem") then return end
-        self:setProc("trigger_gem", true, 1)
+        self:setProc("trigger_gem", true, t.getTurn(self, t))
         self:triggerGemEffect(target, gem, 0)
     end,
     activate = function(self, t)
@@ -231,7 +236,7 @@ newTalent {
             disabled = ([[This has beed disabled for %d turns]]):tformat(turn)
         end
         return([[When you dealt damage the same type as your gem, you may trigger the special effect of your gem.
-        This can happen once per turn.
-        %s]]):tformat(disabled)
+        This can happen every %d turns.
+        %s]]):tformat(t.getTurn(self, t), disabled)
     end,
 }

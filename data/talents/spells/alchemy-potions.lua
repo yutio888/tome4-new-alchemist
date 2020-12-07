@@ -1,4 +1,7 @@
 local DamageType = require "engine.DamageType"
+local Object = require "engine.Object"
+local Map = require "engine.Map"
+
 local function getPotionInfo(self, t)
     local potions = self.alchemy_potions
     if not potions then
@@ -18,7 +21,7 @@ local function newPotion(t)
     if not t.range then
         t.range = function(self, t)
             if self:knowTalent(self.T_THROW_BOMB_NEW) then
-                return self:getTalentRange(self.T_THROW_BOMB_NEW)
+                return self:getTalentRange(self:getTalentFromId(self.T_THROW_BOMB_NEW))
             else
                 return 5
             end
@@ -31,20 +34,20 @@ local function newPotion(t)
             return { type = "hit", range = self:getTalentRange(t), talent = t }
         end
     end
-    t.cooldown = 0
+    t.cooldown = 1
     t.max_charge = function(self, t)
         return math.ceil(self:getTalentLevelRaw(t) / 2)
     end
     t.charge = function(self, t)
         local potion = getPotionInfo(self, t)
-        local nb = potion.nb or 0
+        local nb = math.floor(potion.nb or 0)
         return nb
     end
     t.recharge = function(self, t, nb)
         local potion = getPotionInfo(self, t)
         local c_nb = potion.nb or 0
-        c_nb = math.max(0, math.min(t.max_charge(self, t), c_nb + nb))
-        potion.nb = c_nb
+        c_nb = c_nb + nb
+        potion.nb = util.bound(c_nb, 0, t.max_charge(self, t))
     end
     t.on_pre_use = function(self, t)
         return t.charge(self, t) > 0
@@ -61,7 +64,7 @@ local function newPotion(t)
         return res
     end
     t.on_learn = function(self, t)
-        t.recharge(self, t, 1)
+        t.recharge(self, t, 99)
     end
     t.on_unlearn = function(self, t)
         t.recharge(self, t, 0)
@@ -69,7 +72,7 @@ local function newPotion(t)
     t.callbackOnActBase = function(self, t)
         local potion = getPotionInfo(self, t)
         if potion.turn and potion.turn < game.turn - 100 and potion.nb < t.max_charge(self, t) then
-            potion.recharge(self, t, 1)
+            t.recharge(self, t, 1)
         end
     end
     t.callbackOnCombat = function(self, t, state)
@@ -80,6 +83,11 @@ local function newPotion(t)
             potion.turn = game.turn
         end
     end
+    local info = t.info
+    t.info = function(self, t)
+        return ([[%s
+        Left charges: %d]]):tformat(info(self, t), t.charge(self, t))
+    end
     newTalent(t)
 end
 
@@ -87,7 +95,7 @@ newPotion {
     name = "Smoke Bomb", short_name = "SMOKE_POTION", image = "talents/smoke_bomb.png",
     tactical = { DISABLE = 1, ESCAPE = 2 },
     getDuration = function(self, t)
-        return math.ceil(self:combatSpellDamageBase(t, 20, 2, 7))
+        return math.ceil(self:combatTalentScale(t, 2, 7))
     end,
     target = function(self, t)
         return { type = "ball", range = self:getTalentRange(t), radius = 2, talent = t }
@@ -126,7 +134,7 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return ([[Throw a smoke bombo that lasts for %d turns.]]):tformat(t.getDuration(self, t))
+        return ([[Throw the smoke bomb.]]):tformat(t.getDuration(self, t))
     end,
     info = function(self, t)
         local duration = t.getDuration(self, t)
@@ -137,7 +145,7 @@ newPotion {
 }
 
 newPotion {
-    name = "Healing Potion",
+    name = "Healing Potion", image = "talents/health.png",
     tactical = {
         HEAL = 1,
         CURE = function(self, t, target)
@@ -204,7 +212,7 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return ([[Heal %d; Cure poisons、diseases and wounds]]):tformat(t.getHeal(self, t))
+        return ([[Heal and cure, rid of poison and diseases.]]):tformat()
     end,
     info = function(self, t)
         return ([[Heal target for %d life and cure all poisons、diseases and wounds.
@@ -214,17 +222,20 @@ newPotion {
 }
 
 newPotion {
-    name = "Fire Wall", short_name = "FIRE_POTION",
+    name = "Fire Wall", short_name = "FIRE_POTION", image = "talents/fire_wall.png",
     tactical = { ATTACKAREA = { Fire = 1 } },
-    getLength = function(self, t)
-        return self:combatTalentScale()
-    end,
     target = function(self, t)
         local halflength = math.floor(t.getLength(self, t) / 2)
         return { type = "wall", range = self:getTalentRange(t), halflength = halflength, talent = t, halfmax_spots = halflength + 1 }
     end,
+    getDuration = function(self, t)
+        return self:combatTalentScale(t, 3, 6)
+    end,
+    getLength = function(self, t)
+        return self:combatTalentScale(t, 5, 12)
+    end,
     getDamage = function(self, t)
-        return self:combatSpellDamageBase(t, 5, 30) + 5
+        return self:combatTalentSpellDamageBase(t, 25, 50)
     end,
     getFireRadius = function(self, t)
         return math.ceil(self:combatTalentScale(t, 1, 2))
@@ -245,6 +256,8 @@ newPotion {
         end
         local fire_damage = self:spellCrit(t.getDamage(self, t))
         local fire_radius = t.getFireRadius(self, t)
+        local reduce = t.getReduce(self, t)
+
 
         self:project(tg, x, y, function(px, py, tg, self)
             local oe = game.level.map(px, py, Map.TERRAIN)
@@ -255,10 +268,9 @@ newPotion {
                 return
             end
             local e = Object.new {
-                old_feat = oe,
-                name = _t "fire wall", image = "fire_particle.png",
+                old_feat = oe, type = oe.type, subtype = oe.subtype,
+                name = _t "fire wall", image = oe.image, add_mos = {{image = "fire_particle.png"}},
                 desc = _t "a summoned, transparent wall of fire",
-                type = "wall",
                 display = '~', color = colors.LIGHT_RED, back_color = colors.RED,
                 always_remember = true,
                 can_pass = false,
@@ -271,13 +283,16 @@ newPotion {
                 canAct = false,
                 dam = fire_damage,
                 radius = fire_radius,
+                reduce = reduce,
                 act = function(self)
-                    local tgts = table.values(self:projectCollect({ type = "ball", range = 0, radius = self.radius, friendlyfire = false, x = self.x, y = self.y }, self.x, self.y, Map.ACTOR))
+                    local DamageType = require "engine.DamageType"
+                    local Map = require "engine.Map"
+                    local tgts = table.values(self.summoner:projectCollect({ type = "ball", range = 0, radius = self.radius, friendlyfire = false, x = self.x, y = self.y }, self.x, self.y, Map.ACTOR))
                     self.summoner.__project_source = self
                     for _, l in ipairs(tgts) do
                         local target = l.target
-                        DamageType:get(damtype).projector(self.summoner, target.x, target.y, DamageType.FIRE, self.dam)
-                        target:setEffect(target.EFF_FIRE_BURNT, 3, { reduce = t.getReduce(self, t) })
+                        DamageType:get(DamageType.FIRE).projector(self.summoner, target.x, target.y, DamageType.FIRE, self.dam)
+                        target:setEffect(target.EFF_FIRE_BURNT, 3, { reduce = self.reduce })
                     end
                     self.summoner.__project_source = nil
                     self:useEnergy()
@@ -295,12 +310,12 @@ newPotion {
             e.tooltip = mod.class.Grid.tooltip
             game.level:addEntity(e)
             game.level.map(px, py, Map.TERRAIN, e)
-            game.logSeen(who, "%s conjures a wall of fire!", who.name:capitalize())
+            game.logSeen(self, "%s conjures a wall of fire!", self:getName():capitalize())
         end)
         return true
     end,
     short_info = function(self, t)
-        return ([[Create a fire wall; length %d; dam %d; dur %d]]):tformat(t.getLength(self, t), t.getDamage(self, t), t.getDuration(self, t))
+        return ([[Create a fire wall that burns nearby foe]])
     end,
     info = function(self, t)
         return ([[Create a fiery wall of %d length that lasts for %d turns.
@@ -351,7 +366,7 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return "This is Acid Potion"
+        return _t"Throw bottle of acid that removes sustain"
     end,
     info = function(self, t)
         local damage = t.getDamage(self, t)
@@ -399,7 +414,7 @@ newPotion {
 }
 
 newPotion {
-    name = "Breath of the Frost", short_name = "FROST_POTION",
+    name = "Breath of the Frost", short_name = "FROST_POTION", image = "talents/frost_shield.png",
     range = 0,
     radius = function(self, t)
         if self:knowTalent(self.T_THROW_BOMB_NEW) then
@@ -409,13 +424,14 @@ newPotion {
         end
     end,
     getDuration = function(self, t) return 6 end,
-    getResists = function(self, t) return self:combatSpellDamageBase(t, 5, 30) end,
+    getResists = function(self, t) return self:combatTalentScale(t, 5, 20) end,
     getCritShrug = function(self, t) return self:combatTalentScale(t, 15, 45) end,
     action = function(self, t)
         local targets = table.keys(self:projectCollect({type="ball", radius=self:getTalentRadius(t), talent=t}, self.x, self.y, Map.ACTOR, "friend"))
         for _, target in ipairs(targets) do
             target:setEffect(target.EFF_FROST_SHIELD, t.getDuration(self, t), { power = t.getResists(self, t), critdown = t.getCritShrug(self, t)})
         end
+        return true
     end,
     short_info = function(self, t)
         return ([[Create a frost shield reducing damage and critical hits]]):tformat()
