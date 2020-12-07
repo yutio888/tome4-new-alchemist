@@ -16,6 +16,7 @@
 --
 -- Nicolas Casalini "DarkGod"
 -- darkgod@te4.org
+local DamageType = require "engine.DamageType"
 function getAlchemistPower(self)
     if self and self.type == "gem" then
         local tier = self.material_level or 1
@@ -118,9 +119,13 @@ newTalent{
             local target = l.target
             if target:reactionToward(self) < 0 then
                 dam_done = dam_done + DamageType:get(damtype).projector(self, target.x, target.y, damtype, dam)
-                if ammo.alchemist_bomb and ammo.alchemist_bomb.splash then
-				    DamageType:get(DamageType[ammo.alchemist_bomb.splash.type]).projector(self, target.x, target.y, DamageType[ammo.alchemist_bomb.splash.type], ammo.alchemist_bomb.splash.dam)
-                end
+				if ammo.alchemist_bomb and ammo.alchemist_bomb.splash then
+					local gdam = ammo.alchemist_bomb.splash.dam
+					if type(gdam) == "number" then
+						gdam = dam * gdam / 100
+					end
+					DamageType:get(DamageType[ammo.alchemist_bomb.splash.type]).projector(self, target.x, target.y, DamageType[ammo.alchemist_bomb.splash.type], gdam)
+				end
 
                 if ammo.alchemist_bomb and ammo.alchemist_bomb.stun and rng.percent(ammo.alchemist_bomb.stun.chance) and target:canBe("stun") then
             	    target:setEffect(target.EFF_STUNNED, ammo.alchemist_bomb.stun.dur, {apply_power=self:combatSpellpower()})
