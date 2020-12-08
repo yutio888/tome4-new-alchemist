@@ -131,7 +131,7 @@ You cannot change your potions in combat. Potions have limited use and can be re
 }
 
 newTalent {
-    name = "Exlir Potion", short_name = "MANAGE_POTION_2",
+    name = "Elixir Potion", short_name = "MANAGE_POTION_2",
     type = { "spell/alchemy-potion", 2 },
     points = 5,
     require = spells_req2,
