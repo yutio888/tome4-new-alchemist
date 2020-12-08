@@ -2,6 +2,7 @@ local class = require"engine.class"
 local Birther = require "engine.Birther"
 local ActorTalents = require "engine.interface.ActorTalents"
 local ActorTemporaryEffects = require "engine.interface.ActorTemporaryEffects"
+local Entity = require "engine.Entity"
 class:bindHook("ToME:load", function()
     ActorTemporaryEffects:loadDefinition("/data-new-alchemist/timed_effects.lua")
     ActorTalents:loadDefinition("/data-new-alchemist/talents.lua")
@@ -17,4 +18,33 @@ class:bindHook("Actor:startTalentCooldown", function(self, data)
 	        return true
 	    end
 	end
+end)
+
+class:bindHook("UISet:Minimalist:Resources", function(self, data)
+	local player = data.player
+	local potions = player.alchemy_potions
+	if not potions then return data end
+
+	local x = data.x
+	local y = data.y
+	local width, height = 64, 64
+	local showed
+	for tid, info in pairs(potions) do
+		if player:knowTalent(tid) then
+			local talent = player:getTalentFromId(tid)
+			local nb = info.nb or 0
+			while nb > 0 do
+				showed = true
+				print("XSY", talent.icon)
+				local image = Entity.new { image = talent.icon }
+				image:toScreen(nil, x, y, width, height)
+				x = x + 32
+				nb = nb - 1
+			end
+		end
+	end
+	if showed then
+		data.y = y + height + 5
+	end
+	return data
 end)

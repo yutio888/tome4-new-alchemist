@@ -85,7 +85,7 @@ function alchemy_potions_npc_select(self, t, silent, fake)
                 self.alchemy_potions[t.id] = tid
                 if game.party:hasMember(self) then
                     -- cooldowns for party members
-                    self:startTalentCooldown(t);
+                    self:startTalentCooldown(t)
                     self:startTalentCooldown(tid)
                     self:useEnergy()
                 end

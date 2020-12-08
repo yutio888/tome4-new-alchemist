@@ -1,5 +1,6 @@
 local _M = loadPrevious(...)
 local DamageType = require("engine.DamageType")
+local Talents = require "engine.interface.ActorTalents"
 function _M:combatTalentSpellDamageBase(t, base, max, spellpower_override)
 	-- Compute at "max"
 	local mod = max / ((base + 100) * ((math.sqrt(5) - 1) * 0.8 + 1))
@@ -63,4 +64,25 @@ function _M:checkCanWearGem()
     end
 end
 
+function _M:getAllPotions()
+    return Talents.alchemy_potion_tids
+end
+
+function _M:getPotionInfo(t)
+    local tid = t
+    if type(tid) =="table" then
+        tid = t.id
+    end
+    local potions = self.alchemy_potions
+    if not potions then
+        self.alchemy_potions = {}
+        potions = self.alchemy_potions
+    end
+    local potion = potions[tid]
+    if not potion then
+        potions[tid] = { nb = 0, turn = 0 }
+        potion = potions[tid]
+    end
+    return potion
+end
 return _M

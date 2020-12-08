@@ -2,20 +2,6 @@ local DamageType = require "engine.DamageType"
 local Object = require "engine.Object"
 local Map = require "engine.Map"
 
-local function getPotionInfo(self, t)
-    local potions = self.alchemy_potions
-    if not potions then
-        self.alchemy_potions = {}
-        potions = self.alchemy_potions
-    end
-    local potion = potions[t.id]
-    if not potion then
-        potions[t.id] = { nb = 0, turn = 0 }
-        potion = potions[t.id]
-    end
-    return potion
-end
-
 local function newPotion(t)
     t.type = { "spell/alchemy-potions", 1 }
     if not t.range then
@@ -36,15 +22,15 @@ local function newPotion(t)
     end
     t.cooldown = 1
     t.max_charge = function(self, t)
-        return math.ceil(self:getTalentLevelRaw(t) / 2)
+        return 1
     end
     t.charge = function(self, t)
-        local potion = getPotionInfo(self, t)
+        local potion = self:getPotionInfo(t)
         local nb = math.floor(potion.nb or 0)
         return nb
     end
     t.recharge = function(self, t, nb)
-        local potion = getPotionInfo(self, t)
+        local potion = self:getPotionInfo(t)
         local c_nb = potion.nb or 0
         c_nb = c_nb + nb
         potion.nb = util.bound(c_nb, 0, t.max_charge(self, t))
@@ -69,14 +55,19 @@ local function newPotion(t)
     t.on_unlearn = function(self, t)
         t.recharge(self, t, 0)
     end
+    t.callbackOnAct = function(self, t)
+        t.recharge(self, t, 0)
+    end
     t.callbackOnActBase = function(self, t)
-        local potion = getPotionInfo(self, t)
+        local potion = self:getPotionInfo(t)
         if potion.turn and potion.turn < game.turn - 100 and potion.nb < t.max_charge(self, t) then
             t.recharge(self, t, 1)
+        else
+            t.recharge(self, t, 0)
         end
     end
     t.callbackOnCombat = function(self, t, state)
-        local potion = getPotionInfo(self, t)
+        local potion = self:getPotionInfo(t)
         if state then
             potion.turn = nil
         else
@@ -93,6 +84,7 @@ end
 
 newPotion {
     name = "Smoke Bomb", short_name = "SMOKE_POTION", image = "talents/smoke_bomb.png",
+    icon = "object/elixir_of_stoneskin.png",
     tactical = { DISABLE = 1, ESCAPE = 2 },
     getDuration = function(self, t)
         return math.ceil(self:combatTalentScale(t, 2, 7))
@@ -145,7 +137,7 @@ newPotion {
 }
 
 newPotion {
-    name = "Healing Potion", image = "talents/health.png",
+    name = "Healing Potion", icon = "object/elixir_of_the_fox.png",
     tactical = {
         HEAL = 1,
         CURE = function(self, t, target)
@@ -222,7 +214,7 @@ newPotion {
 }
 
 newPotion {
-    name = "Fire Wall", short_name = "FIRE_POTION", image = "talents/fire_wall.png",
+    name = "Fire Wall", short_name = "FIRE_POTION", image = "talents/fire_wall.png", icon = "object/elixir_of_explosive_force.png",
     tactical = { ATTACKAREA = { Fire = 1 } },
     target = function(self, t)
         local halflength = math.floor(t.getLength(self, t) / 2)
@@ -327,7 +319,7 @@ newPotion {
 }
 
 newPotion {
-    name = "Dissolving Acid", short_name = "ACID_POTION", image = "talents/dissolving_acid.png",
+    name = "Dissolving Acid", short_name = "ACID_POTION", image = "talents/dissolving_acid.png", icon = "object/elixir_of_avoidance.png",
     tactical = { ATTACK = { ACID = 2 }, DISABLE = 2 },
     getDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 150) end,
     getRemoveCount = function(self, t) return math.floor(self:combatTalentScale(t, 1, 3, "log")) end,
@@ -377,7 +369,7 @@ newPotion {
 }
 
 newPotion {
-    name = "Lightning Ball", short_name = "LIGHTNING_POTION",
+    name = "Lightning Ball", short_name = "LIGHTNING_POTION", object = "elixir_of_serendipity.png",
     radius = function(self, t) return math.ceil(self:combatTalentScale(t, 1, 3)) end,
     target = function(self, t)
         return { type = "ball", range = self:getTalentRange(t), radius = self:getTalentRadius(t), talent = t }
@@ -414,7 +406,7 @@ newPotion {
 }
 
 newPotion {
-    name = "Breath of the Frost", short_name = "FROST_POTION", image = "talents/frost_shield.png",
+    name = "Breath of the Frost", short_name = "FROST_POTION", image = "talents/frost_shield.png", icon = "object/elixir_of_mysticism.png",
     range = 0,
     radius = function(self, t)
         if self:knowTalent(self.T_THROW_BOMB_NEW) then
