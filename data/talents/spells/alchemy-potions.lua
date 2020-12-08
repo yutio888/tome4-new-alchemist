@@ -29,8 +29,16 @@ local function newPotion(t)
         local nb = math.floor(potion.nb or 0)
         return nb
     end
-    t.recharge = function(self, t, nb)
+    t.recharge = function(self, t, nb, auto)
         local potion = self:getPotionInfo(t)
+        if nb < 0 then
+            potion.lastUse = game.turn
+        end
+        if auto and nb > 0 then
+            local last = potion.lastUse
+            --auto restore only happens after 10 turns to slow the restore out of combat
+            if not last or game.turn - 10 < last then return end
+        end
         local c_nb = potion.nb or 0
         c_nb = c_nb + nb
         potion.nb = util.bound(c_nb, 0, t.max_charge(self, t))
@@ -50,7 +58,7 @@ local function newPotion(t)
         return res
     end
     t.on_learn = function(self, t)
-        t.recharge(self, t, 99)
+        t.recharge(self, t, 1)
     end
     t.on_unlearn = function(self, t)
         t.recharge(self, t, 0)
@@ -61,7 +69,7 @@ local function newPotion(t)
     t.callbackOnActBase = function(self, t)
         local potion = self:getPotionInfo(t)
         if potion.turn and potion.turn < game.turn - 100 and potion.nb < t.max_charge(self, t) then
-            t.recharge(self, t, 1)
+            t.recharge(self, t, 1, true)
         else
             t.recharge(self, t, 0)
         end
