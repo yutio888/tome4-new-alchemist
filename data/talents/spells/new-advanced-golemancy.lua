@@ -5,6 +5,7 @@ newTalent{
 	points = 5,
 	mana = 5,
 	cant_steal = true,
+	tactical = { BUFF = 10 },
 	cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 4, 20, 12)) end, -- Limit to > 4
 	tactical = { DEFEND = 1, ATTACK=1 },
 	getPower = function(self, t) return self:combatTalentSpellDamage(t, 20, 60) end,
@@ -45,6 +46,7 @@ newTalent{
 	points = 5,
 	mana = 30,
 	cant_steal = true,
+	tactical = { DEFEND = 2, ESCAPE = 2 },
 	getDuration = function(self, t) return math.floor(self:combatTalentLimit(t, 8, 2, 5)) end, -- Limit < 8
 	cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 8, 25, 15)) end, -- Limit to > 8
 	action = function(self, t)
@@ -91,7 +93,7 @@ newTalent {
     type = {"spell/new-advanced-golemancy", 3},
     require = spells_req_high3,
     points = 5,
-    tactical = { DISABLE = 3 },
+    tactical = { DISABLE = 2 },
     mana = 30,
     cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 10, 40, 20)) end, -- Limit to > 8
     radius = function(self, t) return math.floor(self:combatTalentScale(t, 1, 4)) end,
@@ -129,7 +131,7 @@ newTalent {
     type = {"spell/new-advanced-golemancy", 4},
     require = spells_req_high4,
     points = 5,
-    tactical = { BUFF = 3 },
+    tactical = { BUFF = 9 },
     mana = 120,
     cooldown = 50,
     getDuration = function(self, t) return math.ceil(self:combatTalentScale(t, 5, 15)) end,

@@ -36,7 +36,6 @@ newTalent {
 	require = spells_req_high1,
 	points = 5,
 	cooldown = function(self, t) return self:combatTalentLimit(t, 3, 30, 6) end,
-	tactical = { BUFF = 2 },
 	autolearn_talent = "T_MANAGE_ELEMENTAL_INFUSION",
 	getIncrease = function(self, t) return self:combatTalentScale(t, 10, 20) end,
 	passives = function(self, t, ret)
@@ -124,6 +123,7 @@ newTalent {
     points = 5,
     sustain_mana = 100,
     cooldown = 30,
+    tactical = { BUFF = 10 },
     getCDReduce = function(self, t) if self:getTalentLevel(t) > 4 then return 2 else return 1 end end,
     getThreshold = function(self, t) return self.level * 2 end,
     getExposure = function(self, t) return math.floor(self:combatTalentSpellDamage(t, 0, 60)) end,
@@ -173,6 +173,7 @@ newTalent {
     points = 5,
     sustain_mana = 100,
     cooldown = 30,
+    tactical = { BUFF = 10 },
     getResist = function(self, t) return self:combatTalentScale(t, 20, 50) end,
     getResistPen = function(self, t) return 33 end,
     getDamage = function(self, t) return self:combatTalentSpellDamage(t, 5, 80) end,

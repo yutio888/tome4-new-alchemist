@@ -12,7 +12,12 @@ newTalent {
        	if not ammo then return end
 		return {type="hit", range=self:getTalentRange(t), talent=t}
 	end,
-	no_npc_use = true,
+    tactical = function(self, t, aitarget)
+        local damtype = self:getGemDamageType()
+        local t = { ATTACK = {} }
+        t.ATTACK[damtype] = 2
+        return t
+    end,
     cooldown = 6,
     on_pre_use = function(self, t)
         return self:hasAlchemistWeapon()
@@ -74,12 +79,17 @@ newTalent {
     direct_hit = true,
 	reflectable = true,
 	requires_target = true,
+    tactical = function(self, t, aitarget)
+        local damtype = self:getGemDamageType()
+        local t = { ATTACKAREA = {} }
+        t.ATTACKAREA[damtype] = 2
+        return t
+    end,
 	target = function(self, t)
     	local ammo = self:hasAlchemistWeapon()
     	if not ammo then return end
     	return {type="ball", range=self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius=self:getTalentRadius(t), talent=t}
     end,
-	no_npc_use = true,
     cooldown = 12,
     on_pre_use = function(self, t)
         return self:hasAlchemistWeapon()
@@ -137,9 +147,9 @@ newTalent {
     type = {"spell/gem-spell", 3},
     require = spells_req3,
     points = 5,
-	no_npc_use = true,
     cooldown = 20,
     radius = 10,
+    tactical = { DEFEND = 2 },
     getSummonNb = function(self, t) return self:combatTalentScale(t, 1, 3) end,
     getDuration = function(self, t) return self:combatTalentGemDamage(t, 5, 12) end,
     on_learn = function(self, t)
@@ -213,7 +223,6 @@ newTalent {
     type = {"spell/gem-spell", 4},
     require = spells_req4,
     points = 5,
-	no_npc_use = true,
 	mode = "sustained",
     cooldown = 1,
     on_learn = function(self, t)

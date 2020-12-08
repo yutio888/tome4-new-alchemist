@@ -487,7 +487,7 @@ newTalent{
 	mana = 20,
 	cooldown = 15,
 	cant_steal = true,
-	no_npc_use = true,
+	tactical = { HEAL = 2 },
 	getHeal = function(self, t) return self:combatTalentSpellDamage(t, 15, 500) end,
 	action = function(self, t)
 	    local heal = self:spellCrit(t.getHeal(self, t))

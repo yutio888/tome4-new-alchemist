@@ -371,6 +371,7 @@ newPotion {
 newPotion {
     name = "Lightning Ball", short_name = "LIGHTNING_POTION", object = "elixir_of_serendipity.png",
     radius = function(self, t) return math.ceil(self:combatTalentScale(t, 1, 3)) end,
+    tactical = { DISABLE = { daze = 2, blind = 2 } },
     target = function(self, t)
         return { type = "ball", range = self:getTalentRange(t), radius = self:getTalentRadius(t), talent = t }
     end,
@@ -408,6 +409,7 @@ newPotion {
 newPotion {
     name = "Breath of the Frost", short_name = "FROST_POTION", image = "talents/frost_shield.png", icon = "object/elixir_of_mysticism.png",
     range = 0,
+    tactical = { DEFEND = 2 },
     radius = function(self, t)
         if self:knowTalent(self.T_THROW_BOMB_NEW) then
             return self:getTalentRange(self.T_THROW_BOMB_NEW)
