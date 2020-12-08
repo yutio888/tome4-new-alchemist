@@ -222,7 +222,7 @@ newPotion {
 }
 
 newPotion {
-    name = "Fire Wall", short_name = "FIRE_POTION", image = "talents/fire_wall.png", icon = "object/elixir_of_explosive_force.png",
+    name = "Fiery Wall", short_name = "FIRE_POTION", image = "talents/fire_wall.png", icon = "object/elixir_of_explosive_force.png",
     tactical = { ATTACKAREA = { Fire = 1 } },
     target = function(self, t)
         local halflength = math.floor(t.getLength(self, t) / 2)
@@ -315,7 +315,7 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return ([[Create a fire wall that burns nearby foe]])
+        return _t"Create a fire wall that burns nearby foe"
     end,
     info = function(self, t)
         return ([[Create a fiery wall of %d length that lasts for %d turns.
@@ -377,7 +377,7 @@ newPotion {
 }
 
 newPotion {
-    name = "Lightning Ball", short_name = "LIGHTNING_POTION", object = "elixir_of_serendipity.png",
+    name = "Lightning Ball", short_name = "LIGHTNING_POTION", icon = "object/elixir_of_serendipity.png",
     radius = function(self, t) return math.ceil(self:combatTalentScale(t, 1, 3)) end,
     tactical = { DISABLE = { daze = 2, blind = 2 } },
     target = function(self, t)

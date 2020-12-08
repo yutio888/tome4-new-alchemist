@@ -528,8 +528,8 @@ newTalent{
 	info = function(self, t)
 		local power=t.getHeal(self, t)
 		return ([[You invoke the power of your gem, healing you and your golem for %d.
-		If your golem is dead, it will be resurrected at 50%% life.
-		If your golem is below 50%% life, it will gain a shield which can absorb %d damage for 5 turns.]]):
+        If your golem is dead, it will be resurrected at 50%% life.
+        If your golem is below 50%% life, it will gain a shield which can absorb %d damage for 5 turns.]]):
 		tformat(power, power / 2)
 	end,
 }

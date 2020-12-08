@@ -33,8 +33,8 @@ newTalent{
 		local speed = t.getSpeedBoost(self, t)
 		local power = t.getPower(self, t)
 		return ([[You activate a special mode of your golem, boosting its speed by %d%% for %d turns.
-		While supercharged, your golem is enraged and deals %d%% more damage.
-		Damage boost scales with your spellpower.]]):
+        While supercharged, your golem is enraged and deals %d%% more damage.
+        Damage boost scales with your spellpower.]]):
 		tformat(speed, dur, power)
 	end,
 }
@@ -83,7 +83,7 @@ newTalent{
 	end,
 	info = function(self, t)
 		return ([[Teleport to your golem, while your golem teleports to your location. Your foes will be confused, and those that were attacking you will have a %d%% chance to target your golem instead.
-		After teleportation, you and your golem gain 50%% evasion for %d turns.]]):
+        After teleportation, you and your golem gain 50%% evasion for %d turns.]]):
 		tformat(math.min(100, self:getTalentLevel(t) * 15 + 25), t.getDuration(self, t))
 	end,
 }
