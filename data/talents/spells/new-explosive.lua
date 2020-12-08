@@ -71,7 +71,7 @@ newTalent{
         	end
         end
 		inc_dam = inc_dam + (ammo.alchemist_bomb and ammo.alchemist_bomb.power or 0) / 100
-		local dam = self:combatTalentSpellDamage(t, 40, 200, (getAlchemistPower(ammo) + self:combatSpellpower()) / 2)
+		local dam = self:combatTalentSpellDamageBase(t, 40, 200, (getAlchemistPower(ammo) + self:combatSpellpower()) / 2)
 		dam = dam * (1 + inc_dam)
 		return dam, damtype, particle
 	end,
@@ -100,7 +100,11 @@ newTalent{
 		local dam_done = 0
 
 		local nb = 0
-		local grids = self:project(tg, x, y, function(tx, ty) end)
+		local grids = self:project(tg, x, y, function(tx, ty)
+			if ammo.alchemist_bomb and ammo.alchemist_bomb.splash and ammo.alchemist_bomb.splash.type == "LITE" then
+				DamageType:get(DamageType["LITE"]).projector(self, tx, ty, DamageType["LITE"], ammo.alchemist_bomb.splash.dam)
+			end
+		end)
 		if grids then
 			for px, ys in pairs(grids or {}) do
 			    for py, _ in pairs(ys) do
@@ -122,7 +126,7 @@ newTalent{
             local target = l.target
             if target:reactionToward(self) < 0 then
                 dam_done = dam_done + DamageType:get(damtype).projector(self, target.x, target.y, damtype, dam)
-				if ammo.alchemist_bomb and ammo.alchemist_bomb.splash then
+				if ammo.alchemist_bomb and ammo.alchemist_bomb.splash and ammo.alchemist_bomb.splash.type ~= "LITE" then
 					local gdam = ammo.alchemist_bomb.splash.dam
 					if type(gdam) == "number" then
 						gdam = dam * gdam / 100

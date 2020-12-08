@@ -27,8 +27,20 @@ function _M:getGemDamageType()
     return gem.color_attributes.damage_type or DamageType.PHYSICAL
 end
 
+function _M:triggerGemAreaEffect(gem, grids)
+    if gem.alchemist_bomb and gem.alchemist_bomb.splash and gem.alchemist_bomb.splash.type == "LITE" then
+        if grids then
+            for px, ys in pairs(grids or {}) do
+                for py, _ in pairs(ys) do
+                    DamageType:get(DamageType.LITE).projector(self, px, py, DamageType.LITE, gem.alchemist_bomb.splash.dam or 1)
+                end
+            end
+        end
+    end
+end
+
 function _M:triggerGemEffect(target, gem, dam)
-    if gem.alchemist_bomb and gem.alchemist_bomb.splash then
+    if gem.alchemist_bomb and gem.alchemist_bomb.splash and gem.alchemist_bomb.splash.type ~= "LITE" then
         local gdam = gem.alchemist_bomb.splash.dam
         if type(gdam) == "number" then
             gdam = dam * gdam / 100
@@ -48,7 +60,7 @@ function _M:triggerGemEffect(target, gem, dam)
     end
     if gem.alchemist_bomb and gem.alchemist_bomb.mana then self:incMana(gem.alchemist_bomb.mana) end
     if gem.alchemist_bomb and gem.alchemist_bomb.special then gem.alchemist_bomb.special(self, gem, target, dam) end
-    
+
     return dam
 end
 

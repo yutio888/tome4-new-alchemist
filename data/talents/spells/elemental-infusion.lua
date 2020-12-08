@@ -194,14 +194,16 @@ newTalent {
     callbackOnActBase = function(self, t)
     	local type = getElementalInsufionType(self) or DamageType.FIRE
         local nb = t.getTargetCount(self, t)
-		local dam = self:spellCrit(t.getDamage(self, t))
         local targets = table.keys(self:projectCollect({type="ball", radius=6, talent=t}, self.x, self.y, Map.ACTOR, "hostile"))
-        while #targets > 0 and nb > 0 do
-        	local target = rng.tableRemove(targets)
-        	nb = nb - 1
-        	DamageType:get(type).projector(self, target.x, target.y, type, dam)
-            game.level.map:particleEmitter(target.x, target.y, 1, "circle", {base_rot=0, oversize=1.1, a=230, limit_life=8, appear=6, speed=0, img="healred", radius=0, shader=true})
+        if #targets > 0 then
+            local dam = self:spellCrit(t.getDamage(self, t))
+            while #targets > 0 and nb > 0 do
+                local target = rng.tableRemove(targets)
+                nb = nb - 1
+                DamageType:get(type).projector(self, target.x, target.y, type, dam)
+                game.level.map:particleEmitter(target.x, target.y, 1, "circle", {base_rot=0, oversize=1, a=230, limit_life=8, appear=6, speed=0, img="healred", radius=0, shader=true})
 
+            end
         end
     end,
     info = function(self, t)

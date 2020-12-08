@@ -47,6 +47,7 @@ newTalent {
             local _ _, x, y = self:canProject(tg, x, y)
             game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "light_beam", {tx=x-self.x, ty=y-self.y})
             self:triggerGemEffect(target, gem, dam)
+            self:triggerGemAreaEffect(gem, self:project(tg, x, y, function(tx, ty) end))
         end)
 
 		game:playSoundNear(self, "talents/water")
@@ -115,6 +116,8 @@ newTalent {
 		if not x or not y then return nil end
 		local dam = t.getDamage(self, t)
 		local damtype = self:getGemDamageType()
+        local grids = self:project(tg, x, y, function(tx, ty) end)
+        local tgs = 0
 		self:projectApply(tg, x, y, Map.ACTOR, function(target)
 		    if self:reactionToward(target) >= 0 then return end
 		    self:setProc("trigger_gem", true, 5)
@@ -124,7 +127,11 @@ newTalent {
             end
             DamageType:get(damtype).projector(self, target.x, target.y, damtype, tdam)
             self:triggerGemEffect(target, gem, dam)
+            tgs = tgs + 1
         end)
+        if tgs > 0 then
+            self:triggerGemAreaEffect(gem, grids)
+        end
 
         local _ _, x, y = self:canProject(tg, x, y)
 		game.level.map:particleEmitter(x, y, tg.radius, "ball_physical", {radius=tg.radius, tx=x, ty=y})
