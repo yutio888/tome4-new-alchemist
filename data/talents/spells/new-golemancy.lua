@@ -452,6 +452,9 @@ newTalent{
 		if not self.alchemy_golem:knowTalent(self.T_GEM_GOLEM_NEW) then
 		    self.alchemy_golem:learnTalent(self.T_GEM_GOLEM_NEW, true)
 		end
+        if not self.alchemy_golem:attr("gem related talents") then
+            self.alchemy_golem:attr("gem related talents", 1)
+        end
 	end,
 	on_unlearn = function(self, t)
 		if not self.alchemy_golem then return end -- Safety net
