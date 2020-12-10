@@ -70,12 +70,12 @@ function bombUtil:getBaseDamage(self, t, ammo, tg)
         type = self.elemental_infusion
     end
     damtype = dam_table[type] or dam_table["default"]
-    particle = damtype[tg.type or "ball"] or damtype["ball"]
+    particle = damtype[tg and tg.type or "ball"] or damtype["ball"]
     damtype = damtype.type or DamageType.PHYSICAL
     inc_dam = inc_dam + (ammo.alchemist_bomb and ammo.alchemist_bomb.power or 0) / 100
     local dam = self:combatTalentSpellDamageBase(t, 40, 200, (getAlchemistPower(ammo) + self:combatSpellpower()) / 2)
     dam = dam * (1 + inc_dam)
-    local arg = emit_table[tg.type or "ball"] or emit_table["ball"]
+    local arg = emit_table[tg and tg.type or "ball"] or emit_table["ball"]
     return dam, damtype, particle, arg
 end
 function bombUtil:throwBomb(self, t, ammo, tg, x, y, startx, starty)

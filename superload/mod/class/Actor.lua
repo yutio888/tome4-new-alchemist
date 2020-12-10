@@ -1,4 +1,5 @@
 local _M = loadPrevious(...)
+local Talents = require "engine.interface.ActorTalents"
 _M.sustainCallbackCheck.callbackOnAlchemistBomb = "talents_on_alchemist_bomb"
 local _getObjectOffslot = _M.getObjectOffslot
 function _M:getObjectOffslot(o)

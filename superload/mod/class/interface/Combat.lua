@@ -1,6 +1,5 @@
 local _M = loadPrevious(...)
 local DamageType = require("engine.DamageType")
-local Talents = require "engine.interface.ActorTalents"
 function _M:combatTalentSpellDamageBase(t, base, max, spellpower_override)
 	-- Compute at "max"
 	local mod = max / ((base + 100) * ((math.sqrt(5) - 1) * 0.8 + 1))

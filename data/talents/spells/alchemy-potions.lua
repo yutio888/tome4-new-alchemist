@@ -1,7 +1,6 @@
 local DamageType = require "engine.DamageType"
 local Object = require "engine.Object"
 local Map = require "engine.Map"
-local quest = game.player:hasQuest("brotherhood-of-alchemists")
 local function newPotion(t)
     t.type = { "spell/alchemy-potions", 1 }
     if not t.range then
@@ -455,6 +454,8 @@ newPotion {
     getDuration = function(self, t) return 6 end,
     getArmor = function(self, t) return self:combatTalentScale(t, 30, 100) end,
     allowUse = function(self, t)
+        if self ~= game.player then return false end
+        local quest = game.player:hasQuest("brotherhood-of-alchemists")
         return quest.winner == "Ungrol of Last Hope"
     end,
     action = function(self, t)
@@ -484,6 +485,8 @@ newPotion {
     getSpellpower = function(self, t) return self:combatTalentScale(t, 20, 40) end,
     getManaRegen = function(self, t) return self:combatTalentScale(t, 80, 300) end,
     allowUse = function(self, t)
+        if self ~= game.player then return false end
+        local quest = game.player:hasQuest("brotherhood-of-alchemists")
         return quest.winner == "Marus of Elvala"
     end,
     isSpecialPotion = 5,
@@ -513,6 +516,8 @@ newPotion {
     getDuration = function(self, t) return 6 end,
     getEvasion = function(self, t)  return self:combatTalentScale(t, 10, 25) + (self:getLck() - 50) end,
     allowUse = function(self, t)
+        if self ~= game.player then return false end
+        local quest = game.player:hasQuest("brotherhood-of-alchemists")
         return quest.winner == "Agrimley the hermit"
     end,
     isSpecialPotion = 5,
@@ -542,6 +547,8 @@ newPotion {
     getSpeed = function(self, t) return self:combatTalentScale(t, 20, 50) end,
     getMove = function(self, t) return self:combatTalentScale(t, 100, 400) end,
     allowUse = function(self, t)
+        if self ~= game.player then return false end
+        local quest = game.player:hasQuest("brotherhood-of-alchemists")
         return quest.winner == "Stire of Derth"
     end,
     isSpecialPotion = 5,
