@@ -44,7 +44,7 @@ newTalent {
                 dam = dam * (1 + gem.alchemist_bomb.power * 0.01)
             end
             DamageType:get(damtype).projector(self, target.x, target.y, damtype, dam)
-            local _ _, x, y = self:canProject(tg, x, y)
+            local _, x, y = self:canProject(tg, x, y)
             game.level.map:particleEmitter(self.x, self.y, math.max(math.abs(x-self.x), math.abs(y-self.y)), "light_beam", {tx=x-self.x, ty=y-self.y})
             self:triggerGemEffect(target, gem, dam)
             self:triggerGemAreaEffect(gem, self:project(tg, x, y, function(tx, ty) end))
@@ -133,7 +133,7 @@ newTalent {
             self:triggerGemAreaEffect(gem, grids)
         end
 
-        local _ _, x, y = self:canProject(tg, x, y)
+        local _, x, y = self:canProject(tg, x, y)
 		game.level.map:particleEmitter(x, y, tg.radius, "ball_physical", {radius=tg.radius, tx=x, ty=y})
 		game:playSoundNear(self, "talents/arcane")
 		return true

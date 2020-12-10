@@ -249,8 +249,7 @@ newPotion {
         if not x or not y then
             return nil
         end
-        local _
-        _, _, _, x, y = self:canProject(tg, x, y)
+        local _, _, _, x, y = self:canProject(tg, x, y)
         if game.level.map:checkEntity(x, y, Map.TERRAIN, "block_move") then
             return nil
         end

@@ -30,6 +30,7 @@ newBirthDescriptor{
 		["spell/new-golemancy"]={true, 0.3},
 		["spell/gem-spell"]={true, 0.3},
 		["spell/alchemy-potion"] = {true, 0.3},
+		["spell/explosion-control"] = {true, 0.3},
 
 		["spell/new-advanced-golemancy"]={false, 0.3},
 		["spell/elemental-alchemy"]={false, 0.3},

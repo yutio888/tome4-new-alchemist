@@ -16,8 +16,7 @@ if gem_portal then
         if not x or not y then
             return nil
         end
-        local _
-        _, x, y = self:canProject(tg, x, y)
+        local _, x, y = self:canProject(tg, x, y)
 
         local ox, oy = self.x, self.y
         local l = line.new(self.x, self.y, x, y)
