@@ -112,28 +112,43 @@ newTalent {
     cooldown = 15,
     no_unlearn_last = true,
     on_pre_use = alchemy_potions_adjust_pre_use,
-    tactical = { BUFF = 2 },
-    on_pre_use_ai = alchemy_potions_npc_select, -- NPC's automatically pick a tool
+    getMaxCharges = function(self, t) return math.floor(self:combatTalentLimit(t, 7, 1, 4)) end,
+    --on_pre_use_ai = alchemy_potions_npc_select, -- NPC's automatically pick a tool
     action = function(self, t)
-        --local chat = Chat.new("prepare-alchemy-potions", self, self, { player = self, slot = 1, chat_tid = t.id, tool_ids = alchemy_potion_tids })
-        --local d = chat:invoke()
-        --d.key:addBinds { EXIT = function()
-        --    game:unregisterDialog(d)
-        --end }
-        --local tool_id = self:talentDialog(d)
-        --alchemy_potions_setup(self, t)
-        ----self:updateModdableTile()
-        --return tool_id ~= nil -- only use energy/cooldown if a tool was prepared
-        return true
+        if self:talentDialog(require("mod.dialogs.talents.PrepareAlchemistPotion").new(self)) then
+            return true
+        end
+        return nil
+    end,
+    on_learn = function(self, t)
+        self:setTalentTypeMastery("spell/alchemy_potions", self:getTalentMastery(t))
+        for _, tid in ipairs(alchemy_potion_tids) do
+            if self:knowTalent(tid) then
+                local tl = self:getTalentLevelRaw(tid)
+                if tl ~= self:getTalentLevelRaw(t) then
+                    self:learnTalent(tid, true, self:getTalentLevelRaw(t) - tl)
+                end
+            end
+        end
+    end,
+    on_unlearn = function(self, t)
+        for _, tid in ipairs(alchemy_potion_tids) do
+            if self:knowTalent(tid) then
+                self:unlearnTalentFull(tid)
+                if self:getTalentLevelRaw(t) > 0 then
+                    self:learnTalent(tid, true, self:getTalentLevelRaw(t))
+                end
+            end
+        end
     end,
     info = function(self, t)
         local descs = alchemy_potions_get_descs(self, t)
-        return ([[With some advanced preparation, you learn to create and equip one of a number of useful potions (at #YELLOW#level %d#WHITE#):
+        return ([[With some advanced preparation, you learn to create and equip %d of a number of useful potions (at #YELLOW#level %d#WHITE#):
 
 %s
-Preparing a tool sets its talent level and puts it on cooldown.
+Preparing a potion sets its talent level and puts it on cooldown.
 You cannot change your potions in combat. Potions have limited use and can be restored after combat.
-]]):tformat(self:getTalentLevelRaw(t), descs)
+]]):tformat(t.getMaxCharges(self, t), self:getTalentLevelRaw(t), descs)
     end,
 }
 
@@ -144,7 +159,7 @@ newTalent {
     require = spells_req2,
     cooldown = function(self, t) return self:combatTalentScale(t, 20, 10, "log") end,
     mode = "sustained",
-    getDuration = function(self, t) return 15 - self:combatTalentScale(t, 0, 5, "log") end,
+    getDuration = function(self, t) return math.ceil(15 - self:combatTalentScale(t, 0, 5, "log")) end,
     iconOverlay = function(self, t, p)
         if not p then return end
         return tostring("#RED##{bold}#"..math.floor(p.dur or 1).."#LAST##{normal}#"), "buff_font_small"
@@ -215,7 +230,8 @@ newTalent {
             local avail = {}
             for _, tid in pairs(alchemy_potion_tids) do
                 if self:knowTalent(tid) then
-                    if self:callTalent(tid, "charge") < self:callTalent(tid, "max_charge") then
+                    local talent = self:getTalentFromId(tid)
+                    if not talent.isSpecialPotion and self:callTalent(tid, "charge") < self:callTalent(tid, "max_charge") then
                         avail[#avail+1] = tid
                     end
                 end
@@ -230,6 +246,6 @@ newTalent {
     end,
     info = function(self, t)
         return ([[You know how to reuse the remain of your potions.
-        After throwing bomb, you have %d%% chance to reproduce a random potion.]]):tformat(t.getChance(self, t))
+        After throwing bomb, you have %d%% chance to reproduce a random normal potion.]]):tformat(t.getChance(self, t))
     end,
 }

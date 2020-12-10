@@ -39,7 +39,6 @@ newTalent {
         local x2, y2 = self:getTarget(tg2)
         if not x2 or not y2 then return nil end
         if x == x2 and y == y2 then return nil end
-        game.logPlayer(game.player, "%d %d %d %d", x2, y2, x, y)
         bombUtil:throwBomb(self, t, ammo, tg2, x2, y2, x, y)
         return true
     end,

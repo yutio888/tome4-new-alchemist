@@ -69,35 +69,15 @@ function _M:getAllPreparedPotionCharges()
     local potion_tids = self:getAllPotions()
     for _, tid in ipairs(potion_tids) do
         local potion = potions[tid] or { nb = 0, turn = 0, max = 0 }
-        nb = nb + potion.max
+        nb = nb + (potion.max or 0)
     end
     return nb
-end
-
-function _M:consumeAlchemyPotion(t)
-    local potion = self:getPotionInfo(t)
-    if potion.nb <= 0 then
-        return nil
-    end
-    potion.nb = potion.nb - 1
-    return potion.nb
-end
-
-function _M:rechargeAlchemyPotion(t, nb)
-    local potion = self:getPotionInfo(t)
-    if potion.nb >= potion.max then
-        potion.nb = potion.max
-        return nil
-    end
-    if not nb then nb = 1 end
-    potion.nb = util.bound(potion.nb + nb, 0, potion.max)
-    return potion.nb
 end
 
 function _M:restoreAllPotions(t)
     local potions = self.alchemy_potions or {}
     for tid, info in pairs(potions) do
-        info.nb = info.max
+        info.nb = info.max or 0
     end
 end
 
@@ -115,9 +95,10 @@ function _M:unprepareAlchemyPotion(t)
     if not potion then
         return nil
     end
-    potion.max = potion.max - 1
+    potion.max = (potion.max or 0) - 1
     if potion.max <= 0 then
         potions[tid] = nil
+        self:unlearnTalentFull(tid)
         return true
     end
     potion.nb = util.bound(potion.nb, 0, potion.max)
@@ -125,17 +106,29 @@ function _M:unprepareAlchemyPotion(t)
 end
 
 function _M:prepareAlchemyPotion(t)
+    local max = self:getMaxPreparedPotions()
+    local cur = self:getAllPreparedPotionCharges()
+    if cur >= max then return end
     local tid = t
     if type(t) == "table" then tid = t.id end
-    local talent = self:getTalentFromId(t)
-    if not self:callTalent(talent, "allowUse") then
+    if not self:callTalent(t, "allowUse") then
         return nil
     end
     local potion = self:getPotionInfo(t)
-    if potion.max <= 0 then
+    if (potion.max or 0) <= 0 then
         potion.max = 1
     else
-        potion.max = potion.max + 1
+        local talent = self:getTalentFromId(tid)
+        if talent.isSpecialPotion and (potion.max or 0) >= 1 then
+            potion.max = 1
+            game.logPlayer(self, "You cannot prepare more than one bottle of special potions")
+        else
+            potion.max = (potion.max or 0) + 1
+        end
+    end
+    potion.nb = util.bound((potion.nb or 0) + 1, 0, potion.max)
+    if not self:knowTalent(t) then
+        self:learnTalent(t, true, self:getTalentLevelRaw(self.T_MANAGE_POTION_1), { no_unlearn = true })
     end
     return true
 end

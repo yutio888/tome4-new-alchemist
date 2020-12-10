@@ -549,7 +549,6 @@ newTalent{
 	    for _, l in ipairs(tgts) do
 	        local target = l.target
 	        local golem = self.alchemy_golem
-	        print("testXSY: ",target, golem)
 	        if target == self.alchemy_golem then
 	            local tids = table.keys(golem.talents_cd)
     		    local did_something = false

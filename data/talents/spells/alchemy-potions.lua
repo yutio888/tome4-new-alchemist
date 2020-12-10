@@ -27,7 +27,8 @@ local function newPotion(t)
     end
     t.cooldown = 1
     t.max_charge = function(self, t)
-        return 1
+        local potion = self:getPotionInfo(t)
+        return potion.max or 0
     end
     t.charge = function(self, t)
         local potion = self:getPotionInfo(t)
@@ -42,7 +43,7 @@ local function newPotion(t)
         if auto and nb > 0 then
             local last = potion.lastUse
             --auto restore only happens after 10 turns to slow the restore out of combat
-            if not last or game.turn - 10 < last then return end
+            if not last or game.turn - 100 < last then return end
         end
         local c_nb = potion.nb or 0
         c_nb = c_nb + nb
@@ -66,7 +67,7 @@ local function newPotion(t)
         return res
     end
     t.on_learn = function(self, t)
-        t.recharge(self, t, 1)
+        t.recharge(self, t, 0)
     end
     t.on_unlearn = function(self, t)
         t.recharge(self, t, 0)
@@ -91,9 +92,11 @@ local function newPotion(t)
         end
     end
     local info = t.info
-    t.info = function(self, t)
+    t.info = function(self, tc)
+        --default talent level
+        local fake_t = self:getTalentFromId(self.T_MANAGE_POTION_1)
         return ([[%s
-        Left charges: %d]]):tformat(info(self, t), t.charge(self, t))
+        Left charges: %d]]):tformat(info(self, tc, fake_t), tc.charge(self, tc))
     end
     if not t.allowUse then
         t.allowUse = function(self, t) return true end
@@ -147,8 +150,8 @@ newPotion {
     short_info = function(self, t)
         return ([[Throw the smoke bomb.]]):tformat(t.getDuration(self, t))
     end,
-    info = function(self, t)
-        local duration = t.getDuration(self, t)
+    info = function(self, t, fake_t)
+        local duration = t.getDuration(self, fake_t or t)
         return ([[Throw a smoke bomb, blocking everyone's line of sight. The smoke dissipates after %d turns.]]):
         tformat(duration)
     end,
@@ -202,20 +205,23 @@ newPotion {
     end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
-        local x, y, target = self:getTarget(tg)
-        if not target or not self:canProject(tg, x, y) then
+        local x, y = self:getTarget(tg)
+        if not x or not y  then
             return nil
         end
-
-        target:attr("allow_on_heal", 1)
-        target:heal(t.getHeal(self, t), self)
-        target:attr("allow_on_heal", -1)
-        target:removeEffectsFilter(target, function(e)
-            return e.subtype.wound or e.subtype.poison or e.subtype.disease
-        end, 999)
-        if core.shader.active(4) then
-            target:addParticles(Particles.new("shader_shield_temp", 1, { toback = true, size_factor = 1.5, y = -0.3, img = "healgreen", life = 25 }, { type = "healing", time_factor = 2000, beamsCount = 20, noup = 2.0 }))
-            target:addParticles(Particles.new("shader_shield_temp", 1, { toback = false, size_factor = 1.5, y = -0.3, img = "healgreen", life = 25 }, { type = "healing", time_factor = 2000, beamsCount = 20, noup = 1.0 }))
+        local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
+        if #targets <= 0 then return nil end
+        for _, target in ipairs(targets) do
+            target:attr("allow_on_heal", 1)
+            target:heal(t.getHeal(self, t), self)
+            target:attr("allow_on_heal", -1)
+            target:removeEffectsFilter(target, function(e)
+                return e.subtype.wound or e.subtype.poison or e.subtype.disease
+            end, 999)
+            if core.shader.active(4) then
+                target:addParticles(Particles.new("shader_shield_temp", 1, { toback = true, size_factor = 1.5, y = -0.3, img = "healgreen", life = 25 }, { type = "healing", time_factor = 2000, beamsCount = 20, noup = 2.0 }))
+                target:addParticles(Particles.new("shader_shield_temp", 1, { toback = false, size_factor = 1.5, y = -0.3, img = "healgreen", life = 25 }, { type = "healing", time_factor = 2000, beamsCount = 20, noup = 1.0 }))
+            end
         end
 
         game:playSoundNear(self, "talents/heal")
@@ -224,10 +230,10 @@ newPotion {
     short_info = function(self, t)
         return ([[Heal and cure, rid of poison and diseases.]]):tformat()
     end,
-    info = function(self, t)
+    info = function(self, t, fake_t)
         return ([[Heal target for %d life and cure all poisons、diseases and wounds.
         The amount healed will increase with your Spellpower.]]
-        ):tformat(t.getHeal(self, t))
+        ):tformat(t.getHeal(self, fake_t or t))
     end,
 }
 
@@ -326,12 +332,12 @@ newPotion {
     short_info = function(self, t)
         return _t"Create a fire wall that burns nearby foe"
     end,
-    info = function(self, t)
+    info = function(self, t, fake_t)
         return ([[Create a fiery wall of %d length that lasts for %d turns.
         Fire walls may burn any enemy in %d radius, each wall within range deals %d fire damage.
         Burnt enemy will deal %d%% less damage in 3 turns.
         Fire wall does not block movement.]]):
-        tformat(t.getLength(self, t), t.getDuration(self, t), t.getFireRadius(self, t), t.getDamage(self, t), t.getReduce(self, t))
+        tformat(t.getLength(self, fake_t or t), t.getDuration(self, fake_t or t), t.getFireRadius(self, fake_t or t), t.getDamage(self, fake_t or t), t.getReduce(self, fake_t or t))
     end,
 }
 
@@ -378,11 +384,11 @@ newPotion {
     short_info = function(self, t)
         return _t"Throw bottle of acid that removes sustain"
     end,
-    info = function(self, t)
-        local damage = t.getDamage(self, t)
+    info = function(self, t, fake_t)
+        local damage = t.getDamage(self, fake_t or t)
         return ([[Acid erupts all around your target, dealing %0.1f acid damage.
 		The acid attack is extremely distracting, and may remove up to %d sustains (depending on the Spell Save of the target).
-		The damage and chance to remove effects will increase with your Spellpower.]]):tformat(damDesc(self, DamageType.ACID, damage), t.getRemoveCount(self, t))
+		The damage and chance to remove effects will increase with your Spellpower.]]):tformat(damDesc(self, DamageType.ACID, damage), t.getRemoveCount(self, fake_t or t))
     end,
 }
 
@@ -417,10 +423,10 @@ newPotion {
     short_info = function(self, t)
         return ([[Throw a ball of lightning, daze and blind all targets.]]):tformat()
     end,
-    info = function(self, t)
+    info = function(self, t, fake_t)
         return ([[Throw a ball of lightning of radius %d, daze and blind all targets for %d turns.
         If the target resists the daze effect it is instead shocked, which halves stun/daze/pin resistance, for %d turns.
-        ]]):tformat(self:getTalentRadius(t), t.getDazeDuration(self, t), t.getShockDuration(self, t))
+        ]]):tformat(t.radius(self, fake_t or t), t.getDazeDuration(self, fake_t or t), t.getShockDuration(self, fake_t or t))
     end,
 }
 
@@ -443,10 +449,10 @@ newPotion {
     short_info = function(self, t)
         return ([[Create a frost shield reducing damage and critical hits]]):tformat()
     end,
-    info = function(self, t)
+    info = function(self, t, fake_t)
         return ([[Create a frost shield in range %d, reducing %d%% all incoming damage except fire, and reducing direct critical damage by %d%%.
         Frost shield lasts %d turns.]])
-                :tformat(self:getTalentRadius(t), t.getResists(self, t), t.getCritShrug(self, t), t.getDuration(self, t))
+                :tformat(t.range(self, fake_t or t), t.getResists(self, fake_t or t), t.getCritShrug(self, fake_t or t), t.getDuration(self, fake_t or t))
     end,
 }
 
@@ -475,9 +481,9 @@ newPotion {
     short_info = function(self, t)
         return ([[Greatly enchants armor while lowering defense.]]):tformat()
     end,
-    info = function(self, t)
+    info = function(self, t, fake_t)
         return ([[Increase armor by %d , armor hardiness by %d%%, and decrease defense by %d for 6 turns.]])
-        :tformat(t.getArmor(self, t), 50, t.getArmor(self, t))
+        :tformat(t.getArmor(self, fake_t or t), 50, t.getArmor(self, fake_t or t))
     end,
 }
 
@@ -508,9 +514,9 @@ newPotion {
     short_info = function(self, t)
         return ([[Restore mana and gain massive spellpower.]]):tformat()
     end,
-    info = function(self, t)
+    info = function(self, t, fake_t)
         return ([[Restore %d mana and gain %d spellpower in 6 turns]])
-                :tformat(t.getManaRegen(self, t), t.getSpellpower(self, t))
+                :tformat(t.getManaRegen(self, fake_t or t), t.getSpellpower(self, fake_t or t))
     end,
 }
 
@@ -539,14 +545,14 @@ newPotion {
     short_info = function(self, t)
         return ([[Becomes super lucky and may ignore incoming damage.]]):tformat()
     end,
-    info = function(self, t)
+    info = function(self, t, fake_t)
         return ([[Becomes super lucky, have %d%% chance to ignore damage in 6 turns.
-        Chance increases with your luck.]]):tformat(t.getEvasion(self, t))
+        Chance increases with your luck.]]):tformat(t.getEvasion(self, fake_t or t))
     end,
 }
 
 newPotion {
-    name = "Potion of Swiftness", short_name = "SPEED_POTION", image = "talents/nimble_movement.png", icon = "object/elixir_of_invulnerability.png",
+    name = "Potion of Swiftness", short_name = "SPEED_POTION", image = "talents/nimble_movements.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { BUFF = 3 },
     getDuration = function(self, t) return 6 end,
     getSpeed = function(self, t) return self:combatTalentScale(t, 20, 50) end,
@@ -571,9 +577,9 @@ newPotion {
     short_info = function(self, t)
         return ([[Becomes much faster than before.]]):tformat()
     end,
-    info = function(self, t)
+    info = function(self, t, fake_t)
         return ([[Becomes extremely fast, gain %d%% movement speed and %d%% global speed for %d turns.]])
-                :tformat(t.getMove(self, t), t.getSpeed(self, t), t.getDuration(self, t))
+                :tformat(t.getMove(self, fake_t or t), t.getSpeed(self, fake_t or t), t.getDuration(self, fake_t or t))
     end,
 }
 

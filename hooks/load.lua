@@ -35,7 +35,6 @@ class:bindHook("UISet:Minimalist:Resources", function(self, data)
 			local nb = info.nb or 0
 			while nb > 0 do
 				showed = true
-				print("XSY", talent.icon)
 				local image = Entity.new { image = talent.icon }
 				image:toScreen(nil, x, y, width, height)
 				x = x + 32
