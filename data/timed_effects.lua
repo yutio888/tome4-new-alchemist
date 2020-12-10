@@ -123,3 +123,76 @@ newEffect {
 	end,
 
 }
+
+
+newEffect{
+	name = "STONED_ARMOUR", image = "talents/stoneskin.png",
+	desc = _t"Stoned Armour",
+	long_desc = function(self, eff) return ("The target's armour has been enchanted, granting %d armour and %d%% armour hardiness, but decreasing defense by ."):tformat(eff.ac, eff.hard, eff.ac) end,
+	type = "physical",
+	subtype = { nature=true },
+	status = "beneficial",
+	parameters = { ac=10, hard=10 },
+	on_gain = function(self, err) return _t"#Target#'s skin looks a bit thorny.", _t"+Stoned Armour" end,
+	on_lose = function(self, err) return _t"#Target# is less thorny now.", _t"-Stoned Armour" end,
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "combat_armor", eff.ac)
+		self:effectTemporaryValue(eff, "combat_armor_hardiness", eff.hard)
+		self:effectTemporaryValue(eff, "combat_def", -eff.reduce)
+	end,
+}
+
+newEffect{
+	name = "POTION_OF_MAGIC", image = "talents/gather_the_threads.png",
+	desc = _t"Potion of Magic",
+	long_desc = function(self, eff) return ("The target's spellpower has been increased by %d."):tformat(eff.cur_power or eff.power) end,
+	charges = function(self, eff) return math.floor(eff.cur_power or eff.power) end,
+	type = "magical",
+	subtype = { arcane=true },
+	status = "beneficial",
+	parameters = { power=10 },
+	on_gain = function(self, err) return _t"#Target# is surging arcane power.", _t"+Magic Potion" end,
+	on_lose = function(self, err) return _t"#Target# is no longer surging arcane power.", _t"-Magic Potion" end,
+	activate = function(self, eff)
+		eff.cur_power = eff.power
+		eff.tmpid = self:addTemporaryValue("combat_spellpower", eff.power)
+		eff.particle = self:addParticles(Particles.new("arcane_power", 1))
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("combat_spellpower", eff.tmpid)
+		self:removeParticles(eff.particle)
+	end,
+}
+
+newEffect{
+	name = "SUPER_LUCKY", image = "talents/lucky_day.png",
+	desc = _t"Super Lucky",
+	long_desc = function(self, eff) return ("%d%% chance to fully absorb any damaging actions."):tformat(eff.power) end,
+	type = "physical",
+	subtype = { nature=true },
+	status = "beneficial",
+	parameters = { power=10 },
+	on_gain = function(self, err) return _t"#Target# is super lucky now.", _t"+Super Lucky" end,
+	on_lose = function(self, err) return _t"#Target# seems less lucky.", _t"-Super Lucky" end,
+	activate = function(self, eff)
+		eff.tmpid = self:addTemporaryValue("cancel_damage_chance", eff.power)
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("cancel_damage_chance", eff.tmpid)
+	end,
+}
+
+
+newEffect{
+	name = "SPEED_POTION", image = "talents/rapid_shot.png",
+	desc = _t"Swiftness",
+	long_desc = function(self, eff) return ("Increases movement speed by %d%%, global speed by %d%%."):tformat(eff.power, eff.power_all) end,
+	type = "physical",
+	subtype = { tactic=true },
+	status = "beneficial",
+	parameters = {power=10},
+	activate = function(self, eff)
+		self:effectTemporaryValue(eff, "movement_speed", eff.power)
+		self:effectTemporaryValue(eff, "global_speed_add", eff.power_all)
+	end,
+}

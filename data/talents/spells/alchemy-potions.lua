@@ -1,7 +1,7 @@
 local DamageType = require "engine.DamageType"
 local Object = require "engine.Object"
 local Map = require "engine.Map"
-
+local quest = game.player:hasQuest("brotherhood-of-alchemists")
 local function newPotion(t)
     t.type = { "spell/alchemy-potions", 1 }
     if not t.range then
@@ -15,9 +15,15 @@ local function newPotion(t)
     end
     t.direct_hit = true
     t.requires_target = true
-    if not t.target then
-        t.target = function(self, t)
+    local target = t.target
+    t.target = function(self, t)
+        if self:isTalentActive(self.T_MANAGE_POTION_3) then
+            return { type = "cone", range = 0, radius = self:getTalentRange(t), talent = t }
+        end
+        if not target then
             return { type = "hit", range = self:getTalentRange(t), talent = t }
+        else
+            return target(self, t)
         end
     end
     t.cooldown = 1
@@ -51,7 +57,10 @@ local function newPotion(t)
         if t.charge(self, t) <= 0 then
             return
         end
+        local reduce = self:isTalentActive(self.T_MANAGE_POTION_3)
+        if reduce then self:attr("spellpower_reduction", 1) end
         local res = action(self, t)
+        if reduce then self:attr("spellpower_reduction", -1) end
         if res then
             t.recharge(self, t, -1)
         end
@@ -86,6 +95,9 @@ local function newPotion(t)
     t.info = function(self, t)
         return ([[%s
         Left charges: %d]]):tformat(info(self, t), t.charge(self, t))
+    end
+    if not t.allowUse then
+        t.allowUse = function(self, t) return true end
     end
     newTalent(t)
 end
@@ -138,8 +150,7 @@ newPotion {
     end,
     info = function(self, t)
         local duration = t.getDuration(self, t)
-        return ([[Throw a smoke bomb, blocking everyone's line of sight. The smoke dissipates after %d turns.
-        Duration will increase with your Spellpower.]]):
+        return ([[Throw a smoke bomb, blocking everyone's line of sight. The smoke dissipates after %d turns.]]):
         tformat(duration)
     end,
 }
@@ -389,7 +400,6 @@ newPotion {
         local x, y = self:getTarget(tg)
         if not x or not y then return nil end
         self:projectApply(tg, x, y, Map.ACTOR, function(target)
-            if self:reactionToward(target) >= 0 then return end
             if target:canBe("stun") then
                 target:setEffect(target.EFF_DAZED, t.getDazeDuration(self, t), {})
             else
@@ -415,8 +425,7 @@ newPotion {
 
 newPotion {
     name = "Breath of the Frost", short_name = "FROST_POTION", image = "talents/frost_shield.png", icon = "object/elixir_of_mysticism.png",
-    range = 0,
-    tactical = { DEFEND = 2 },
+    tactical = { DEFEND = 3 },
     getDuration = function(self, t) return 6 end,
     getResists = function(self, t) return self:combatTalentScale(t, 5, 20) end,
     getCritShrug = function(self, t) return self:combatTalentScale(t, 15, 45) end,
@@ -439,3 +448,120 @@ newPotion {
                 :tformat(self:getTalentRadius(t), t.getResists(self, t), t.getCritShrug(self, t), t.getDuration(self, t))
     end,
 }
+
+newPotion {
+    name = "Stoned Armour", short_name = "STONE_POTION", image = "talents/stoneskin.png", icon = "object/elixir_of_invulnerability.png",
+    tactical = { DEFEND = 2 },
+    getDuration = function(self, t) return 6 end,
+    getArmor = function(self, t) return self:combatTalentScale(t, 30, 100) end,
+    allowUse = function(self, t)
+        return quest.winner == "Ungrol of Last Hope"
+    end,
+    action = function(self, t)
+        local tg = self:getTalentTarget(t)
+        local x, y = self:getTarget(tg)
+        if not x or not y then return nil end
+        local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
+        for _, target in ipairs(targets) do
+            target:setEffect(target.EFF_STONED_ARMOUR, 6, {ac=t:getArmor(self, t), hard=50})
+        end
+        return true
+    end,
+    isSpecialPotion = 5,
+    short_info = function(self, t)
+        return ([[Greatly enchants armor while lowering defense.]]):tformat()
+    end,
+    info = function(self, t)
+        return ([[Increase armor by %d , armor hardiness by %d%%, and decrease defense by %d for 6 turns.]])
+        :tformat(t.getArmor(self, t), 50, t.getArmor(self, t))
+    end,
+}
+
+newPotion {
+    name = "Potion of Magic", short_name = "ARCANE_POTION", image = "talents/ARCANE_POWER.png", icon = "object/elixir_of_invulnerability.png",
+    tactical = { BUFF = 3 },
+    getDuration = function(self, t) return 6 end,
+    getSpellpower = function(self, t) return self:combatTalentScale(t, 20, 40) end,
+    getManaRegen = function(self, t) return self:combatTalentScale(t, 80, 300) end,
+    allowUse = function(self, t)
+        return quest.winner == "Marus of Elvala"
+    end,
+    isSpecialPotion = 5,
+    action = function(self, t)
+        local tg = self:getTalentTarget(t)
+        local x, y = self:getTarget(tg)
+        if not x or not y then return nil end
+        local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
+        for _, target in ipairs(targets) do
+            target:incMana(t.getManaRegen(self, t))
+            target:setEffect(target.EFF_POTION_OF_MAGIC, 6, { power = t.getSpellpower(self, t)})
+        end
+        return true
+    end,
+    short_info = function(self, t)
+        return ([[Restore mana and gain massive spellpower.]]):tformat()
+    end,
+    info = function(self, t)
+        return ([[Restore %d mana and gain %d spellpower in 6 turns]])
+                :tformat(t.getManaRegen(self, t), t.getSpellpower(self, t))
+    end,
+}
+
+newPotion {
+    name = "Potion of Luck", short_name = "LUCK_POTION", image = "talents/lucky_day.png", icon = "object/elixir_of_invulnerability.png",
+    tactical = { DEFEND = 2 },
+    getDuration = function(self, t) return 6 end,
+    getEvasion = function(self, t)  return self:combatTalentScale(t, 10, 25) + (self:getLck() - 50) end,
+    allowUse = function(self, t)
+        return quest.winner == "Agrimley the hermit"
+    end,
+    isSpecialPotion = 5,
+    action = function(self, t)
+        local tg = self:getTalentTarget(t)
+        local x, y = self:getTarget(tg)
+        if not x or not y then return nil end
+        local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
+        for _, target in ipairs(targets) do
+            target:setEffect(target.EFF_SUPER_LUCKY, 6, { power = t.getEvasion(self, t)})
+        end
+        return true
+    end,
+    short_info = function(self, t)
+        return ([[Becomes super lucky and may ignore incoming damage.]]):tformat()
+    end,
+    info = function(self, t)
+        return ([[Becomes super lucky, have %d%% chance to ignore damage in 6 turns.
+        Chance increases with your luck.]]):tformat(t.getEvasion(self, t))
+    end,
+}
+
+newPotion {
+    name = "Potion of Swiftness", short_name = "SPEED_POTION", image = "talents/nimble_movement.png", icon = "object/elixir_of_invulnerability.png",
+    tactical = { BUFF = 3 },
+    getDuration = function(self, t) return 6 end,
+    getSpeed = function(self, t) return self:combatTalentScale(t, 20, 50) end,
+    getMove = function(self, t) return self:combatTalentScale(t, 100, 400) end,
+    allowUse = function(self, t)
+        return quest.winner == "Stire of Derth"
+    end,
+    isSpecialPotion = 5,
+    action = function(self, t)
+        local tg = self:getTalentTarget(t)
+        local x, y = self:getTarget(tg)
+        if not x or not y then return nil end
+        local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
+        for _, target in ipairs(targets) do
+            target:setEffect(target.EFF_SPEED_POTION, t.getDuration(self, t), { power = t.getMove(self, t), power_all = t.getSpeed(self, t)})
+        end
+        return true
+    end,
+    short_info = function(self, t)
+        return ([[Becomes much faster than before.]]):tformat()
+    end,
+    info = function(self, t)
+        return ([[Becomes extremely fast, gain %d%% movement speed and %d%% global speed for %d turns.]])
+                :tformat(t.getMove(self, t), t.getSpeed(self, t), t.getDuration(self, t))
+    end,
+}
+
+
