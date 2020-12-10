@@ -334,10 +334,10 @@ newPotion {
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
         if not x or not y then return nil end
-        local nb = t.getRemoveCount(self,t)
         self:project(tg, x, y, function(px, py)
             local target = game.level.map(px, py, Map.ACTOR)
             if not target then return end
+            local nb = t.getRemoveCount(self,t)
             DamageType:get(DamageType.ACID).projector(self, px, py, DamageType.ACID, (self:spellCrit(t.getDamage(self, t))))
 
             local effs = {}
@@ -417,18 +417,14 @@ newPotion {
     name = "Breath of the Frost", short_name = "FROST_POTION", image = "talents/frost_shield.png", icon = "object/elixir_of_mysticism.png",
     range = 0,
     tactical = { DEFEND = 2 },
-    radius = function(self, t)
-        if self:knowTalent(self.T_THROW_BOMB_NEW) then
-            return self:getTalentRange(self.T_THROW_BOMB_NEW)
-        else
-            return 5
-        end
-    end,
     getDuration = function(self, t) return 6 end,
     getResists = function(self, t) return self:combatTalentScale(t, 5, 20) end,
     getCritShrug = function(self, t) return self:combatTalentScale(t, 15, 45) end,
     action = function(self, t)
-        local targets = table.keys(self:projectCollect({type="ball", radius=self:getTalentRadius(t), talent=t}, self.x, self.y, Map.ACTOR, "friend"))
+        local tg = self:getTalentTarget(t)
+        local x, y = self:getTarget(tg)
+        if not x or not y then return nil end
+        local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
         for _, target in ipairs(targets) do
             target:setEffect(target.EFF_FROST_SHIELD, t.getDuration(self, t), { power = t.getResists(self, t), critdown = t.getCritShrug(self, t)})
         end
@@ -438,7 +434,8 @@ newPotion {
         return ([[Create a frost shield reducing damage and critical hits]]):tformat()
     end,
     info = function(self, t)
-        return ([[Create a frost shield for friendly creatures and yourself in radius %d, reducing %d%% all incoming damage except fire, and reducing direct critical damage by %d%%. ]])
-                :tformat(self:getTalentRadius(t), t.getResists(self, t), t.getCritShrug(self, t))
+        return ([[Create a frost shield in range %d, reducing %d%% all incoming damage except fire, and reducing direct critical damage by %d%%.
+        Frost shield lasts %d turns.]])
+                :tformat(self:getTalentRadius(t), t.getResists(self, t), t.getCritShrug(self, t), t.getDuration(self, t))
     end,
 }
