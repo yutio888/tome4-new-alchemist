@@ -13,6 +13,10 @@ alchemy_potion_tids = {
     "T_FIRE_POTION",
     "T_FROST_POTION",
     "T_LIGHTNING_POTION",
+    "T_STONE_POTION",
+    "T_ARCANE_POTION",
+    "T_LUCK_POTION",
+    "T_SPEED_POTION",
 }
 Talents.alchemy_potion_tids = alchemy_potion_tids
 

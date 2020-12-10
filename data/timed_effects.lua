@@ -128,7 +128,7 @@ newEffect {
 newEffect{
 	name = "STONED_ARMOUR", image = "talents/stoneskin.png",
 	desc = _t"Stoned Armour",
-	long_desc = function(self, eff) return ("The target's armour has been enchanted, granting %d armour and %d%% armour hardiness, but decreasing defense by ."):tformat(eff.ac, eff.hard, eff.ac) end,
+	long_desc = function(self, eff) return ("The target's armour has been enchanted, granting %d armour and %d%% armour hardiness, but decreasing defense by %d."):tformat(eff.ac, eff.hard, eff.ac) end,
 	type = "physical",
 	subtype = { nature=true },
 	status = "beneficial",
@@ -138,7 +138,7 @@ newEffect{
 	activate = function(self, eff)
 		self:effectTemporaryValue(eff, "combat_armor", eff.ac)
 		self:effectTemporaryValue(eff, "combat_armor_hardiness", eff.hard)
-		self:effectTemporaryValue(eff, "combat_def", -eff.reduce)
+		self:effectTemporaryValue(eff, "combat_def", -eff.ac)
 	end,
 }
 
@@ -192,7 +192,7 @@ newEffect{
 	status = "beneficial",
 	parameters = {power=10},
 	activate = function(self, eff)
-		self:effectTemporaryValue(eff, "movement_speed", eff.power)
-		self:effectTemporaryValue(eff, "global_speed_add", eff.power_all)
+		self:effectTemporaryValue(eff, "movement_speed", eff.power * 0.01)
+		self:effectTemporaryValue(eff, "global_speed_add", eff.power_all * 0.01)
 	end,
 }

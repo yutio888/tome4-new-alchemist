@@ -17,7 +17,7 @@ local function newPotion(t)
     local target = t.target
     t.target = function(self, t)
         if self:isTalentActive(self.T_MANAGE_POTION_3) then
-            return { type = "cone", range = 0, radius = self:getTalentRange(t), talent = t }
+            return { type = "cone", range = 0, radius = self:getTalentRange(t), talent = t, selffire = true, player_selffire = true }
         end
         if not target then
             return { type = "hit", range = self:getTalentRange(t), talent = t }
@@ -347,6 +347,7 @@ newPotion {
         self:project(tg, x, y, function(px, py)
             local target = game.level.map(px, py, Map.ACTOR)
             if not target then return end
+            if target == self then return end
             local nb = t.getRemoveCount(self,t)
             DamageType:get(DamageType.ACID).projector(self, px, py, DamageType.ACID, (self:spellCrit(t.getDamage(self, t))))
 
@@ -399,6 +400,7 @@ newPotion {
         local x, y = self:getTarget(tg)
         if not x or not y then return nil end
         self:projectApply(tg, x, y, Map.ACTOR, function(target)
+            if target == self then return end
             if target:canBe("stun") then
                 target:setEffect(target.EFF_DAZED, t.getDazeDuration(self, t), {})
             else
@@ -455,6 +457,7 @@ newPotion {
     getArmor = function(self, t) return self:combatTalentScale(t, 30, 100) end,
     allowUse = function(self, t)
         if self ~= game.player then return false end
+        if config.settings.cheat then return true end
         local quest = game.player:hasQuest("brotherhood-of-alchemists")
         return quest.winner == "Ungrol of Last Hope"
     end,
@@ -464,7 +467,7 @@ newPotion {
         if not x or not y then return nil end
         local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
         for _, target in ipairs(targets) do
-            target:setEffect(target.EFF_STONED_ARMOUR, 6, {ac=t:getArmor(self, t), hard=50})
+            target:setEffect(target.EFF_STONED_ARMOUR, 6, {ac=t.getArmor(self, t), hard=50})
         end
         return true
     end,
@@ -479,13 +482,14 @@ newPotion {
 }
 
 newPotion {
-    name = "Potion of Magic", short_name = "ARCANE_POTION", image = "talents/ARCANE_POWER.png", icon = "object/elixir_of_invulnerability.png",
+    name = "Potion of Magic", short_name = "ARCANE_POTION", image = "talents/arcane_power.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { BUFF = 3 },
     getDuration = function(self, t) return 6 end,
     getSpellpower = function(self, t) return self:combatTalentScale(t, 20, 40) end,
     getManaRegen = function(self, t) return self:combatTalentScale(t, 80, 300) end,
     allowUse = function(self, t)
         if self ~= game.player then return false end
+        if config.settings.cheat then return true end
         local quest = game.player:hasQuest("brotherhood-of-alchemists")
         return quest.winner == "Marus of Elvala"
     end,
@@ -517,6 +521,7 @@ newPotion {
     getEvasion = function(self, t)  return self:combatTalentScale(t, 10, 25) + (self:getLck() - 50) end,
     allowUse = function(self, t)
         if self ~= game.player then return false end
+        if config.settings.cheat then return true end
         local quest = game.player:hasQuest("brotherhood-of-alchemists")
         return quest.winner == "Agrimley the hermit"
     end,
@@ -548,6 +553,7 @@ newPotion {
     getMove = function(self, t) return self:combatTalentScale(t, 100, 400) end,
     allowUse = function(self, t)
         if self ~= game.player then return false end
+        if config.settings.cheat then return true end
         local quest = game.player:hasQuest("brotherhood-of-alchemists")
         return quest.winner == "Stire of Derth"
     end,
