@@ -159,7 +159,8 @@ newTalent {
     require = spells_req2,
     cooldown = function(self, t) return self:combatTalentScale(t, 20, 10, "log") end,
     mode = "sustained",
-    getDuration = function(self, t) return math.ceil(15 - self:combatTalentScale(t, 0, 5, "log")) end,
+    no_npc_use = true,
+    getDuration = function(self, t) return math.ceil(15 - util.bound(self:combatTalentScale(t, 0, 5, "log"), 0, 10)) end,
     iconOverlay = function(self, t, p)
         if not p then return end
         return tostring("#RED##{bold}#"..math.floor(p.dur or 1).."#LAST##{normal}#"), "buff_font_small"
@@ -194,8 +195,12 @@ newTalent {
         end
     end,
     info = function(self, t)
+        local p = self:isTalentActive(t.id)
+        local desc = ""
+        if p then desc = ([[Remaining turns: %d .]]):tformat(p.dur) end
         return ([[Enter the focused state of reproducing potions for %d turns, after which you will recharge all your alchemy potions.
-        Reproduing potions need focus, any incoming damage may break this state. Every time you are damaged, you must check your physical or mental save to preverse focus. If you fail to do so, this talent will automatically deactivate.]]):tformat(t.getDuration(self, t))
+        Reproduing potions need focus, any incoming damage may break this state. Every time you are damaged, you must check your physical or mental save to preverse focus. If you fail to do so, this talent will automatically deactivate.
+        %s]]):tformat(t.getDuration(self, t), desc)
     end,
 }
 
@@ -206,6 +211,7 @@ newTalent {
     require = spells_req3,
     cooldown = 20,
     mode = "sustained",
+    no_npc_use = true,
     getSpeedUp = function(self, t) return math.max(50, 15 + self:combatTalentScale(t, 5, 15)) end,
     activate = function(self, t) return {} end,
     deactivate = function(self, t, p) return true end,
@@ -222,17 +228,37 @@ newTalent {
     type = { "spell/alchemy-potion", 4 },
     points = 5,
     require = spells_req4,
-    mode = "passive",
-    getChance = function(self, t) return self:combatTalentScale(t, 10, 25) end,
+    mode = "sustained",
+    sustain_mana = 80,
+    no_npc_use = true,
+    getTime = function(self, t) return 10 - math.floor(self:combatTalentLimit(t, 10, 0, 6.9)) end,
+    iconOverlay = function(self, t, p)
+        if not p then return end
+        if p.time <= 0 then return end
+        return tostring("#RED##{bold}#"..math.floor(p.time or 1).."#LAST##{normal}#"), "buff_font_small"
+    end,
+    activate = function(self, t) return {
+        time = 0
+    }
+    end,
+    deactivate = function(self, t, p)
+        return true
+    end,
     callbackOnAlchemistBomb = function(self, t)
-        local chance = t.getChance(self, t)
-        if rng.percent(chance) then
+        if not self.in_combat then return end
+        local p = self:isTalentActive(t.id)
+        if not p then
+            return
+        end
+        p.time = p.time - 1
+        if p.time <= 0 then
+            p.time = t.getTime(self, t)
             local avail = {}
             for _, tid in pairs(alchemy_potion_tids) do
                 if self:knowTalent(tid) then
                     local talent = self:getTalentFromId(tid)
                     if not talent.isSpecialPotion and self:callTalent(tid, "charge") < self:callTalent(tid, "max_charge") then
-                        avail[#avail+1] = tid
+                        avail[#avail + 1] = tid
                     end
                 end
             end
@@ -242,10 +268,27 @@ newTalent {
                     self:callTalent(potion, "recharge", 1)
                 end
             end
+            return
+        end
+    end,
+    callbackOnCombat = function(self, t, state)
+        local p = self:isTalentActive(t.id)
+        if not p then
+            return
+        end
+        if state then
+            p.time = t.getTime(self, t)
+        else
+            p.time = 0
         end
     end,
     info = function(self, t)
+        local p = self:isTalentActive(t.id)
+        local desc = ""
+        if p and p.time > 0 then desc = ([[Remaining explosions: %d .]]):tformat(p.time) end
         return ([[You know how to reuse the remain of your potions.
-        After throwing bomb, you have %d%% chance to reproduce a random normal potion.]]):tformat(t.getChance(self, t))
+        You may restore one bottle of random potion after your bomb explodes %d times in combat.
+        Some special potions cannot be restored in this way.
+        %s]]):tformat(t.getChance(self, t), desc)
     end,
 }

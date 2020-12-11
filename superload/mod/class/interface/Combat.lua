@@ -57,7 +57,11 @@ function _M:triggerGemEffect(target, gem, dam)
         self.turn_procs.alchemist_bomb_leech = nb + 1
         self:heal(math.max(dam, self.max_life * gem.alchemist_bomb.leech) / (100 * (nb + 1)), gem)
     end
-    if gem.alchemist_bomb and gem.alchemist_bomb.mana then self:incMana(gem.alchemist_bomb.mana) end
+    if gem.alchemist_bomb and gem.alchemist_bomb.mana then
+        local nb = self.turn_procs.alchemist_bomb_mana or 0
+        self.turn_procs.alchemist_bomb_mana = nb + 1
+        self:incMana(gem.alchemist_bomb.mana / nb)
+    end
     if gem.alchemist_bomb and gem.alchemist_bomb.special then gem.alchemist_bomb.special(self, gem, target, dam) end
 
     return dam

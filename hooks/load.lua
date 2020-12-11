@@ -47,3 +47,31 @@ class:bindHook("UISet:Minimalist:Resources", function(self, data)
 	end
 	return data
 end)
+
+class:bindHook("UISet:Classic:Resources", function(self, data)
+	local player = data.player
+	local potions = player.alchemy_potions
+	if not potions then return data end
+
+	local x = data.x
+	local h = data.h
+	local showed
+	for tid, info in pairs(potions) do
+		if player:knowTalent(tid) then
+			local talent = player:getTalentFromId(tid)
+			local nb = info.nb or 0
+			while nb > 0 do
+				showed = true
+				self:mouseTooltip("This are your prepared alchemy potions",
+						self:makeTexture(("#ANTIQUE_WHITE#%s    :       #ffffff#%d"):tformat(talent.name, nb),
+								0, h, 255, 255, 255))
+				h = h + self.font_h
+				nb = nb - 1
+			end
+		end
+	end
+	if showed then
+		data.h = h
+	end
+	return data
+end)

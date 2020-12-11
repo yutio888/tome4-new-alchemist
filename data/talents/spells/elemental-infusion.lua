@@ -35,7 +35,6 @@ newTalent {
 	mode = "passive",
 	require = spells_req_high1,
 	points = 5,
-	cooldown = function(self, t) return self:combatTalentLimit(t, 3, 30, 6) end,
 	autolearn_talent = "T_MANAGE_ELEMENTAL_INFUSION",
 	getIncrease = function(self, t) return self:combatTalentScale(t, 10, 20) end,
 	passives = function(self, t, ret)
@@ -78,7 +77,10 @@ newTalent {
         if self:isTalentCoolingDown(t) then return end
         local chance = t.getChance(self, t)
         if not rng.percent(chance) then return end
-        self:startTalentCooldown(t)
+        if not self:hasProc("infusion_delay_trigger") then
+            self:setProc("infusion_delay_trigger", 1)
+            game:onTickEnd(self:startTalentCooldown(t))
+        end
         local type = getElementalInsufionType(self)
         local dur = t.getDuration(self, t)
         for _, l in ipairs(targets) do
@@ -175,7 +177,7 @@ newTalent {
     cooldown = 30,
     tactical = { BUFF = 10 },
     getResist = function(self, t) return self:combatTalentScale(t, 20, 50) end,
-    getResistPen = function(self, t) return 33 end,
+    getResistPen = function(self, t) return self:combatTalentLimit(t, 40, 10, 33) end,
     getDamage = function(self, t) return self:combatTalentSpellDamage(t, 5, 80) end,
     activate = function(self, t)
     	game:playSoundNear(self, "talents/fireflash")

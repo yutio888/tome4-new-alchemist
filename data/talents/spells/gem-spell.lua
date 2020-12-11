@@ -4,6 +4,7 @@ newTalent {
     require = spells_req1,
     points = 5,
     range = 10,
+    mana = 1,
     direct_hit = true,
 	reflectable = true,
 	requires_target = true,
@@ -18,7 +19,7 @@ newTalent {
         t.ATTACK[damtype] = 2
         return t
     end,
-    cooldown = 6,
+    cooldown = 3,
     on_pre_use = function(self, t)
         return self:hasAlchemistWeapon()
     end,
@@ -75,10 +76,10 @@ newTalent {
     type = {"spell/gem-spell", 2},
     require = spells_req2,
     points = 5,
-    range = function(self, t) return self:combatTalentScale(t, 2, 6) end,
+    range = function(self, t) return self:combatTalentScale(t, 1, 3) end,
     radius = function(self, t) return 5 end,
+    mana = 1,
     direct_hit = true,
-	reflectable = true,
 	requires_target = true,
     tactical = function(self, t, aitarget)
         local damtype = self:getGemDamageType()
@@ -91,7 +92,7 @@ newTalent {
     	if not ammo then return end
     	return {type="ball", range=self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius=self:getTalentRadius(t), talent=t}
     end,
-    cooldown = 12,
+    cooldown = 15,
     on_pre_use = function(self, t)
         return self:hasAlchemistWeapon()
     end,
@@ -113,7 +114,11 @@ newTalent {
         local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
-		if not x or not y then return nil end
+        if not self:teleportRandom(x, y, 0) then
+            game.logSeen(self, "%s's teleport fizzles!", self:getName():capitalize())
+            game:playSoundNear(self, "talents/teleport")
+            return true
+        end
 		local dam = t.getDamage(self, t)
 		local damtype = self:getGemDamageType()
         local grids = self:project(tg, x, y, function(tx, ty) end)
@@ -135,17 +140,18 @@ newTalent {
 
         local _, x, y = self:canProject(tg, x, y)
 		game.level.map:particleEmitter(x, y, tg.radius, "ball_physical", {radius=tg.radius, tx=x, ty=y})
-		game:playSoundNear(self, "talents/arcane")
+        game:playSoundNear(self, "talents/teleport")
 		return true
     end,
     info = function(self, t)
-        return([[Deals %0.2f %s damage to all targets in radius %d.
+        return([[Invoke the power of gem, teleports you to up to %d tiles away, to a targeted location in line of sight.
+        Then deals %0.2f %s damage to all hostile targets in radius %d.
         If this attack hits, it will trigger the special effect of gem.
         This talent can be activated even in silence.
         Using this talent will disable One with Gem for 5 turns.
         The damage scales with your gem tier, and the damage type changes with your gem.
         This spell cannot crit.
-        ]]):tformat(damDesc(self,self:getGemDamageType(), t.getDamage(self, t)), _t(self:getGemDamageType():lower()), t.radius(self, t))
+        ]]):tformat(t.range(self, t), damDesc(self,self:getGemDamageType(), t.getDamage(self, t)), _t(self:getGemDamageType():lower()), t.radius(self, t))
     end,
 }
 
@@ -156,7 +162,8 @@ newTalent {
     points = 5,
     cooldown = 20,
     radius = 10,
-    tactical = { DEFEND = 2 },
+    mana = 1,
+    tactical = { DEFEND = 1.5 },
     getSummonNb = function(self, t) return self:combatTalentScale(t, 1, 3) end,
     getDuration = function(self, t) return self:combatTalentGemDamage(t, 5, 12) end,
     on_learn = function(self, t)
@@ -231,7 +238,10 @@ newTalent {
     require = spells_req4,
     points = 5,
 	mode = "sustained",
-    cooldown = 1,
+    no_npc_use = true,
+    sustain_mana = function(self, t) return self:combatTalentLimit(t, 0, 300, 80) end,
+    cooldown = function(self, t) return self:combatTalentLimit(t, 0, 100, 10) end,
+    tactical = { BUFF = 3 },
     on_learn = function(self, t)
         self:checkCanWearGem()
     end,
@@ -239,13 +249,25 @@ newTalent {
         self:checkCanWearGem()
     end,
     getTurn = function(self, t)
-        return math.max(1, math.ceil(self:combatTalentScale(t, 5, 2.2)))
+        return 1
+    end,
+    getCost = function(self, t)
+        return self:combatTalentLimit(t, 0, 40, 10)
+    end,
+    iconOverlay = function(self, t, p)
+        if not p then return end
+        local t = self:hasProc("trigger_gem").turns
+        if not t then return end
+        return tostring("#RED##{bold}#"..math.floor(t).."#LAST##{normal}#"), "buff_font_small"
     end,
     callbackOnDealDamage = function(self, t, val, target, dead, death_note)
         if death_note.damtype ~= self:getGemDamageType() then return end
         local gem = self:hasAlchemistWeapon()
         if not gem then return end
         if self:hasProc("trigger_gem") then return end
+        local cost = t.getCost(self, t)
+        if self:getMana() < cost then return end
+        self:incMana(-cost)
         self:setProc("trigger_gem", true, t.getTurn(self, t))
         self:triggerGemEffect(target, gem, 0)
     end,
@@ -262,7 +284,8 @@ newTalent {
             disabled = ([[This has beed disabled for %d turns]]):tformat(turn)
         end
         return([[When you dealt damage the same type as your gem, you may trigger the special effect of your gem.
+        Each trigger drains you %d mana.
         This can happen every %d turns.
-        %s]]):tformat(t.getTurn(self, t), disabled)
+        %s]]):tformat(t.getCost(self, t), t.getTurn(self, t), disabled)
     end,
 }

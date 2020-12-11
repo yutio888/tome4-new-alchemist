@@ -33,32 +33,42 @@ local emit_table = {
     ["cone"] = function(self, particle, tg, x, y, startx, starty)
         game.level.map:particleEmitter(startx, starty, tg.radius, particle, {radius=tg.radius, tx=x-startx, ty=y-starty})
     end,
+	["widebeam"] = function(self, particle, tg, x, y, startx, starty)
+		if not startx then startx = self.x end
+		if not starty then starty = self.y end
+		game.level.map:particleEmitter(startx, starty, tg.radius, particle, {radius=tg.radius, tx=x-startx, ty=y-starty})
+	end,
 }
 local dam_table = {
     ["default"] = {
         type = DamageType.PHYSICAL,
         ["ball"] = "ball_physical",
         ["cone"] = "breath_earth",
+		["widebeam"] = "earth_beam_wide",
     },
     ["fire"] = {
         type = DamageType.FIRE,
         ["ball"] = "fireslash",
         ["cone"] = "breath_fire",
+		["widebeam"] = "flamebeam_wide",
     },
     ["cold"] = {
         type = DamageType.COLD,
         ["ball"] = "ball_ice",
         ["cone"] = "breath_cold",
+		["widebeam"] = "ice_beam_wide",
     },
     ["acid"] = {
         type = DamageType.ACID,
         ["ball"] = "ball_acid",
         ["cone"] = "breath_acid",
+		["widebeam"] = "acid_beam_wide",
     },
     ["lightning"] = {
         type = DamageType.LIGHTNING,
         ["ball"] = "ball_lightning_beam",
         ["cone"] = "breath_lightning",
+		["widebeam"] = "lightning_beam_wide",
     },
 }
 function bombUtil:getBaseDamage(self, t, ammo, tg)
@@ -87,8 +97,8 @@ function bombUtil:throwBomb(self, t, ammo, tg, x, y, startx, starty)
 	end
 	local dam_done = 0
 
-	dam = self:callTalent(t.id, "calcFurtherDamage", tg, ammo, x, y, dam) or dam
 	local tgts = table.values(self:projectCollect(tg, x, y, Map.ACTOR))
+	dam = self:callTalent(t.id, "calcFurtherDamage", tg, ammo, x, y, dam, tgts) or dam
 	table.sort(tgts, "dist")
 	for _, l in ipairs(tgts) do
 		local target = l.target
@@ -113,12 +123,15 @@ function bombUtil:throwBomb(self, t, ammo, tg, x, y, startx, starty)
 
 	self:fireTalentCheck("callbackOnAlchemistBomb", tgts, t)
 
-	if ammo.alchemist_bomb and ammo.alchemist_bomb.leech then self:heal(math.min(self.max_life * ammo.alchemist_bomb.leech / 100, dam_done), ammo) end
+	local nb = self.turn_procs.alchemist_bomb_leech or 0
+	self.turn_procs.alchemist_bomb_leech = nb + 1
+	if ammo.alchemist_bomb and ammo.alchemist_bomb.leech then self:heal(math.min(self.max_life * ammo.alchemist_bomb.leech / (100 * (nb + 1)), dam_done), ammo) end
 
 	emit(self, particle, tg, x, y, startx, starty)
 
-	if ammo.alchemist_bomb and ammo.alchemist_bomb.mana then self:incMana(ammo.alchemist_bomb.mana) end
-
+	local nb = self.turn_procs.alchemist_bomb_mana or 0
+	self.turn_procs.alchemist_bomb_mana = nb + 1
+	if ammo.alchemist_bomb and ammo.alchemist_bomb.mana then self:incMana(ammo.alchemist_bomb.mana/ nb) end
 	return tgts
 end
 function bombUtil:getDamageBonus(self, t, lostgrids, tl)
@@ -131,11 +144,10 @@ newTalent{
 	type = {"spell/new-explosive", 1},
 	require = spells_req1,
 	points = 5,
-	mana = 5,
+	mana = 10,
 	cooldown = 4,
 	range = function(self, t) return math.floor(self:combatTalentLimit(t, 15, 5.1, 9.1)) end,
 	radius = function(self, t) return self:callTalent(self.T_EXPLOSION_EXPERT_NEW, "getRadius") end,
-	direct_hit = true,
 	requires_target = true,
 	target = function(self, t)
 		local ammo = self:hasAlchemistWeapon()
@@ -249,17 +261,18 @@ newTalent{
 	points = 5,
 	getRadius = function(self, t) return math.max(2, math.floor(self:combatTalentLimit(t, 20, 2.5, 6.6))) end,
 	mingrids = function(self, t) return self:combatTalentScale(t, 1, 3) end,
+	reduction = 2.5,
 	minmax = function(self, t, grids)
 		local theoretical_nb = bombUtil.theoretical_nbs[t.getRadius(self, t)]
 		if grids then
 			local lostgrids = math.max(theoretical_nb - grids, t.mingrids(self, t))
 			local mult = math.max(0, math.log10(lostgrids)) / (6 - math.min(self:getTalentLevel(self.T_EXPLOSION_EXPERT_NEW)/1.3, 5))
-			mult = mult / 2
+			mult = mult / t.reduction
 			print("Adjusting explosion damage to account for ", lostgrids, " lost tiles => ", mult * 100)
 			return mult
 		else
-			local min = (math.log10(t.mingrids(self, t)) / (6 - math.min(self:getTalentLevel(t)/1.3, 5))) / 2
-			local max = (math.log10(theoretical_nb) / (6 - math.min(self:getTalentLevel(t)/1.3, 5))) / 2
+			local min = (math.log10(t.mingrids(self, t)) / (6 - math.min(self:getTalentLevel(t)/1.3, 5))) / t.reduction
+			local max = (math.log10(theoretical_nb) / (6 - math.min(self:getTalentLevel(t)/1.3, 5))) / t.reduction
 			return min, max
 		end
 	end,
@@ -272,7 +285,7 @@ newTalent{
 }
 
 newTalent {
-    name = "Chain Blasting", image = "talents/shockwave_bomb.png",
+    name = "Fast Recharge", short_name = "CHAIN_BLASTING", image = "talents/shockwave_bomb.png",
     type = {"spell/new-explosive", 4},
   	require = spells_req4,
     mode = "passive",
@@ -283,7 +296,7 @@ newTalent {
         return self:combatTalentLimit(t, 35, 5, 25) * (1 + power * 0.01)
     end,
     info = function(self, t)
-        return ([[Your alchemist bombs now have %d%% chance to not go on cooldown.
+        return ([[Your Throw Bomb talent now have %d%% chance to not go on cooldown.
         Chances increases with your gem tier.]])
         :tformat(t.getChance(self, t))
     end,
