@@ -79,7 +79,6 @@ function bombUtil:getBaseDamage(self, t, ammo, tg)
     return dam, damtype, particle, arg
 end
 function bombUtil:throwBomb(self, t, ammo, tg, x, y, startx, starty)
-
 	local dam, damtype, particle, emit = bombUtil:getBaseDamage(self, t, ammo, tg)
 	dam = self:spellCrit(dam)
 	local golem
@@ -120,7 +119,7 @@ function bombUtil:throwBomb(self, t, ammo, tg, x, y, startx, starty)
 
 	if ammo.alchemist_bomb and ammo.alchemist_bomb.mana then self:incMana(ammo.alchemist_bomb.mana) end
 
-	game:playSoundNear(self, "talents/arcane")
+	return tgts
 end
 function bombUtil:getDamageBonus(self, t, lostgrids, tl)
 	local mult = math.max(0, math.log10(lostgrids)) / (6 - math.min(tl/1.3, 5))
@@ -188,7 +187,11 @@ newTalent{
 	end,
 	callbackOnAlchemistBomb = function(self, t, tgts, talent)
 		if t == talent then return end
-		self:startTalentCooldown(t.id, 4)
+		local cd = talent.cooldown
+		if type(cd) == "function" then
+			cd = cd(self, talent)
+		end
+		self:startTalentCooldown(t.id, cd)
 	end,
 	action = function(self, t)
 		local ammo = self:hasAlchemistWeapon()
@@ -201,6 +204,7 @@ newTalent{
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
 		bombUtil:throwBomb(self, t, ammo, tg, x, y)
+		game:playSoundNear(self, "talents/arcane")
 		return true
 	end,
 	info = function(self, t)
@@ -212,7 +216,7 @@ newTalent{
 		The gem will explode for %0.1f %s damage.
 		Each kind of gem will also provide a specific effect.
 		The damage will improve with better gems and with your Spellpower.
-		Throwing bomb by any means will put this talent on cooldown for 4 turns.]]):tformat(dam, DamageType:get(damtype).name)
+		Using this talent will put other bomb talent go on cooldown for 4 turns.]]):tformat(dam, DamageType:get(damtype).name)
 	end,
 }
 
