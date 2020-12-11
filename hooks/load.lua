@@ -60,13 +60,13 @@ class:bindHook("UISet:Classic:Resources", function(self, data)
 		if player:knowTalent(tid) then
 			local talent = player:getTalentFromId(tid)
 			local nb = info.nb or 0
-			while nb > 0 do
+			local max = info.max or 0
+			if max > 0 then
 				showed = true
 				self:mouseTooltip("This are your prepared alchemy potions",
-						self:makeTexture(("#ANTIQUE_WHITE#%s    :       #ffffff#%d"):tformat(talent.name, nb),
+						self:makeTexture(("#ANTIQUE_WHITE#%s: #ffffff#%d / %d"):tformat(talent.name, nb, max),
 								0, h, 255, 255, 255))
 				h = h + self.font_h
-				nb = nb - 1
 			end
 		end
 	end

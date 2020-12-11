@@ -31,7 +31,9 @@ local emit_table = {
         game.level.map:particleEmitter(x, y, tg.radius, particle, {radius=tg.radius, tx=x, ty=y})
     end,
     ["cone"] = function(self, particle, tg, x, y, startx, starty)
-        game.level.map:particleEmitter(startx, starty, tg.radius, particle, {radius=tg.radius, tx=x-startx, ty=y-starty})
+		if not startx then startx = self.x end
+		if not starty then starty = self.y end
+        game.level.map:particleEmitter(startx, starty , tg.radius, particle, {radius=tg.radius, tx=x-startx, ty=y-starty})
     end,
 	["widebeam"] = function(self, particle, tg, x, y, startx, starty)
 		if not startx then startx = self.x end
@@ -48,7 +50,7 @@ local dam_table = {
     },
     ["fire"] = {
         type = DamageType.FIRE,
-        ["ball"] = "fireslash",
+        ["ball"] = "fireflash",
         ["cone"] = "breath_fire",
 		["widebeam"] = "flamebeam_wide",
     },
@@ -121,7 +123,7 @@ function bombUtil:throwBomb(self, t, ammo, tg, x, y, startx, starty)
 		end
 	end
 
-	self:fireTalentCheck("callbackOnAlchemistBomb", tgts, t)
+	self:fireTalentCheck("callbackOnAlchemistBomb", tgts, t, x, y, startx, starty)
 
 	local nb = self.turn_procs.alchemist_bomb_leech or 0
 	self.turn_procs.alchemist_bomb_leech = nb + 1
@@ -199,11 +201,7 @@ newTalent{
 	end,
 	callbackOnAlchemistBomb = function(self, t, tgts, talent)
 		if t == talent then return end
-		local cd = talent.cooldown
-		if type(cd) == "function" then
-			cd = cd(self, talent)
-		end
-		self:startTalentCooldown(t.id, cd)
+		self:startTalentCooldown(t.id)
 	end,
 	action = function(self, t)
 		local ammo = self:hasAlchemistWeapon()
@@ -228,7 +226,7 @@ newTalent{
 		The gem will explode for %0.1f %s damage.
 		Each kind of gem will also provide a specific effect.
 		The damage will improve with better gems and with your Spellpower.
-		Using this talent will put other bomb talent go on cooldown for 4 turns.]]):tformat(dam, DamageType:get(damtype).name)
+		Using this talent will put other bomb talent go on cooldown.]]):tformat(dam, DamageType:get(damtype).name)
 	end,
 }
 
@@ -246,9 +244,16 @@ newTalent{
 	    [DamageType.ACID] = t.getResists(self, t),
 	    })
 	end,
+	getMana = function(self, t) return self:combatTalentScale(t, 3, 20) end,
+	callbackOnTakeDamage = function(self, t, src, x, y, type, dam, state)
+		if type == DamageType.FIRE or type == DamageType.ACID or type == DamageType.COLD or type == DamageType.LIGHTNING then
+			self:incMana(t.getMana(self, t))
+		end
+	end,
 	info = function(self, t)
-		return ([[Grants protection against external elemental damage (fire, cold, lightning and acid) by %d%%.]]):
-		tformat(t.getResists(self, t))
+		return ([[Grants protection against external elemental damage (fire, cold, lightning and acid) by %d%%.
+		Besides, each time you're hit by elemental damage, you may regain %d mana.]]):
+		tformat(t.getResists(self, t), t.getMana(self, t))
 	end,
 }
 
@@ -280,7 +285,7 @@ newTalent{
 		local min, max = t.minmax(self, t)
 		return ([[Your alchemist bombs now affect a radius of %d around them.
 		Explosion damage may increase by %d%% (if the explosion is not contained) to %d%% if the area of effect is confined.]]):
-		tformat(t.getRadius(self, t), min*100, max*100) --I5
+		tformat(t.getRadius(self, t), min*100, max*100)
 	end,
 }
 

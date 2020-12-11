@@ -162,7 +162,7 @@ newTalent {
     no_npc_use = true,
     getDuration = function(self, t) return math.ceil(15 - util.bound(self:combatTalentScale(t, 0, 5, "log"), 0, 10)) end,
     iconOverlay = function(self, t, p)
-        if not p then return end
+        if not p then return "" end
         return tostring("#RED##{bold}#"..math.floor(p.dur or 1).."#LAST##{normal}#"), "buff_font_small"
     end,
     activate = function(self, t) return {
@@ -212,7 +212,7 @@ newTalent {
     cooldown = 20,
     mode = "sustained",
     no_npc_use = true,
-    getSpeedUp = function(self, t) return math.max(50, 15 + self:combatTalentScale(t, 5, 15)) end,
+    getSpeedUp = function(self, t) return math.min(50, 15 + self:combatTalentScale(t, 5, 15)) end,
     activate = function(self, t) return {} end,
     deactivate = function(self, t, p) return true end,
     info = function(self, t)
@@ -233,9 +233,11 @@ newTalent {
     no_npc_use = true,
     getTime = function(self, t) return 10 - math.floor(self:combatTalentLimit(t, 10, 0, 6.9)) end,
     iconOverlay = function(self, t, p)
-        if not p then return end
-        if p.time <= 0 then return end
-        return tostring("#RED##{bold}#"..math.floor(p.time or 1).."#LAST##{normal}#"), "buff_font_small"
+        if not p then return "" end
+        if not p.time then return "" end
+        if p.time <= 0 then return "" end
+        local str = tostring("#RED##{bold}#"..math.floor(p.time or 1).."#LAST##{normal}#")
+        return str, "buff_font_small"
     end,
     activate = function(self, t) return {
         time = 0
@@ -289,6 +291,6 @@ newTalent {
         return ([[You know how to reuse the remain of your potions.
         You may restore one bottle of random potion after your bomb explodes %d times in combat.
         Some special potions cannot be restored in this way.
-        %s]]):tformat(t.getChance(self, t), desc)
+        %s]]):tformat(t.getTime(self, t), desc)
     end,
 }

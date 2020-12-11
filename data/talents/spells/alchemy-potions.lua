@@ -25,6 +25,11 @@ local function newPotion(t)
             return target(self, t)
         end
     end
+    t.speed = function(self, t)
+        if self:isTalentActive(self.T_MANAGE_POTION_3) then
+            return self:getSpeed('spell') * self:callTalent(self.T_MANAGE_POTION_3, "getSpeedUp") / 100
+        end
+    end
     t.cooldown = 1
     t.max_charge = function(self, t)
         local potion = self:getPotionInfo(t)
@@ -265,14 +270,13 @@ newPotion {
         if not x or not y then
             return nil
         end
-        local _, _, _, x, y = self:canProject(tg, x, y)
-        if game.level.map:checkEntity(x, y, Map.TERRAIN, "block_move") then
-            return nil
+
+        if tg.type == "wall" then
+            _, _, _, x, y = self:canProject(tg, x, y)
         end
         local fire_damage = self:spellCrit(t.getDamage(self, t))
         local fire_radius = t.getFireRadius(self, t)
         local reduce = t.getReduce(self, t)
-
 
         self:project(tg, x, y, function(px, py, tg, self)
             local oe = game.level.map(px, py, Map.TERRAIN)
@@ -303,13 +307,13 @@ newPotion {
                     local DamageType = require "engine.DamageType"
                     local Map = require "engine.Map"
                     local tgts = table.values(self.summoner:projectCollect({ type = "ball", range = 0, radius = self.radius, friendlyfire = false, x = self.x, y = self.y }, self.x, self.y, Map.ACTOR))
-                    self.summoner.__project_source = self
+                    --self.summoner.__project_source = self
                     for _, l in ipairs(tgts) do
                         local target = l.target
                         DamageType:get(DamageType.FIRE).projector(self.summoner, target.x, target.y, DamageType.FIRE, self.dam)
                         target:setEffect(target.EFF_FIRE_BURNT, 3, { reduce = self.reduce })
                     end
-                    self.summoner.__project_source = nil
+                    --self.summoner.__project_source = nil
                     self:useEnergy()
                     self.temporary = self.temporary - 1
                     if self.temporary <= 0 then

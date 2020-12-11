@@ -252,13 +252,12 @@ newTalent {
         return 1
     end,
     getCost = function(self, t)
-        return self:combatTalentLimit(t, 0, 40, 10)
+        return self:combatTalentLimit(t, 0, 40, 5)
     end,
     iconOverlay = function(self, t, p)
-        if not p then return end
-        local t = self:hasProc("trigger_gem").turns
-        if not t then return end
-        return tostring("#RED##{bold}#"..math.floor(t).."#LAST##{normal}#"), "buff_font_small"
+        if not p then return "" end
+        local turn = self.turn_procs.multi and self.turn_procs.multi.trigger_gem and self.turn_procs.multi.trigger_gem.turns or 0
+        return tostring("#RED##{bold}#"..turn.."#LAST##{normal}#"), "buff_font_small"
     end,
     callbackOnDealDamage = function(self, t, val, target, dead, death_note)
         if death_note.damtype ~= self:getGemDamageType() then return end
@@ -268,7 +267,8 @@ newTalent {
         local cost = t.getCost(self, t)
         if self:getMana() < cost then return end
         self:incMana(-cost)
-        self:setProc("trigger_gem", true, t.getTurn(self, t))
+        local proc = {val = true, turns = t.getTurn(self, t)}
+        table.set(self, "turn_procs", "multi", "trigger_gem", proc)
         self:triggerGemEffect(target, gem, 0)
     end,
     activate = function(self, t)
