@@ -46,7 +46,7 @@ newTalent {
         local ammo = self:hasAlchemistWeapon()
         local dam, damtype = 1, DamageType.PHYSICAL
         if ammo then dam, damtype = bombUtil:getBaseDamage(self, t, ammo) end
-        return([[Imbue your gem with pure mana and activate its power as a wide beam.
+        return([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
         ]]):tformat(damDesc(self, damtype, dam * 1.5), DamageType:get(damtype).name)
     end,

@@ -1,6 +1,19 @@
 local DamageType = require "engine.DamageType"
 local Object = require "engine.Object"
 local Map = require "engine.Map"
+local translation_table = {
+    _t("Smoke Bomb", "talent name"),
+    _t("Healing Potion", "talent name"),
+    _t("Fiery Wall", "talent name"),
+    _t("Dissolving Acid", "talent name"),
+    _t("Lightning Ball", "talent name"),
+    _t("Breath of the Frost", "talent name"),
+    _t("Stoned Armour", "talent name"),
+    _t("Potion of Magic", "talent name"),
+    _t("Potion of Luck", "talent name"),
+    _t("Potion of Swiftness", "talent name"),
+}
+
 local function newPotion(t)
     t.type = { "spell/alchemy-potions", 1 }
     if not t.range then

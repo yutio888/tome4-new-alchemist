@@ -212,14 +212,14 @@ newTalent {
     cooldown = 20,
     mode = "sustained",
     no_npc_use = true,
-    getSpeedUp = function(self, t) return math.min(50, 15 + self:combatTalentScale(t, 5, 15)) end,
+    getSpeedUp = function(self, t) return 100 - math.min(50, 15 + self:combatTalentScale(t, 5, 15)) end,
     activate = function(self, t) return {} end,
     deactivate = function(self, t, p) return true end,
     info = function(self, t)
         return ([[You may spray your potion in cone instead of throw onto a single target.
         However, this will make your potion less effective, your spellpower is considered as half when spraying potions.
         Besides, your potions cost %d%% less turn in this way.
-        ]]):tformat(t.getSpeedUp(self, t))
+        ]]):tformat(100 - t.getSpeedUp(self, t))
     end,
 }
 
