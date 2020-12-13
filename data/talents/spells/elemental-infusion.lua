@@ -70,9 +70,9 @@ newTalent {
     mode = "passive",
     require = spells_req_high2,
     points = 5,
-    cooldown = function(self, t) return math.floor(self:combatTalentLimit(t, 1, 10, 6)) end,
+    cooldown = function(self, t) return math.floor(self:combatTalentLimit(t, 1, 10, 4)) end,
     getChance = function(self, t) return math.floor(self:combatTalentLimit(t, 100, 25, 75)) end,
-    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 1, 4)) end,
+    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 1, 3)) end,
     callbackOnAlchemistBomb = function(self, t, targets)
         if self:isTalentCoolingDown(t) then return end
         local chance = t.getChance(self, t)
@@ -123,7 +123,7 @@ newTalent {
     mode = "sustained",
     require = spells_req_high3,
     points = 5,
-    sustain_mana = 100,
+    sustain_mana = 80,
     cooldown = 30,
     tactical = { BUFF = 10 },
     getCDReduce = function(self, t) if self:getTalentLevel(t) > 4 then return 2 else return 1 end end,
@@ -173,7 +173,7 @@ newTalent {
     mode = "sustained",
     require = spells_req_high4,
     points = 5,
-    sustain_mana = 100,
+    sustain_mana = 30,
     cooldown = 30,
     tactical = { BUFF = 10 },
     getResist = function(self, t) return self:combatTalentScale(t, 20, 50) end,

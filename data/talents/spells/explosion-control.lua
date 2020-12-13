@@ -3,7 +3,7 @@ newTalent {
     type = { "spell/explosion-control", 1},
     require = spells_req_high1,
     points = 5,
-    mana = 15,
+    mana = -15,
     cooldown = 3,
     fixed_cooldown = true,
     direct_hit = true,
@@ -25,7 +25,7 @@ newTalent {
         if self:knowTalent(self.T_THROW_BOMB_NEW) then return true end
     end,
     calcFurtherDamage = function(self, t, tg, ammo, x, y, dam)
-        return dam * 1.5
+        return dam * 1.8
     end,
     action = function(self, t)
         local ammo = self:hasAlchemistWeapon()
@@ -47,7 +47,7 @@ newTalent {
         if ammo then dam, damtype = bombUtil:getBaseDamage(self, t, ammo) end
         return([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
-        ]]):tformat(damDesc(self, damtype, dam * 1.5), DamageType:get(damtype).name)
+        ]]):tformat(damDesc(self, damtype, dam * 1.8), DamageType:get(damtype).name)
     end,
 }
 
@@ -56,8 +56,8 @@ newTalent {
     type = { "spell/explosion-control", 1},
     require = spells_req_high1,
     points = 5,
-    mana = 30,
-    cooldown = 8,
+    mana = 20,
+    cooldown = 6,
     fixed_cooldown = true,
     direct_hit = true,
     requires_target = true,
@@ -76,7 +76,7 @@ newTalent {
         return {type="hit", range=self:getTalentRange(t)+(ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), talent=t}
     end,
     range = 7,
-    getSpecialRadius = function(self, t) return 4 end,
+    getSpecialRadius = function(self, t) return 6 end,
     on_pre_use = function(self, t)
         local ammo = self:hasAlchemistWeapon()
         if not ammo then return false end
@@ -96,7 +96,7 @@ newTalent {
         local x, y = self:getTarget(tg)
         if not x or not y then return nil end
         local _, x, y = self:canProject(tg, x, y)
-        local tg2 = {type="cone", range=0, radius=t.getSpecialRadius(self, t), cone_angle = 25, start_x=x, start_y=y, friendlyfire=false, talent=t}
+        local tg2 = {type="cone", range=0, radius=t.getSpecialRadius(self, t), cone_angle = 90, start_x=x, start_y=y, friendlyfire=false, talent=t}
         local x2, y2 = self:getTarget(tg2)
         if not x2 or not y2 then return nil end
         if x == x2 and y == y2 then return nil end
@@ -121,8 +121,8 @@ newTalent {
     type = { "spell/explosion-control", 1},
     require = spells_req_high1,
     points = 5,
-    mana = 45,
-    cooldown = 12,
+    mana = 30,
+    cooldown = 9,
     fixed_cooldown = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
         if t == talent then return end
@@ -195,8 +195,8 @@ newTalent {
     type = { "spell/explosion-control", 1},
     require = spells_req_high1,
     points = 5,
-    mana = 60,
-    cooldown = 16,
+    mana = 50,
+    cooldown = 12,
     fixed_cooldown = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
         if t == talent then return end
@@ -204,7 +204,7 @@ newTalent {
     end,
     range = function(self, t) return math.floor(self:combatTalentLimit(t, 15, 5.1, 9.1)) end,
     radius = function(self, t)
-        return util.bound(math.floor(self:getTalentLevel(t) / 2), 1, 5)
+        return util.bound(math.floor(self:getTalentLevel(t) / 2) + 1, 1, 5)
     end,
     direct_hit = true,
     requires_target = true,

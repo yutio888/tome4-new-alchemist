@@ -113,7 +113,7 @@ newEffect {
 	callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, state)
 		if type == DamageType.FIRE then return end
 		local d_color = DamageType:get(type).text_color or "#ORCHID#"
-		local reduce = dam * util.bound(eff.power, 0, 1)
+		local reduce = dam * util.bound(eff.power * 0.01, 0, 1)
 		if reduce > 0 then
 			game:delayedLogDamage(src, self, 0, ("%s(%d frost reduce#LAST#%s)#LAST#"):tformat(d_color, reduce, d_color), false)
 		else

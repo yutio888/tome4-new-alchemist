@@ -167,7 +167,13 @@ newGem("Amber", "object/amber.png", 4, 16, "blue", 30, 40, 4, 65,
 )
 newGem("Turquoise", "object/turquoise.png", 4, 16, "green", 30, 40, 4, 65,
         { resists_pen = { all = 12 }, combat_atk = 12 },
-        { splash = { type = "ACID_DISARM", dam = { dam = 1, chance = 50 }, desc = _t "50% chance to disarm" } }
+        { splash = { desc = _t "50% chance to disarm" }, special = function(self, gem, target, dam)
+            if rng.percent(50) and target:canBe("disarm") then
+                if target:canBe("disarm") then
+                    target:setEffect(target.EFF_DISARMED, 3, {})
+                end
+            end
+        end }
 )
 newGem("Sapphire", "object/sapphire.png", 4, 16, "white", 30, 40, 4, 65,
         { combat_def = 16, combat_mentalresist = 16, combat_spellresist = 16, combat_physresist = 16, },

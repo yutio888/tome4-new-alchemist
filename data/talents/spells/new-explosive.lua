@@ -231,7 +231,7 @@ newTalent{
 	require = spells_req3,
 	mode = "passive",
 	points = 5,
-	getRadius = function(self, t) return math.max(2, math.floor(self:combatTalentLimit(t, 20, 2.5, 6.6))) end,
+	getRadius = function(self, t) return math.max(1, math.floor(self:combatTalentLimit(t, 20, 2.5, 6.6))) end,
 	mingrids = function(self, t) return math.max(0, self:combatTalentScale(t, 1, 5)) end,
 	reduction = 2,
 	minmax = function(self, t, grids)

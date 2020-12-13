@@ -4,7 +4,7 @@ newTalent {
     require = spells_req1,
     points = 5,
     range = 10,
-    mana = 1,
+    mana = -5,
     direct_hit = true,
 	reflectable = true,
 	requires_target = true,
@@ -19,12 +19,12 @@ newTalent {
         t.ATTACK[damtype] = 2
         return t
     end,
-    cooldown = 5,
+    cooldown = 4,
     on_pre_use = function(self, t)
         return self:hasAlchemistWeapon()
     end,
     getDamage = function(self, t)
-        return self:combatTalentGemDamage(t, 120, 350)
+        return self:combatTalentGemDamage(t, 120, 450)
     end,
     action = function(self, t)
         local gem = self:hasAlchemistWeapon()
@@ -78,7 +78,7 @@ newTalent {
     points = 5,
     range = function(self, t) return self:combatTalentScale(t, 1, 3) end,
     radius = function(self, t) return 5 end,
-    mana = 1,
+    mana = -5,
     direct_hit = true,
 	requires_target = true,
     tactical = function(self, t, aitarget)
@@ -92,12 +92,12 @@ newTalent {
     	if not ammo then return end
     	return {type="ball", range=self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius=self:getTalentRadius(t), talent=t}
     end,
-    cooldown = 15,
+    cooldown = 10,
     on_pre_use = function(self, t)
         return self:hasAlchemistWeapon()
     end,
     getDamage = function(self, t)
-        return self:combatTalentGemDamage(t, 100, 250)
+        return self:combatTalentGemDamage(t, 100, 350)
     end,
     on_learn = function(self, t)
         self:checkCanWearGem()
@@ -162,7 +162,7 @@ newTalent {
     points = 5,
     cooldown = 20,
     radius = 10,
-    mana = 1,
+    mana = -5,
     tactical = { DEFEND = 1.5 },
     getSummonNb = function(self, t) return self:combatTalentScale(t, 1, 3) end,
     getDuration = function(self, t) return self:combatTalentGemDamage(t, 5, 12) end,
