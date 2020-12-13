@@ -283,9 +283,9 @@ newPotion {
     end,
     getDamage = function(self, t)
         if self:isTalentActive(self.T_MANAGE_POTION_3) then
-            return self:combatTalentSpellDamageBase(t, 0, 20)
+            return self:combatTalentSpellDamageBase(t, 0, 30)
         else
-            return self:combatTalentSpellDamageBase(t, 30, 100)
+            return self:combatTalentSpellDamageBase(t, 0, 50)
         end
     end,
     getFireRadius = function(self, t)
