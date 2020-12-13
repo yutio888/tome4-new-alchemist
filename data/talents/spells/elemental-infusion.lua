@@ -177,7 +177,7 @@ newTalent {
     cooldown = 30,
     tactical = { BUFF = 10 },
     getResist = function(self, t) return self:combatTalentScale(t, 20, 50) end,
-    getResistPen = function(self, t) return self:combatTalentLimit(t, 40, 10, 33) end,
+    getResistPen = function(self, t) return 0 end,
     getDamage = function(self, t) return self:combatTalentSpellDamage(t, 5, 80) end,
     activate = function(self, t)
     	game:playSoundNear(self, "talents/fireflash")
@@ -214,8 +214,8 @@ newTalent {
             type = "fire"
         end
         return ([[You body turn into pure element.
-        You gain %d%% resistance, %d%% resistance penetration for the specific element you choose.
+        You gain %d%% resistance for the specific element you choose.
         Every turn, a random elemental bolt will hit up to %d of your foes in radius 6, dealing %0.2f %s damage.
-        ]]):tformat(t.getResist(self, t), t.getResistPen(self, t), t.getTargetCount(self, t), damDesc(self, getElementalInsufionType(self), t.getDamage(self, t)), _t(type))
+        ]]):tformat(t.getResist(self, t), t.getTargetCount(self, t), damDesc(self, getElementalInsufionType(self), t.getDamage(self, t)), _t(type))
     end,
 }

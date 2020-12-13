@@ -172,6 +172,7 @@ newEffect{
 	subtype = { nature=true },
 	status = "beneficial",
 	parameters = { power=10 },
+    charges = function(self, t) return eff.power end,
 	on_gain = function(self, err) return _t"#Target# is super lucky now.", _t"+Super Lucky" end,
 	on_lose = function(self, err) return _t"#Target# seems less lucky.", _t"-Super Lucky" end,
 	activate = function(self, eff)
@@ -194,5 +195,149 @@ newEffect{
 	activate = function(self, eff)
 		self:effectTemporaryValue(eff, "movement_speed", eff.power * 0.01)
 		self:effectTemporaryValue(eff, "global_speed_add", eff.power_all * 0.01)
+	end,
+}
+
+newEffect {
+    name = "DIAMOND_SPEED", image = "talents/infusion__movement.png",
+    desc = _t "Diamond Speed",
+    long_desc = function(self, eff)
+        return ("Gain %d free moves."):tformat(eff.stack)
+    end,
+    type = "magical",
+    subtype = { speed = true },
+    status = "beneficial",
+    parameters = { power = 100 },
+    charges = function(self, eff) return eff.stack end,
+    activate = function(self, eff)
+        self:effectTemporaryValue(eff, "free_movement", 1)
+    end,
+    on_merge = function(self, old_eff, new_eff)
+        local newstack = math.min(3, (old_eff.stack or 0) + (new_eff.stack or 0))
+        local dur = math.max(old_eff.dur, new_eff.dur)
+        old_eff.stack = newstack
+        old_eff.dur = dur
+        return old_eff
+    end,
+    callbackOnMove = function(self, eff, moved, force, ox, oy)
+        if not moved or force then
+            return
+        end
+        eff.stack = eff.stack - 1
+        if eff.stack <= 0 then
+            self:removeEffect(self.EFF_DIAMOND_SPEED)
+        end
+    end,
+}
+
+newEffect {
+    name = "PEARL_ARMOUR", image = "effects/checkered-diamond.png",
+    desc = _t "Pearl Armour",
+    long_desc = function(self, eff)
+        return ("Increases armour by %d."):tformat(eff.stack * 25)
+    end,
+    type = "magical",
+    subtype = { speed = true },
+    status = "beneficial",
+    parameters = { power = 100 },
+    charges = function(self, eff) return eff.stack * 25 end,
+    activate = function(self, eff)
+        eff.speed = self:addTemporaryValue("combat_armor", eff.stack * 25)
+    end,
+    deactivate = function(self, eff)
+        self:removeTemporaryValue("combat_armor", eff.speed)
+    end,
+    on_merge = function(self, old_eff, new_eff)
+        self:removeTemporaryValue("combat_armor", old_eff.speed)
+        local newstack = math.min(3, old_eff.stack + new_eff.stack)
+        local dur = math.max(old_eff.dur, new_eff.dur)
+        old_eff.stack = newstack
+        old_eff.dur = dur
+        old_eff.speed = self:addTemporaryValue("combat_armor", old_eff.stack * 25)
+        return old_eff
+    end,
+}
+
+newEffect {
+	name = "JADE_REGEN", image = "talents/infusion__regeneration.png",
+    desc = _t "Jade Regeneration",
+    long_desc = function(self, eff)
+        return ("Increases life regeneration by %d per turn."):tformat(eff.stack * 50)
+    end,
+    type = "magical",
+    subtype = { healing = true, regeneration = true },
+    status = "beneficial",
+    parameters = { power = 10 },
+    charges = function(self, eff) return eff.stack end,
+    activate = function(self, eff)
+        eff.tmpid = self:addTemporaryValue("life_regen", eff.stack * 50)
+    end,
+    deactivate = function(self, eff)
+        self:removeTemporaryValue("life_regen", eff.tmpid)
+    end,
+    on_merge = function(self, old_eff, new_eff)
+        self:removeTemporaryValue("life_regen", old_eff.tmpid)
+        local newstack = math.min(3, old_eff.stack + new_eff.stack)
+        local dur = math.max(old_eff.dur, new_eff.dur)
+        old_eff.stack = newstack
+        old_eff.dur = dur
+        old_eff.tmpid = self:addTemporaryValue("life_regen", old_eff.stack * 50)
+        return old_eff
+    end,
+}
+
+newEffect {
+	name = "EMERALD_AFFINITY" , image = "talents/infusion__wild.png",
+	desc = _t "Emerald Affinity",
+	long_desc = function(self, eff)
+		return ("Increases affinity for all damage by %d%%."):tformat(eff.stack * 5)
+	end,
+	type = "magical",
+	subtype = {  },
+	status = "beneficial",
+	parameters = { power = 10 },
+	charges = function(self, eff) return eff.stack end,
+	activate = function(self, eff)
+		eff.tmpid = self:addTemporaryValue("damage_affinity", { all=eff.stack * 5 })
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("damage_affinity", eff.tmpid)
+	end,
+	on_merge = function(self, old_eff, new_eff)
+		self:removeTemporaryValue("damage_affinity", old_eff.tmpid)
+		local newstack = math.min(3, old_eff.stack + new_eff.stack)
+		local dur = math.max(old_eff.dur, new_eff.dur)
+		old_eff.stack = newstack
+		old_eff.dur = dur
+		old_eff.tmpid = self:addTemporaryValue("damage_affinity",  { all=old_eff.stack * 5 })
+		return old_eff
+	end,
+}
+
+newEffect {
+	name = "ONYX_HEAL_ENCHANT" , image = "talents/infusion__wild.png",
+	desc = _t "Onyx Heal Enchant",
+	long_desc = function(self, eff)
+		return ("Increases healing factor by %d%%."):tformat(eff.stack * 20)
+	end,
+	type = "magical",
+	subtype = { heal = true },
+	status = "beneficial",
+	parameters = { power = 10 },
+	charges = function(self, eff) return eff.stack end,
+	activate = function(self, eff)
+		eff.tmpid = self:addTemporaryValue("healing_factor", eff.stack * 0.2 )
+	end,
+	deactivate = function(self, eff)
+		self:removeTemporaryValue("healing_factor", eff.tmpid)
+	end,
+	on_merge = function(self, old_eff, new_eff)
+		self:removeTemporaryValue("healing_factor", old_eff.tmpid)
+		local newstack = math.min(3, old_eff.stack + new_eff.stack)
+		local dur = math.max(old_eff.dur, new_eff.dur)
+		old_eff.stack = newstack
+		old_eff.dur = dur
+		old_eff.tmpid = self:addTemporaryValue("healing_factor", old_eff.stack * 0.3)
+		return old_eff
 	end,
 }

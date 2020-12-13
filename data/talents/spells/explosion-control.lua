@@ -1,7 +1,7 @@
 newTalent {
     name = "Throw Bomb: Beam Mode",
     type = { "spell/explosion-control", 1},
-    require = spells_req1,
+    require = spells_req_high1,
     points = 5,
     mana = 15,
     cooldown = 3,
@@ -54,8 +54,8 @@ newTalent {
 
 newTalent {
     name = "Throw Bomb: Cone Mode",
-    type = { "spell/explosion-control", 2},
-    require = spells_req2,
+    type = { "spell/explosion-control", 1},
+    require = spells_req_high1,
     points = 5,
     mana = 30,
     cooldown = 8,
@@ -120,10 +120,10 @@ newTalent {
 
 newTalent {
     name = "Throw Bomb: Implosion",
-    type = { "spell/explosion-control", 3},
-    require = spells_req3,
+    type = { "spell/explosion-control", 1},
+    require = spells_req_high1,
     points = 5,
-    mana = 60,
+    mana = 45,
     cooldown = 12,
     fixed_cooldown = true,
     no_unlearn_last = true,
@@ -132,7 +132,7 @@ newTalent {
         self:startTalentCooldown(t.id, 4)
     end,
     range = function(self, t) return math.floor(self:combatTalentLimit(t, 9, 0.1, 4.1)) end,
-    radius = function(self, t) return math.max(1, math.floor(self:combatTalentLimit(t, 0, 4.1, 2.1))) end,
+    radius = function(self, t) return math.max(0, math.floor(self:combatTalentLimit(t, 0, 4.1, 1.6))) end,
     direct_hit = true,
     requires_target = true,
     target = function(self, t)
@@ -195,8 +195,8 @@ newTalent {
 
 newTalent {
     name = "Throw Bomb: Chain Blast",
-    type = { "spell/explosion-control", 4},
-    require = spells_req4,
+    type = { "spell/explosion-control", 1},
+    require = spells_req_high1,
     points = 5,
     mana = 60,
     cooldown = 16,

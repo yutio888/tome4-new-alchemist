@@ -16,12 +16,22 @@ local translation_table = {
 
 local function newPotion(t)
     t.type = { "spell/alchemy-potions", 1 }
-    if not t.range then
-        t.range = function(self, t)
+    local _range = t.range
+    t.range = function(self, t)
+        if self:isTalentActive(self.T_MANAGE_POTION_3) then
+            return self:getTalentRange(self:getTalentFromId(self.T_MANAGE_POTION_3))
+        end
+        if not _range then
             if self:knowTalent(self.T_THROW_BOMB_NEW) then
                 return self:getTalentRange(self:getTalentFromId(self.T_THROW_BOMB_NEW))
             else
                 return 5
+            end
+        else
+            if type(_range) == "function" then
+                return _range(self, t)
+            else
+                return _range
             end
         end
     end
@@ -30,7 +40,7 @@ local function newPotion(t)
     local target = t.target
     t.target = function(self, t)
         if self:isTalentActive(self.T_MANAGE_POTION_3) then
-            return { type = "cone", range = 0, radius = self:getTalentRange(t), talent = t, selffire = true, player_selffire = true }
+            return { type = "cone", range = 0, cone_angle = 120, radius = self:getTalentRange(t), talent = t, selffire = true, player_selffire = true }
         end
         if not target then
             return { type = "hit", range = self:getTalentRange(t), talent = t }
@@ -127,7 +137,7 @@ newPotion {
     icon = "object/elixir_of_stoneskin.png",
     tactical = { DISABLE = 1, ESCAPE = 2 },
     getDuration = function(self, t)
-        return math.ceil(self:combatTalentScale(t, 2, 7))
+        return math.ceil(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 2, 7))
     end,
     target = function(self, t)
         return { type = "ball", range = self:getTalentRange(t), radius = 2, talent = t }
@@ -263,19 +273,23 @@ newPotion {
         return { type = "wall", range = self:getTalentRange(t), halflength = halflength, talent = t, halfmax_spots = halflength + 1 }
     end,
     getDuration = function(self, t)
-        return self:combatTalentScale(t, 3, 6)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 3, 6)
     end,
     getLength = function(self, t)
         return self:combatTalentScale(t, 5, 12)
     end,
     getDamage = function(self, t)
-        return self:combatTalentSpellDamageBase(t, 25, 50)
+        if self:isTalentActive(self.T_MANAGE_POTION_3) then
+            return self:combatTalentSpellDamageBase(t, 0, 20)
+        else
+            return self:combatTalentSpellDamageBase(t, 30, 100)
+        end
     end,
     getFireRadius = function(self, t)
-        return math.ceil(self:combatTalentScale(t, 1, 2))
+        return math.floor(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 1, 3))
     end,
     getReduce = function(self, t)
-        return math.ceil(self:combatTalentScale(t, 5, 20))
+        return math.ceil(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 5, 20))
     end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
@@ -290,7 +304,7 @@ newPotion {
         local fire_damage = self:spellCrit(t.getDamage(self, t))
         local fire_radius = t.getFireRadius(self, t)
         local reduce = t.getReduce(self, t)
-
+        local nb = 0
         self:project(tg, x, y, function(px, py, tg, self)
             local oe = game.level.map(px, py, Map.TERRAIN)
             if not oe or oe.special then
@@ -342,8 +356,9 @@ newPotion {
             e.tooltip = mod.class.Grid.tooltip
             game.level:addEntity(e)
             game.level.map(px, py, Map.TERRAIN, e)
-            game.logSeen(self, "%s conjures a wall of fire!", self:getName():capitalize())
+            nb = nb + 1
         end)
+        game.logSeen(self, "%s conjures %d walls of fire!", self:getName():capitalize(), nb)
         return true
     end,
     short_info = function(self, t)
@@ -354,7 +369,7 @@ newPotion {
         Fire walls may burn any enemy in %d radius, each wall within range deals %d fire damage.
         Burnt enemy will deal %d%% less damage in 3 turns.
         Fire wall does not block movement.]]):
-        tformat(t.getLength(self, fake_t or t), t.getDuration(self, fake_t or t), t.getFireRadius(self, fake_t or t), t.getDamage(self, fake_t or t), t.getReduce(self, fake_t or t))
+        tformat(t.getLength(self, fake_t or t), t.getDuration(self, fake_t or t), t.getFireRadius(self, fake_t or t), damDesc(self, DamageType.FIRE, t.getDamage(self, fake_t or t)), t.getReduce(self, fake_t or t))
     end,
 }
 
@@ -362,7 +377,7 @@ newPotion {
     name = "Dissolving Acid", short_name = "ACID_POTION", image = "talents/dissolving_acid.png", icon = "object/elixir_of_avoidance.png",
     tactical = { ATTACK = { ACID = 2 }, DISABLE = 2 },
     getDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 150) end,
-    getRemoveCount = function(self, t) return math.floor(self:combatTalentScale(t, 1, 3, "log")) end,
+    getRemoveCount = function(self, t) return math.floor(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 1, 3, "log")) end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
@@ -411,13 +426,13 @@ newPotion {
 
 newPotion {
     name = "Lightning Ball", short_name = "LIGHTNING_POTION", icon = "object/elixir_of_serendipity.png",
-    radius = function(self, t) return math.ceil(self:combatTalentScale(t, 1, 3)) end,
+    radius = function(self, t) return math.ceil(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 1, 3)) end,
     tactical = { DISABLE = { daze = 2, blind = 2 } },
     target = function(self, t)
         return { type = "ball", range = self:getTalentRange(t), radius = self:getTalentRadius(t), talent = t }
     end,
-    getDazeDuration = function(self, t) return self:combatTalentScale(t, 2, 4) end,
-    getShockDuration = function(self, t) return self:combatTalentScale(t, 4, 6) end,
+    getDazeDuration = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 2, 4) end,
+    getShockDuration = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 4, 6) end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
@@ -451,8 +466,8 @@ newPotion {
     name = "Breath of the Frost", short_name = "FROST_POTION", image = "talents/frost_shield.png", icon = "object/elixir_of_mysticism.png",
     tactical = { DEFEND = 3 },
     getDuration = function(self, t) return 6 end,
-    getResists = function(self, t) return self:combatTalentScale(t, 5, 20) end,
-    getCritShrug = function(self, t) return self:combatTalentScale(t, 15, 45) end,
+    getResists = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 5, 20) end,
+    getCritShrug = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 15, 45) end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
@@ -477,7 +492,7 @@ newPotion {
     name = "Stoned Armour", short_name = "STONE_POTION", image = "talents/stoneskin.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { DEFEND = 2 },
     getDuration = function(self, t) return 6 end,
-    getArmor = function(self, t) return self:combatTalentScale(t, 30, 100) end,
+    getArmor = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 30, 100) end,
     allowUse = function(self, t)
         if self ~= game.player then return false end
         if config.settings.cheat then return true end
@@ -508,8 +523,8 @@ newPotion {
     name = "Potion of Magic", short_name = "ARCANE_POTION", image = "talents/arcane_power.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { BUFF = 3 },
     getDuration = function(self, t) return 6 end,
-    getSpellpower = function(self, t) return self:combatTalentScale(t, 20, 40) end,
-    getManaRegen = function(self, t) return self:combatTalentScale(t, 80, 300) end,
+    getSpellpower = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 20, 40) end,
+    getManaRegen = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 80, 300) end,
     allowUse = function(self, t)
         if self ~= game.player then return false end
         if config.settings.cheat then return true end
@@ -541,7 +556,7 @@ newPotion {
     name = "Potion of Luck", short_name = "LUCK_POTION", image = "talents/lucky_day.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { DEFEND = 2 },
     getDuration = function(self, t) return 6 end,
-    getEvasion = function(self, t)  return self:combatTalentScale(t, 10, 25) + (self:getLck() - 50) end,
+    getEvasion = function(self, t)  return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 10, 25) + (self:getLck() - 50) end,
     allowUse = function(self, t)
         if self ~= game.player then return false end
         if config.settings.cheat then return true end
@@ -572,8 +587,8 @@ newPotion {
     name = "Potion of Swiftness", short_name = "SPEED_POTION", image = "talents/nimble_movements.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { BUFF = 3 },
     getDuration = function(self, t) return 6 end,
-    getSpeed = function(self, t) return self:combatTalentScale(t, 20, 50) end,
-    getMove = function(self, t) return self:combatTalentScale(t, 100, 400) end,
+    getSpeed = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 20, 50) end,
+    getMove = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 100, 400) end,
     allowUse = function(self, t)
         if self ~= game.player then return false end
         if config.settings.cheat then return true end

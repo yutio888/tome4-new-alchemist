@@ -24,7 +24,7 @@ newTalent {
         return self:hasAlchemistWeapon()
     end,
     getDamage = function(self, t)
-        return self:combatTalentGemDamage(t, 120, 500)
+        return self:combatTalentGemDamage(t, 120, 400)
     end,
     action = function(self, t)
         local gem = self:hasAlchemistWeapon()
@@ -257,6 +257,7 @@ newTalent {
     iconOverlay = function(self, t, p)
         if not p then return "" end
         local turn = self.turn_procs.multi and self.turn_procs.multi.trigger_gem and self.turn_procs.multi.trigger_gem.turns or 0
+        if turn <= 0 then return "" end
         return tostring("#RED##{bold}#"..turn.."#LAST##{normal}#"), "buff_font_small"
     end,
     callbackOnDealDamage = function(self, t, val, target, dead, death_note)

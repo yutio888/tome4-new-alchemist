@@ -157,10 +157,10 @@ newTalent {
     type = { "spell/alchemy-potion", 2 },
     points = 5,
     require = spells_req2,
-    cooldown = function(self, t) return self:combatTalentScale(t, 20, 10, "log") end,
+    cooldown = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 20, 10, "log") end,
     mode = "sustained",
     no_npc_use = true,
-    getDuration = function(self, t) return math.ceil(15 - util.bound(self:combatTalentScale(t, 0, 5, "log"), 0, 10)) end,
+    getDuration = function(self, t) return math.ceil(15 - util.bound(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 0, 5, "log"), 0, 10)) end,
     iconOverlay = function(self, t, p)
         if not p then return "" end
         return tostring("#RED##{bold}#"..math.floor(p.dur or 1).."#LAST##{normal}#"), "buff_font_small"
@@ -210,6 +210,7 @@ newTalent {
     points = 5,
     require = spells_req3,
     cooldown = 20,
+    range = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 3, 7) end,
     mode = "sustained",
     no_npc_use = true,
     getSpeedUp = function(self, t) return 100 - math.min(50, 15 + self:combatTalentScale(t, 5, 15)) end,
@@ -231,7 +232,7 @@ newTalent {
     mode = "sustained",
     sustain_mana = 80,
     no_npc_use = true,
-    getTime = function(self, t) return 10 - math.floor(self:combatTalentLimit(t, 10, 0, 6.9)) end,
+    getTime = function(self, t) return 10 - math.floor(self:combatTalentLimit(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 10, 0, 6.9)) end,
     iconOverlay = function(self, t, p)
         if not p then return "" end
         if not p.time then return "" end

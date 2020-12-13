@@ -7,7 +7,7 @@ newTalentType{ allow_random=true, is_spell=true, type="spell/gem-spell", name=_t
 newTalentType{ allow_random=true, is_spell=true, type="spell/alchemy-potion", name=_t"alchemy potions", description=_t"prepare some alchemy potions."}
 newTalentType{ allow_random=true, is_spell=true, type="spell/alchemy-potions", hide = true, name=_t"alchemy potions", description=_t"some useful alchemy potions."}
 
-newTalentType{ allow_random=true, no_silence=true, is_spell=true, mana_regen=true, type="spell/explosion-control", name = _t"explostion-control", description = _t"Control your alchemist bomb."}
+newTalentType{ allow_random=true, no_silence=true, is_spell=true, mana_regen=true, type="spell/explosion-control", name = _t"explostion-control", min_lev = 10, description = _t"Control your alchemist bomb."}
 
 damDesc = Talents.main_env.damDesc
 spells_req1 = Talents.main_env.spells_req1

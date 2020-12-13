@@ -18,13 +18,6 @@
 -- darkgod@te4.org
 local DamageType = require "engine.DamageType"
 bombUtil = {}
-local function getAlchemistPower(self)
-	if self and self.type == "gem" then
-		local tier = self.material_level or 1
-		return tier * 20
-	end
-	return 0
-end
 local emit_table = {
     ["ball"] = function(self, particle, tg, x, y, startx, starty)
         local _, x, y = self:canProject(tg, x, y)
@@ -85,7 +78,12 @@ function bombUtil:getBaseDamage(self, t, ammo, tg)
     particle = damtype[tg and tg.type or "ball"] or damtype["ball"]
     damtype = damtype.type or DamageType.PHYSICAL
     inc_dam = inc_dam + (ammo.alchemist_bomb and ammo.alchemist_bomb.power or 0) / 100
-    local dam = self:combatTalentSpellDamageBase(t, 40, 200, (getAlchemistPower(ammo) + self:combatSpellpower()) / 2)
+    local dam
+	if t.getBaseDamage then
+		dam = t.getBaseDamage(self, t)
+	else
+		dam = self:combatTalentSpellDamageBase(t, 0, 200, self:combatSpellpower(1, self:combatGemPower()))
+	end
     dam = dam * (1 + inc_dam)
     local arg = emit_table[tg and tg.type or "ball"] or emit_table["ball"]
     return dam, damtype, particle, arg
@@ -97,49 +95,23 @@ function bombUtil:throwBomb(self, t, ammo, tg, x, y, startx, starty)
 	if self.alchemy_golem then
 		golem = game.level:hasEntity(self.alchemy_golem) and self.alchemy_golem or nil
 	end
-	local dam_done = 0
+	local grids = self:project(tg, x, y, function(tx, ty) end)
+	self:triggerGemAreaEffect(ammo, grids)
 
 	local tgts = table.values(self:projectCollect(tg, x, y, Map.ACTOR))
-	dam = self:callTalent(t.id, "calcFurtherDamage", tg, ammo, x, y, dam, tgts) or dam
+	dam = self:callTalent(t.id, "calcFurtherDamage", tg, ammo, x, y, dam, tgts, grids) or dam
 	table.sort(tgts, "dist")
 	for _, l in ipairs(tgts) do
 		local target = l.target
 		if target:reactionToward(self) < 0 then
-			dam_done = dam_done + DamageType:get(damtype).projector(self, target.x, target.y, damtype, dam)
-			if ammo.alchemist_bomb and ammo.alchemist_bomb.splash and ammo.alchemist_bomb.splash.type ~= "LITE" then
-				local gdam = ammo.alchemist_bomb.splash.dam
-				if type(gdam) == "number" then
-					gdam = dam * gdam / 100
-				end
-				DamageType:get(DamageType[ammo.alchemist_bomb.splash.type]).projector(self, target.x, target.y, DamageType[ammo.alchemist_bomb.splash.type], gdam)
-			end
-
-			if ammo.alchemist_bomb and ammo.alchemist_bomb.stun and rng.percent(ammo.alchemist_bomb.stun.chance) and target:canBe("stun") then
-				target:setEffect(target.EFF_STUNNED, ammo.alchemist_bomb.stun.dur, {apply_power=self:combatSpellpower()})
-			end
-			if ammo.alchemist_bomb and ammo.alchemist_bomb.daze and rng.percent(ammo.alchemist_bomb.daze.chance) and target:canBe("stun") then
-				target:setEffect(target.EFF_DAZED, ammo.alchemist_bomb.daze.dur, {apply_power=self:combatSpellpower()})
-			end
+			DamageType:get(damtype).projector(self, target.x, target.y, damtype, dam)
+			self:triggerGemEffect(target, ammo, dam)
 		end
 	end
 
 	self:fireTalentCheck("callbackOnAlchemistBomb", tgts, t, x, y, startx, starty)
-
-	local nb = self.turn_procs.alchemist_bomb_leech or 0
-	self.turn_procs.alchemist_bomb_leech = nb + 1
-	if ammo.alchemist_bomb and ammo.alchemist_bomb.leech then self:heal(math.min(self.max_life * ammo.alchemist_bomb.leech / (100 * (nb + 1)), dam_done), ammo) end
-
 	emit(self, particle, tg, x, y, startx, starty)
-
-	local nb = self.turn_procs.alchemist_bomb_mana or 0
-	self.turn_procs.alchemist_bomb_mana = nb + 1
-	if ammo.alchemist_bomb and ammo.alchemist_bomb.mana then self:incMana(ammo.alchemist_bomb.mana/ nb) end
 	return tgts
-end
-function bombUtil:getDamageBonus(self, t, lostgrids, tl)
-	local mult = math.max(0, math.log10(lostgrids)) / (6 - math.min(tl/1.3, 5))
-	mult = mult / 2
-	return mult
 end
 newTalent{
 	name = "Throw Bomb", short_name = "THROW_BOMB_NEW", image = "talents/throw_bomb.png",
@@ -174,22 +146,17 @@ newTalent{
 		else return { PHYSICAL = 2 }
 		end
 	end },
-	calcFurtherDamage = function(self, t, tg, ammo, x, y, dam)
+	calcFurtherDamage = function(self, t, tg, ammo, x, y, dam, tgts, grids)
 		local nb = 0
-		local grids = self:project(tg, x, y, function(tx, ty)
-			if ammo.alchemist_bomb and ammo.alchemist_bomb.splash and ammo.alchemist_bomb.splash.type == "LITE" then
-				DamageType:get(DamageType["LITE"]).projector(self, tx, ty, DamageType["LITE"], ammo.alchemist_bomb.splash.dam)
-			end
-		end)
-		if grids then
-			for px, ys in pairs(grids or {}) do
-				for py, _ in pairs(ys) do
-					nb = nb + 1
-				end
-			end
-		end
 		-- Compare theorical AOE zone with actual zone and adjust damage accordingly
 		if self:knowTalent(self.T_EXPLOSION_EXPERT_NEW) then
+			if grids then
+				for px, ys in pairs(grids or {}) do
+					for py, _ in pairs(ys) do
+						nb = nb + 1
+					end
+				end
+			end
 			if nb > 0 then
 				dam = dam + dam * self:callTalent(self.T_EXPLOSION_EXPERT_NEW, "minmax", nb)
 			end
@@ -265,19 +232,19 @@ newTalent{
 	mode = "passive",
 	points = 5,
 	getRadius = function(self, t) return math.max(2, math.floor(self:combatTalentLimit(t, 20, 2.5, 6.6))) end,
-	mingrids = function(self, t) return self:combatTalentScale(t, 1, 3) end,
-	reduction = 2.5,
+	mingrids = function(self, t) return math.max(0, self:combatTalentScale(t, 1, 5)) end,
+	reduction = 2,
 	minmax = function(self, t, grids)
 		local theoretical_nb = bombUtil.theoretical_nbs[t.getRadius(self, t)]
 		if grids then
 			local lostgrids = math.max(theoretical_nb - grids, t.mingrids(self, t))
-			local mult = math.max(0, math.log10(lostgrids)) / (6 - math.min(self:getTalentLevel(self.T_EXPLOSION_EXPERT_NEW)/1.3, 5))
+			local mult = math.max(0, math.log10(lostgrids)) / (6 - math.min(self:getTalentLevel(self.T_EXPLOSION_EXPERT_NEW), 5))
 			mult = mult / t.reduction
 			print("Adjusting explosion damage to account for ", lostgrids, " lost tiles => ", mult * 100)
 			return mult
 		else
-			local min = (math.log10(t.mingrids(self, t)) / (6 - math.min(self:getTalentLevel(t)/1.3, 5))) / t.reduction
-			local max = (math.log10(theoretical_nb) / (6 - math.min(self:getTalentLevel(t)/1.3, 5))) / t.reduction
+			local min = (math.max(0, math.log10(t.mingrids(self, t))) / (6 - math.min(self:getTalentLevel(t), 5))) / t.reduction
+			local max = (math.log10(theoretical_nb) / (6 - math.min(self:getTalentLevel(t), 5))) / t.reduction
 			return min, max
 		end
 	end,
@@ -297,7 +264,7 @@ newTalent {
     points = 5,
     getChance = function(self, t)
         local ammo = self:hasAlchemistWeapon()
-        local power = getAlchemistPower(ammo)
+        local power = self:combatGemPower(ammo)
         return self:combatTalentLimit(t, 35, 5, 25) * (1 + power * 0.01)
     end,
     info = function(self, t)

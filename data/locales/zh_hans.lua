@@ -80,7 +80,7 @@ t([[Heal target for %d life and cure all poisons、diseases and wounds.
         治疗量受法术强度加成。]], "tformat")
 t("fire wall", "火墙", "_t")
 t("a summoned, transparent wall of fire", "一堵透明的火焰墙。", "_t")
-t("%s conjures a wall of fire!", "%s 制造出火焰之墙！", "logSeen")
+t("%s conjures %d walls of fire!", "%s 制造出%d堵火焰之墙！", "logSeen")
 t("Create a fire wall that burns nearby foe", "制造火墙灼烧周围敌人。", "_t")
 t([[Create a fiery wall of %d length that lasts for %d turns.
         Fire walls may burn any enemy in %d radius, each wall within range deals %d fire damage.
@@ -153,10 +153,10 @@ t([[If you have chosen your elemental infusion, every time you deal damage the s
         ]], "tformat")
 t("Body of Element", "元素之躯", "talent name")
 t([[You body turn into pure element.
-        You gain %d%% resistance, %d%% resistance penetration for the specific element you choose.
+        You gain %d%% resistance for the specific element you choose.
         Every turn, a random elemental bolt will hit up to %d of your foes in radius 6, dealing %0.2f %s damage.
         ]], [[你的身体部分转化为纯粹的元素形态。
-        对指定充能元素获得 %d%% 抗性， %d%% 抗性穿透。
+        对指定充能元素获得 %d%% 抗性。
         此外，每回合开始时，对6格范围内至多 %d 名随机敌人造成 %0.2f %s 伤害。
         ]], "tformat")
 -- untranslated text
@@ -209,13 +209,6 @@ t([[Throw bomb to target location dealing %0.2f %s damage in radius %d, then mak
         ]], [[向指定位置投掷炸弹造成 %0.2f %s 伤害，爆炸半径 %d 格。随后制造一场连环爆破。
         任何在伤害范围内的敌人，将触发一次类似的爆炸效果。
         每触发一次爆炸，后续爆炸伤害减少 %d%% 。
-        你必须学会炸弹投掷技能才能使用该技能。
-        使用其他投掷炸弹的技能会让该技能进入4回合冷却。
-        ]], "tformat")
--- old translated text
-t([[Imbue your gem with pure mana and activate its power as a wide beam.
-        Throwing bomb by any means will put this talent on cooldown for 4 turns.
-        ]], [[向一块宝石内灌输爆炸能量，触发一次宽射线类型的 %0.2f %s伤害。 
         你必须学会炸弹投掷技能才能使用该技能。
         使用其他投掷炸弹的技能会让该技能进入4回合冷却。
         ]], "tformat")
@@ -584,6 +577,17 @@ t("#Target# seems less lucky.", "#Target# 看起来不那么幸运了。", "_t")
 t("-Super Lucky", "-超级幸运", "_t")
 t("Swiftness", "迅捷", "_t")
 t("Increases movement speed by %d%%, global speed by %d%%.", "移动速度增加 %d%%, 整体速度增加 %d%%.", "tformat")
+t("Diamond Speed", "钻石加速", "_t")
+t("Gain %d free moves.", "获得 %d 次免费移动。", "tformat")
+t("Pearl Armour", "珍珠护甲", "_t")
+t("Increases armour by %d.", "增加 %d 护甲。", "tformat")
+t("Jade Regeneration", "翡翠回复", "_t")
+t("Increases life regeneration by %d per turn.", "增加 %d 生命回复。", "tformat")
+t("Emerald Affinity", "祖母绿吸收", "_t")
+t("Increases affinity for all damage by %d%%.", "增加伤害吸收 %d%%。", "tformat")
+t("Onyx Heal Enchant", "玛瑙治疗强化", "_t")
+t("Increases healing factor by %d%%.", "增加治疗系数 %d%%。", "tformat")
+
 -- untranslated text
 --[==[
 t("#Target#'s skin looks a bit thorny.", "#Target#'s skin looks a bit thorny.", "_t")
@@ -648,7 +652,23 @@ t("Equip which tool for #YELLOW#%s#LAST#?", "Equip which tool for #YELLOW#%s#LAS
 ------------------------------------------------
 section "tome-new-alchemist/overload/data/general/objects/gem.lua"
 
-t("15% chance to disarm", "15% 概率缴械", "_t")
+t("50% chance to silence for 2 turns", "50% 概率沉默2回合", "_t")
+t("Deals %d%% extra fireburn damage", "造成 %d%% 额外火焰燃烧伤害", "tformat")
+t("Regen 150 life in 3 turns (stacks for 3 times)", "3回合内回复150生命（可堆叠至三倍）", "_t")
+t("50% chance to disarm", "50% 概率缴械", "_t")
+t("Deals 12% extra ice damage, may freeze or wet target.", "造成 12% 额外寒冰伤害，可能触发冻结或湿润效果", "_t")
+t("Gain affinity for all damage by 5% in 3 turns (stacks for 3 times)", "3回合内获得5%伤害吸收（可堆叠至三倍）", "_t")
+t("Deals %d%% extra physical knockback damage", "造成%d%%额外物理击退伤害", "tformat")
+t("Increases healing factor by 30% for 3 turns (stacks for 3 times)", "3回合内治疗系数上升30%（可堆叠至三倍）", "_t")
+t("50% chance to cleanse one magical debuff", "50%概率解除一项魔法负面状态", "_t")
+t("gain 20 defense for 5 turns", "5回合内闪避上升20", "_t")
+t("Deals %d%% extra poison damage", "造成%d%%额外毒素伤害", "_t")
+-- new text
+--[==[
+t("Gain one free move in 2 turns (stacks for 3 times", "Gain one free move in 2 turns (stacks for 3 times", "_t")
+t("Gain 25 armor in 3 turns (stacks for 3 times", "Gain 25 armor in 3 turns (stacks for 3 times", "_t")
+--]==]
+
 -- untranslated text
 --[==[
 t("gem", "gem", "entity type")
@@ -659,44 +679,42 @@ t("..", "..", "entity name")
 t("alchemist-gem", "alchemist-gem", "entity type")
 t("diamond", "diamond", "entity name")
 t("alchemist diamond", "alchemist diamond", "entity name")
+t("blue", "blue", "entity subtype")
 t("pearl", "pearl", "entity name")
 t("alchemist pearl", "alchemist pearl", "entity name")
-t("Lights terrain (power 100)", "Lights terrain (power 100)", "_t")
 t("moonstone", "moonstone", "entity name")
 t("alchemist moonstone", "alchemist moonstone", "entity name")
+t("violet", "violet", "entity subtype")
 t("fire opal", "fire opal", "entity name")
 t("alchemist fire opal", "alchemist fire opal", "entity name")
 t("red", "red", "entity subtype")
+t("jade", "jade", "entity name")
+t("alchemist jade", "alchemist jade", "entity name")
+t("black", "black", "entity subtype")
 t("bloodstone", "bloodstone", "entity name")
 t("alchemist bloodstone", "alchemist bloodstone", "entity name")
-t("ruby", "ruby", "entity name")
-t("alchemist ruby", "alchemist ruby", "entity name")
 t("amber", "amber", "entity name")
 t("alchemist amber", "alchemist amber", "entity name")
-t("yellow", "yellow", "entity subtype")
 t("turquoise", "turquoise", "entity name")
 t("alchemist turquoise", "alchemist turquoise", "entity name")
 t("green", "green", "entity subtype")
-t("jade", "jade", "entity name")
-t("alchemist jade", "alchemist jade", "entity name")
-t("Slows by 17%", "Slows by 17%", "_t")
 t("sapphire", "sapphire", "entity name")
 t("alchemist sapphire", "alchemist sapphire", "entity name")
-t("blue", "blue", "entity subtype")
-t("quartz", "quartz", "entity name")
-t("alchemist quartz", "alchemist quartz", "entity name")
 t("emerald", "emerald", "entity name")
 t("alchemist emerald", "alchemist emerald", "entity name")
+t("ruby", "ruby", "entity name")
+t("alchemist ruby", "alchemist ruby", "entity name")
+t("quartz", "quartz", "entity name")
+t("alchemist quartz", "alchemist quartz", "entity name")
 t("lapis lazuli", "lapis lazuli", "entity name")
 t("alchemist lapis lazuli", "alchemist lapis lazuli", "entity name")
-t("garnet", "garnet", "entity name")
-t("alchemist garnet", "alchemist garnet", "entity name")
 t("onyx", "onyx", "entity name")
 t("alchemist onyx", "alchemist onyx", "entity name")
-t("black", "black", "entity subtype")
 t("amethyst", "amethyst", "entity name")
 t("alchemist amethyst", "alchemist amethyst", "entity name")
-t("violet", "violet", "entity subtype")
+t("yellow", "yellow", "entity subtype")
+t("garnet", "garnet", "entity name")
+t("alchemist garnet", "alchemist garnet", "entity name")
 t("opal", "opal", "entity name")
 t("alchemist opal", "alchemist opal", "entity name")
 t("topaz", "topaz", "entity name")
@@ -705,17 +723,21 @@ t("aquamarine", "aquamarine", "entity name")
 t("alchemist aquamarine", "alchemist aquamarine", "entity name")
 t("ametrine", "ametrine", "entity name")
 t("alchemist ametrine", "alchemist ametrine", "entity name")
-t("Lights terrain (power 1)", "Lights terrain (power 1)", "_t")
 t("zircon", "zircon", "entity name")
 t("alchemist zircon", "alchemist zircon", "entity name")
 t("spinel", "spinel", "entity name")
 t("alchemist spinel", "alchemist spinel", "entity name")
 t("citrine", "citrine", "entity name")
 t("alchemist citrine", "alchemist citrine", "entity name")
+t("Lights terrain (power 1)", "Lights terrain (power 1)", "_t")
 t("agate", "agate", "entity name")
 t("alchemist agate", "alchemist agate", "entity name")
 --]==]
 
+-- old translated text
+t("Gain one free move in 2 turns (stacks for 3 times)", "2回合内获得1次免费移动机会（可堆叠至三倍）", "_t")
+t("Gain 25 armor in 3 turns (stacks for 3 times)", "3回合内获得25护甲（可堆叠至三倍）", "_t")
+t("15% chance to disarm", "15% 概率缴械", "_t")
 
 ------------------------------------------------
 section "tome-new-alchemist/overload/mod/class/uiset/ClassicPlayerDisplay.lua"

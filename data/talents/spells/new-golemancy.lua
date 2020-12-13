@@ -544,7 +544,7 @@ newTalent{
     mode = "passive",
 	points = 5,
 	getChance = function(self, t) return math.floor(self:combatTalentLimit(t, 100, 35, 75)) end,
-	getNb = function(self, t) return self:getTalentLevel(t) <= 6 and 1 or 2 end,
+	getNb = function(self, t) return self:getTalentLevel(t) <= 5 and 1 or 2 end,
 	callbackOnAlchemistBomb = function(self, t, tgts)
 	    for _, l in ipairs(tgts) do
 	        local target = l.target
