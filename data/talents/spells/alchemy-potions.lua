@@ -523,7 +523,9 @@ newPotion {
     end,
     isSpecialPotion = 5,
     short_info = function(self, t)
-        return t.info(self, t, getFakeTalent(self))
+        local fake_t = getFakeTalent(self)
+        return ([[Increase armor by %d , armor hardiness by %d%%, and decrease defense by %d for 6 turns.]])
+                :tformat(t.getArmor(self, fake_t or t), 50, t.getArmor(self, fake_t or t))
     end,
     info = function(self, t, fake_t)
         return ([[Increase armor by %d , armor hardiness by %d%%, and decrease defense by %d for 6 turns.]])
@@ -556,7 +558,9 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return t.info(self, t, getFakeTalent(self))
+        local fake_t = getFakeTalent(self)
+        return ([[Restore %d mana and gain %d spellpower in 6 turns]])
+                :tformat(t.getManaRegen(self, fake_t or t), t.getSpellpower(self, fake_t or t))
     end,
     info = function(self, t, fake_t)
         return ([[Restore %d mana and gain %d spellpower in 6 turns]])
@@ -587,7 +591,7 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return t.info(self, t, getFakeTalent(self))
+        return ([[Becomes super lucky, have %d%% chance to ignore damage in 6 turns. Chance increases with your luck.]]):tformat(t.getEvasion(self, getFakeTalent(self) or t))
     end,
     info = function(self, t, fake_t)
         return ([[Becomes super lucky, have %d%% chance to ignore damage in 6 turns. Chance increases with your luck.]]):tformat(t.getEvasion(self, fake_t or t))
@@ -618,7 +622,9 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return t.info(self, t, getFakeTalent(self))
+        local fake_t = getFakeTalent(self)
+        return ([[Becomes extremely fast, gain %d%% movement speed and %d%% global speed for %d turns.]])
+                :tformat(t.getMove(self, fake_t or t), t.getSpeed(self, fake_t or t), t.getDuration(self, fake_t or t))
     end,
     info = function(self, t, fake_t)
         return ([[Becomes extremely fast, gain %d%% movement speed and %d%% global speed for %d turns.]])
