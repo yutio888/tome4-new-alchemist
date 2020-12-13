@@ -294,7 +294,7 @@ t("Supercharge Golem", "超载傀儡", "talent name")
 t("Your golem is currently inactive.", "你的傀儡暂时处于未激活状态。", "logPlayer")
 t([[You activate a special mode of your golem, boosting its speed by %d%% for %d turns.
         While supercharged, your golem is enraged and deals %d%% more damage.
-        Damage boost scales with your spellpower.]], [[激活傀儡，加速 %d%%， 持续 %d 回合。
+        Damage boost scales with your spellpower.]], [[激活傀儡，加速 %d%% ， 持续 %d 回合。
         同时，傀儡造成的伤害增加 %d%% 。
         伤害加成随法术强度增加。]], "tformat")
 t("Golem Portal", "傀儡传送", "talent name")

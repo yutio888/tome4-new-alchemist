@@ -11,7 +11,7 @@ newTalent {
 	target = function(self, t)
     	local ammo = self:hasAlchemistWeapon()
        	if not ammo then return end
-		return {type="hit", range=self:getTalentRange(t), talent=t}
+		return {type="bolt", range=self:getTalentRange(t), talent=t}
 	end,
     tactical = function(self, t, aitarget)
         local damtype = self:getGemDamageType()
