@@ -4,7 +4,6 @@ locale "zh_hans"
 ------------------------------------------------
 ------------------------------------------------
 section "tome-new-alchemist/data/birth/mage.lua"
-
 t("New Alchemist", "炼金术士（新版）", "birth descriptor name")
 -- untranslated text
 --[==[
@@ -72,16 +71,16 @@ t("Potion of Swiftness", "迅捷药水", "talent name")
 t([[%s
         Left charges: %d]], [[%s
         剩余次数: %d]], "tformat")
-t("Throw the smoke bomb.", "投掷烟雾弹。", "tformat")
+t("Produce smoke for %d turns.", "制造持续 %d 回合的烟雾。", "tformat")
 t("Throw a smoke bomb, blocking everyone's line of sight. The smoke dissipates after %d turns.", "投掷烟雾，阻挡视线，烟雾持续 %d 回合。", "tformat")
-t("Heal and cure, rid of poison and diseases.", "治疗，并解除毒素和疾病。", "tformat")
+t("Heal %d and get rid of poison and diseases.", "治疗 %d ，并解除毒素和疾病。", "tformat")
 t([[Heal target for %d life and cure all poisons、diseases and wounds.
         The amount healed will increase with your Spellpower.]], [[治疗目标 %d 生命，并解除全部疾病、毒素和伤口状态。
         治疗量受法术强度加成。]], "tformat")
 t("fire wall", "火墙", "_t")
 t("a summoned, transparent wall of fire", "一堵透明的火焰墙。", "_t")
 t("%s conjures %d walls of fire!", "%s 制造出%d堵火焰之墙！", "logSeen")
-t("Create a fire wall that burns nearby foe", "制造火墙灼烧周围敌人。", "_t")
+t("Create a fire wall that burns nearby foe, length %d , dur %d , radius %d , dam %d", "制造火墙灼烧周围敌人，长度 %d ，持续 %d ，灼烧半径 %d ，伤害 %d 。", "tformat")
 t([[Create a fiery wall of %d length that lasts for %d turns.
         Fire walls may burn any enemy in %d radius, each wall within range deals %d fire damage.
         Burnt enemy will deal %d%% less damage in 3 turns.
@@ -89,19 +88,19 @@ t([[Create a fiery wall of %d length that lasts for %d turns.
         火墙将灼烧周围 %d 格内的目标，每块火焰将造成 %d 伤害。
         被火焰烧伤的敌人在 3 回合内造成的伤害减少 %d%% 。
         火墙不会阻挡移动。]], "tformat")
-t("Throw bottle of acid that removes sustain", "投掷酸液，解除对方的维持状态。", "_t")
+t("Throw bottle of acid that deals %d damage and removes %d sustain", "投掷酸液，造成 %d 伤害并解除对方的 %d 项维持状态。", "tformat")
 t([[Acid erupts all around your target, dealing %0.1f acid damage.
 		The acid attack is extremely distracting, and may remove up to %d sustains (depending on the Spell Save of the target).
 		The damage and chance to remove effects will increase with your Spellpower.]], [[酸液在目标周围爆发，造成 %0.1f 点酸性伤害。
 		酸性伤害具有腐蚀性，有一定概率除去至多 %d 个持续效果（需要通过对方的法术豁免）。
 		受法术强度影响，伤害和几率额外加成。]], "tformat")
-t("Throw a ball of lightning, daze and blind all targets.", "投掷闪电球，眩晕并致盲目标。", "tformat")
+t("Throw a ball of lightning, daze and blind all targets in radius %d for %d turns.", "投掷半径 %d 的闪电球，眩晕并致盲目标 %d 回合。", "tformat")
 t([[Throw a ball of lightning of radius %d, daze and blind all targets for %d turns.
         If the target resists the daze effect it is instead shocked, which halves stun/daze/pin resistance, for %d turns.
         ]], [[投掷半径 %d 的闪电球，眩晕并致盲目标 %d 回合。
         如果目标免疫了眩晕，则会被闪电震撼，减半震慑和定身免疫，持续 %d 回合。
         ]], "tformat")
-t("Create a frost shield reducing damage and critical hits", "制造寒冰护盾，减少伤害。", "tformat")
+t("Create a frost shield reducing damage by %d%% and critical hits by %d%% for %d turns.", "制造寒冰护盾，减少 %d%% 伤害和 %d%% 暴击伤害，持续 %d 回合。", "tformat")
 t([[Create a frost shield in range %d, reducing %d%% all incoming damage except fire, and reducing direct critical damage by %d%%.
         Frost shield lasts %d turns.]], [[投掷药水，为距离 %d 内的目标制造冰霜护盾，减少 %d%% 非火焰伤害，同时受到的暴击伤害减少 %d%%。
         冰霜护盾持续 %d 回合。]], "tformat")
@@ -110,9 +109,7 @@ t("Increase armor by %d , armor hardiness by %d%%, and decrease defense by %d fo
 t("Restore mana and gain massive spellpower.", "恢复法力并获得大量法术强度。", "tformat")
 t("Restore %d mana and gain %d spellpower in 6 turns", "恢复 %d 法力并获得 %d 法术强度，持续6回合。", "tformat")
 t("Becomes super lucky and may ignore incoming damage.", "变得非常幸运，可以躲闪伤害。", "tformat")
-t([[Becomes super lucky, have %d%% chance to ignore damage in 6 turns.
-        Chance increases with your luck.]], [[幸运提升，6回合内 %d%% 无视伤害。
-        几率受幸运加成。]], "tformat")
+t([[Becomes super lucky, have %d%% chance to ignore damage in 6 turns. Chance increases with your luck.]], [[幸运提升，6回合内 %d%% 无视伤害。几率受幸运加成。]], "tformat")
 t("Becomes much faster than before.", "大幅增加速度。", "tformat")
 t("Becomes extremely fast, gain %d%% movement speed and %d%% global speed for %d turns.", "速度大幅提升，增加 %d%% 移动速度和 %d%% 整体速度，持续 %d 回合", "tformat")
 
@@ -975,3 +972,8 @@ section "tome-new-alchemist/superload/mod/class/Actor.lua"
 
 t("You cannot prepare more than one bottle of special potions", "你不能准备多于一瓶特殊药剂。", "logPlayer")
 
+
+------------------------------------------------
+section "tome-new-alchemist/superload/mod/class/Object.lua"
+
+t("Gem related talents", "宝石相关技能", "_t")

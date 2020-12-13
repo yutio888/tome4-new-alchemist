@@ -28,7 +28,7 @@ newBirthDescriptor{
 	talents_types = {
 		["spell/new-explosive"]={true, 0.3},
 		["spell/new-golemancy"]={true, 0.3},
-		["spell/gem-spell"]={true, 0},
+		["spell/gem-spell"]={true, 0.3},
 		["spell/alchemy-potion"] = {true, 0.3},
 		["spell/alchemy-potions"] = {true, 0.3},
 		["spell/explosion-control"] = {false, 0.3},

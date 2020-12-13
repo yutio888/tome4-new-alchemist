@@ -131,8 +131,8 @@ newTalent {
         if t == talent then return end
         self:startTalentCooldown(t.id, 4)
     end,
-    range = function(self, t) return math.floor(self:combatTalentLimit(t, 9, 0.1, 4.1)) end,
-    radius = function(self, t) return math.max(0, math.floor(self:combatTalentLimit(t, 0, 4.1, 1.6))) end,
+    range = function(self, t) return math.max(0, math.floor(self:combatTalentLimit(t, 9, 0.1, 4.1))) end,
+    radius = function(self, t) return math.max(0, math.floor(self:combatTalentLimit(t, 0, 4.1, 2))) end,
     direct_hit = true,
     requires_target = true,
     target = function(self, t)

@@ -19,12 +19,12 @@ newTalent {
         t.ATTACK[damtype] = 2
         return t
     end,
-    cooldown = 3,
+    cooldown = 5,
     on_pre_use = function(self, t)
         return self:hasAlchemistWeapon()
     end,
     getDamage = function(self, t)
-        return self:combatTalentGemDamage(t, 120, 400)
+        return self:combatTalentGemDamage(t, 30, 420)
     end,
     action = function(self, t)
         local gem = self:hasAlchemistWeapon()
@@ -97,7 +97,7 @@ newTalent {
         return self:hasAlchemistWeapon()
     end,
     getDamage = function(self, t)
-        return self:combatTalentGemDamage(t, 100, 320)
+        return self:combatTalentGemDamage(t, 30, 320)
     end,
     on_learn = function(self, t)
         self:checkCanWearGem()

@@ -82,7 +82,7 @@ function bombUtil:getBaseDamage(self, t, ammo, tg)
 	if t.getBaseDamage then
 		dam = t.getBaseDamage(self, t)
 	else
-		dam = self:combatTalentSpellDamageBase(t, 0, 200, self:combatSpellpower(1, self:combatGemPower()))
+		dam = self:combatTalentSpellDamageBase(t, 20, 200, self:combatSpellpower(1, self:combatGemPower() / 2))
 	end
     dam = dam * (1 + inc_dam)
     local arg = emit_table[tg and tg.type or "ball"] or emit_table["ball"]
@@ -118,7 +118,7 @@ newTalent{
 	type = {"spell/new-explosive", 1},
 	require = spells_req1,
 	points = 5,
-	mana = 10,
+	mana = 5,
 	cooldown = 4,
 	range = function(self, t) return math.floor(self:combatTalentLimit(t, 15, 5.1, 9.1)) end,
 	radius = function(self, t) return self:callTalent(self.T_EXPLOSION_EXPERT_NEW, "getRadius") end,

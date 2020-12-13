@@ -14,6 +14,11 @@ local translation_table = {
     _t("Potion of Swiftness", "talent name"),
 }
 
+
+local function getFakeTalent(self)
+    return self:getTalentFromId(self.T_MANAGE_POTION_1)
+end
+
 local function newPotion(t)
     t.type = { "spell/alchemy-potions", 1 }
     local _range = t.range
@@ -121,10 +126,8 @@ local function newPotion(t)
     end
     local info = t.info
     t.info = function(self, tc)
-        --default talent level
-        local fake_t = self:getTalentFromId(self.T_MANAGE_POTION_1)
         return ([[%s
-        Left charges: %d]]):tformat(info(self, tc, fake_t), tc.charge(self, tc))
+        Left charges: %d]]):tformat(info(self, tc, getFakeTalent(self)), tc.charge(self, tc))
     end
     if not t.allowUse then
         t.allowUse = function(self, t) return true end
@@ -176,7 +179,7 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return ([[Throw the smoke bomb.]]):tformat(t.getDuration(self, t))
+        return ([[Produce smoke for %d turns.]]):tformat(t.getDuration(self, getFakeTalent(self) or t))
     end,
     info = function(self, t, fake_t)
         local duration = t.getDuration(self, fake_t or t)
@@ -256,7 +259,7 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return ([[Heal and cure, rid of poison and diseases.]]):tformat()
+        return ([[Heal %d and get rid of poison and diseases.]]):tformat(t.getHeal(self, getFakeTalent(self) or t))
     end,
     info = function(self, t, fake_t)
         return ([[Heal target for %d life and cure all poisons、diseases and wounds.
@@ -289,7 +292,11 @@ newPotion {
         return math.floor(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 1, 3))
     end,
     getReduce = function(self, t)
-        return math.ceil(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 5, 20))
+        if self:isTalentActive(self.T_MANAGE_POTION_3) then
+            return 1
+        else
+            return math.ceil(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 5, 20))
+        end
     end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
@@ -362,7 +369,8 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return _t"Create a fire wall that burns nearby foe"
+        local fake_t = getFakeTalent(self)
+        return ("Create a fire wall that burns nearby foe, length %d , dur %d , radius %d , dam %d"):tformat(t.getLength(self, fake_t or t), t.getDuration(self, fake_t or t), t.getFireRadius(self, fake_t or t), damDesc(self, DamageType.FIRE, t.getDamage(self, fake_t or t)))
     end,
     info = function(self, t, fake_t)
         return ([[Create a fiery wall of %d length that lasts for %d turns.
@@ -414,7 +422,9 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return _t"Throw bottle of acid that removes sustain"
+        local fake_t = getFakeTalent(self)
+        local damage = t.getDamage(self, fake_t or t)
+        return ("Throw bottle of acid that deals %d damage and removes %d sustain"):tformat(damDesc(self, DamageType.ACID, damage), t.getRemoveCount(self, fake_t or t))
     end,
     info = function(self, t, fake_t)
         local damage = t.getDamage(self, fake_t or t)
@@ -453,7 +463,8 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return ([[Throw a ball of lightning, daze and blind all targets.]]):tformat()
+        local fake_t = getFakeTalent(self)
+        return ([[Throw a ball of lightning, daze and blind all targets in radius %d for %d turns.]]):tformat(t.radius(self, fake_t or t), t.getDazeDuration(self, fake_t or t))
     end,
     info = function(self, t, fake_t)
         return ([[Throw a ball of lightning of radius %d, daze and blind all targets for %d turns.
@@ -479,7 +490,8 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return ([[Create a frost shield reducing damage and critical hits]]):tformat()
+        local fake_t = getFakeTalent(self)
+        return ([[Create a frost shield reducing damage by %d%% and critical hits by %d%% for %d turns.]]):tformat(t.getResists(self, fake_t or t), t.getCritShrug(self, fake_t or t), t.getDuration(self, fake_t or t))
     end,
     info = function(self, t, fake_t)
         return ([[Create a frost shield in range %d, reducing %d%% all incoming damage except fire, and reducing direct critical damage by %d%%.
@@ -497,7 +509,7 @@ newPotion {
         if self ~= game.player then return false end
         if config.settings.cheat then return true end
         local quest = game.player:hasQuest("brotherhood-of-alchemists")
-        return quest.winner == "Ungrol of Last Hope"
+        return quest and quest.winner == "Ungrol of Last Hope"
     end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
@@ -511,7 +523,7 @@ newPotion {
     end,
     isSpecialPotion = 5,
     short_info = function(self, t)
-        return ([[Greatly enchants armor while lowering defense.]]):tformat()
+        return t.info(self, t, getFakeTalent(self))
     end,
     info = function(self, t, fake_t)
         return ([[Increase armor by %d , armor hardiness by %d%%, and decrease defense by %d for 6 turns.]])
@@ -529,7 +541,7 @@ newPotion {
         if self ~= game.player then return false end
         if config.settings.cheat then return true end
         local quest = game.player:hasQuest("brotherhood-of-alchemists")
-        return quest.winner == "Marus of Elvala"
+        return quest and quest.winner == "Marus of Elvala"
     end,
     isSpecialPotion = 5,
     action = function(self, t)
@@ -544,7 +556,7 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return ([[Restore mana and gain massive spellpower.]]):tformat()
+        return t.info(self, t, getFakeTalent(self))
     end,
     info = function(self, t, fake_t)
         return ([[Restore %d mana and gain %d spellpower in 6 turns]])
@@ -561,7 +573,7 @@ newPotion {
         if self ~= game.player then return false end
         if config.settings.cheat then return true end
         local quest = game.player:hasQuest("brotherhood-of-alchemists")
-        return quest.winner == "Agrimley the hermit"
+        return quest and quest.winner == "Agrimley the hermit"
     end,
     isSpecialPotion = 5,
     action = function(self, t)
@@ -575,11 +587,10 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return ([[Becomes super lucky and may ignore incoming damage.]]):tformat()
+        return t.info(self, t, getFakeTalent(self))
     end,
     info = function(self, t, fake_t)
-        return ([[Becomes super lucky, have %d%% chance to ignore damage in 6 turns.
-        Chance increases with your luck.]]):tformat(t.getEvasion(self, fake_t or t))
+        return ([[Becomes super lucky, have %d%% chance to ignore damage in 6 turns. Chance increases with your luck.]]):tformat(t.getEvasion(self, fake_t or t))
     end,
 }
 
@@ -593,7 +604,7 @@ newPotion {
         if self ~= game.player then return false end
         if config.settings.cheat then return true end
         local quest = game.player:hasQuest("brotherhood-of-alchemists")
-        return quest.winner == "Stire of Derth"
+        return quest and quest.winner == "Stire of Derth"
     end,
     isSpecialPotion = 5,
     action = function(self, t)
@@ -607,7 +618,7 @@ newPotion {
         return true
     end,
     short_info = function(self, t)
-        return ([[Becomes much faster than before.]]):tformat()
+        return t.info(self, t, getFakeTalent(self))
     end,
     info = function(self, t, fake_t)
         return ([[Becomes extremely fast, gain %d%% movement speed and %d%% global speed for %d turns.]])
