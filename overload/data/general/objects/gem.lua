@@ -234,15 +234,15 @@ newGem("Ametrine", "object/ametrine.png", 1, 8, "yellow", 1, 10, 1, 20,
 )
 newGem("Zircon", "object/zircon.png", 1, 8, "yellow", 1, 10, 1, 20,
         { combat_armor = 10 },
-        { daze = { chance = 30, dur = 2 } }
+        { daze = { chance = 50, dur = 2 } }
 )
 newGem("Spinel", "object/spinel.png", 1, 8, "green", 1, 10, 1, 20,
         { combat_def = 4, combat_mentalresist = 4, combat_spellresist = 4, combat_physresist = 4, },
-        { splash = { type = "POISON", dam = 20, desc = _t "Deals %d%% extra poison damage" } }
+        { splash = { type = "POISON", dam = 50, desc = ("Deals %d%% extra poison damage"):tformat(50) } }
 )
 newGem("Citrine", "object/citrine.png", 1, 8, "yellow", 1, 10, 1, 20,
         { lite = 4, infravision = 4, },
-        { splash = { type = "LITE", dam = 1, desc = _t "Lights terrain (power 1)" } }
+        { splash = { type = "LITE", dam = 100, desc = _t "Lights terrain (power 100)" } }
 )
 newGem("Agate", "object/agate.png", 1, 8, "black", 1, 10, 1, 20,
         { inc_stats = { [Stats.STAT_STR] = 2, [Stats.STAT_DEX] = 2, [Stats.STAT_MAG] = 2, [Stats.STAT_WIL] = 2, [Stats.STAT_CUN] = 2, [Stats.STAT_CON] = 2, } },

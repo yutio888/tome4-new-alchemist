@@ -6,7 +6,6 @@ newTalent {
     mana = 15,
     cooldown = 3,
     fixed_cooldown = true,
-    no_unlearn_last = true,
     direct_hit = true,
     requires_target = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
@@ -60,7 +59,6 @@ newTalent {
     mana = 30,
     cooldown = 8,
     fixed_cooldown = true,
-    no_unlearn_last = true,
     direct_hit = true,
     requires_target = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent, x, y, startx, starty)
@@ -126,13 +124,12 @@ newTalent {
     mana = 45,
     cooldown = 12,
     fixed_cooldown = true,
-    no_unlearn_last = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
         if t == talent then return end
         self:startTalentCooldown(t.id, 4)
     end,
     range = function(self, t) return math.max(0, math.floor(self:combatTalentLimit(t, 9, 0.1, 4.1))) end,
-    radius = function(self, t) return math.max(0, math.floor(self:combatTalentLimit(t, 0, 4.1, 2))) end,
+    radius = function(self, t) return math.max(0, math.floor(self:combatTalentLimit(t, 0, 4.1, 1.9))) end,
     direct_hit = true,
     requires_target = true,
     target = function(self, t)
@@ -201,7 +198,6 @@ newTalent {
     mana = 60,
     cooldown = 16,
     fixed_cooldown = true,
-    no_unlearn_last = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
         if t == talent then return end
         self:startTalentCooldown(t.id, 4)

@@ -10,7 +10,8 @@ end
 function _M:combatTalentGemDamage(t, base, max)
     local gem = self:hasAlchemistWeapon()
     if not gem then return 0 end
-    return self:combatTalentSpellDamageBase(t, base, max, self:combatSpellpower(1, self:combatGemPower()))
+    local max = self:combatTalentScale(self:getTalentLevel(t), base, max, 0.25)
+    return self:combatTalentScale(gem.material_level, max/3, max, 3)
 end
 
 function _M:combatGemPower()

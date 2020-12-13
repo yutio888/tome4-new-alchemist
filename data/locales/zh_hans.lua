@@ -659,7 +659,7 @@ t("Deals %d%% extra physical knockback damage", "造成%d%%额外物理击退伤
 t("Increases healing factor by 30% for 3 turns (stacks for 3 times)", "3回合内治疗系数上升30%（可堆叠至三倍）", "_t")
 t("50% chance to cleanse one magical debuff", "50%概率解除一项魔法负面状态", "_t")
 t("gain 20 defense for 5 turns", "5回合内闪避上升20", "_t")
-t("Deals %d%% extra poison damage", "造成%d%%额外毒素伤害", "_t")
+t("Deals %d%% extra poison damage", "造成%d%%额外毒素伤害", "tformat")
 -- new text
 --[==[
 t("Gain one free move in 2 turns (stacks for 3 times", "Gain one free move in 2 turns (stacks for 3 times", "_t")

@@ -82,7 +82,7 @@ function bombUtil:getBaseDamage(self, t, ammo, tg)
 	if t.getBaseDamage then
 		dam = t.getBaseDamage(self, t)
 	else
-		dam = self:combatTalentSpellDamageBase(t, 20, 200, self:combatSpellpower(1, self:combatGemPower() / 2))
+		dam = self:combatTalentSpellDamageBase(t, 30, 200, self:combatSpellpower(1, self:combatGemPower() / 2))
 	end
     dam = dam * (1 + inc_dam)
     local arg = emit_table[tg and tg.type or "ball"] or emit_table["ball"]

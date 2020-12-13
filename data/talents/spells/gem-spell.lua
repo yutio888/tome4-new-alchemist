@@ -24,7 +24,7 @@ newTalent {
         return self:hasAlchemistWeapon()
     end,
     getDamage = function(self, t)
-        return self:combatTalentGemDamage(t, 30, 420)
+        return self:combatTalentGemDamage(t, 120, 350)
     end,
     action = function(self, t)
         local gem = self:hasAlchemistWeapon()
@@ -97,7 +97,7 @@ newTalent {
         return self:hasAlchemistWeapon()
     end,
     getDamage = function(self, t)
-        return self:combatTalentGemDamage(t, 30, 320)
+        return self:combatTalentGemDamage(t, 100, 250)
     end,
     on_learn = function(self, t)
         self:checkCanWearGem()

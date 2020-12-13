@@ -140,7 +140,7 @@ newPotion {
     icon = "object/elixir_of_stoneskin.png",
     tactical = { DISABLE = 1, ESCAPE = 2 },
     getDuration = function(self, t)
-        return math.ceil(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 2, 7))
+        return math.ceil(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 2, 5))
     end,
     target = function(self, t)
         return { type = "ball", range = self:getTalentRange(t), radius = 2, talent = t }
