@@ -27,6 +27,7 @@ function _M:getGemDamageType()
 end
 
 function _M:triggerGemAreaEffect(gem, grids)
+    if not gem then return end
     if gem.alchemist_bomb and gem.alchemist_bomb.splash and gem.alchemist_bomb.splash.type == "LITE" then
         if grids then
             for px, ys in pairs(grids or {}) do
@@ -36,10 +37,21 @@ function _M:triggerGemAreaEffect(gem, grids)
             end
         end
     end
+    if gem.alchemist_bomb and gem.alchemist_bomb.leech then
+        local nb = self.turn_procs.alchemist_bomb_leech or 0
+        self.turn_procs.alchemist_bomb_leech = nb + 1
+        self:heal(math.max(dam, self.max_life * gem.alchemist_bomb.leech) / (100 * math.pow(2, nb)), gem)
+    end
+    if gem.alchemist_bomb and gem.alchemist_bomb.mana then
+        local nb = self.turn_procs.alchemist_bomb_mana or 0
+        self.turn_procs.alchemist_bomb_mana = nb + 1
+        self:incMana(gem.alchemist_bomb.mana / math.pow(2, nb))
+    end
     if gem.alchemist_bomb and gem.alchemist_bomb.special_area then gem.alchemist_bomb.special_area(self, gem, grids) end
 end
 
 function _M:triggerGemEffect(target, gem, dam)
+    if not gem then return dam end
     if gem.alchemist_bomb and gem.alchemist_bomb.splash and gem.alchemist_bomb.splash.type and gem.alchemist_bomb.splash.type ~= "LITE" then
         local gdam = gem.alchemist_bomb.splash.dam
         if type(gdam) == "number" then
@@ -52,16 +64,6 @@ function _M:triggerGemEffect(target, gem, dam)
     end
     if gem.alchemist_bomb and gem.alchemist_bomb.daze and rng.percent(gem.alchemist_bomb.daze.chance) and target:canBe("stun") then
         target:setEffect(target.EFF_DAZED, gem.alchemist_bomb.daze.dur, {apply_power=self:combatSpellpower()})
-    end
-    if gem.alchemist_bomb and gem.alchemist_bomb.leech then
-        local nb = self.turn_procs.alchemist_bomb_leech or 0
-        self.turn_procs.alchemist_bomb_leech = nb + 1
-        self:heal(math.max(dam, self.max_life * gem.alchemist_bomb.leech) / (100 * math.pow(2, nb)), gem)
-    end
-    if gem.alchemist_bomb and gem.alchemist_bomb.mana then
-        local nb = self.turn_procs.alchemist_bomb_mana or 0
-        self.turn_procs.alchemist_bomb_mana = nb + 1
-        self:incMana(gem.alchemist_bomb.mana / math.pow(2, nb))
     end
     if gem.alchemist_bomb and gem.alchemist_bomb.special then gem.alchemist_bomb.special(self, gem, target, dam) end
 

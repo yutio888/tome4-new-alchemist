@@ -22,6 +22,7 @@ end
 local function newPotion(t)
     t.type = { "spell/alchemy-potions", 1 }
     local _range = t.range
+    t.never_fail = true -- potions are similar to object skill, that should never fail
     t.range = function(self, t)
         if self:isTalentActive(self.T_MANAGE_POTION_3) then
             return self:getTalentRange(self:getTalentFromId(self.T_MANAGE_POTION_3))
@@ -48,9 +49,11 @@ local function newPotion(t)
             return { type = "cone", range = 0, cone_angle = 120, radius = self:getTalentRange(t), talent = t, selffire = true, player_selffire = true }
         end
         if not target then
-            return { type = "hit", range = self:getTalentRange(t), talent = t }
+            return { type = "hit", range = self:getTalentRange(t), talent = t, nowarning = true }
         else
-            return target(self, t)
+            local checkTarget = target(self, t)
+            checkTarget.nowarning = true
+            return checkTarget
         end
     end
     t.speed = function(self, t)

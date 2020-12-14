@@ -9,6 +9,7 @@ newTalent{
 	cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 4, 20, 12)) end, -- Limit to > 4
 	tactical = { DEFEND = 1, ATTACK=1 },
 	getPower = function(self, t) return self:combatTalentSpellDamage(t, 20, 60) end,
+	getPassivePower = function(self, t) return self:combatTalentScale(t, 20, 60) end,
 	getSpeedBoost = function(self, t) return self:combatTalentScale(t, 10, 50) end,
 	getDuration = function(self, t) return 7 end,
 	action = function(self, t)
@@ -28,14 +29,20 @@ newTalent{
 		game:playSoundNear(self, "talents/arcane")
 		return true
 	end,
+	passives = function(self, t, p)
+		if not self.alchemy_golem then return end -- Safety net
+		self:talentTemporaryValue(p, "alchemy_golem", {combat_spellpower=t.getPower(self, t), combat_dam = t.getPower(self, t)})
+	end,
 	info = function(self, t)
         local dur = t.getDuration(self, t)
 		local speed = t.getSpeedBoost(self, t)
 		local power = t.getPower(self, t)
+		local passive = t.getPassivePower(self, t)
 		return ([[You activate a special mode of your golem, boosting its speed by %d%% for %d turns.
         While supercharged, your golem is enraged and deals %d%% more damage.
+        Also, learn this talent will grant your golem %d spellpower and physical power.
         Damage boost scales with your spellpower.]]):
-		tformat(speed, dur, power)
+		tformat(speed, dur, power, passive)
 	end,
 }
 
@@ -143,7 +150,6 @@ newTalent {
         end
         return self:combatTalentSpellDamage(t, 0, 100, golem:combatSpellpower())
     end,
-    getPower = function(self, t) return self:combatTalentScale(t, 20, 60) end,
     action = function(self, t)
         local mover, golem = getGolem(self)
         if not golem then
@@ -159,17 +165,12 @@ newTalent {
         golem:setEffect(golem.EFF_ULTIMATE_POWER, t.getDuration(self, t), {stats = stats , power = power, dam = t.getDamage(self, t)})
         return true
     end,
-    passives = function(self, t, p)
-        if not self.alchemy_golem then return end -- Safety net
-        self:talentTemporaryValue(p, "alchemy_golem", {combat_spellpower=t.getPower(self, t), combat_dam = t.getPower(self, t)})
-    end,
     info = function(self, t)
         return([[Infuse your golem with #GOLD#ULTIMATE POWER#LAST#!
         In %d turns, your golem gains great fury, automatically dealing %0.2f elemental damage (fire/cold/lightning/acid, selected randomly) to foes in radius 6 at the start of each turn.
         While in fury state, your golem's stats are increased by %d, and if it is already supercharged, will gain %d%% additional damage boost.
-        Also, learn this talent will grant your golem %d spellpower and physical power.
         The stat and damage boost scales with your golem's spellpower.
-        ]]):tformat(t.getDuration(self, t), t.getDamage(self, t),  t.getStatsBoost(self, t), t.getStatsBoost(self, t), t.getPower(self, t))
+        ]]):tformat(t.getDuration(self, t), t.getDamage(self, t),  t.getStatsBoost(self, t), t.getStatsBoost(self, t))
     end,
 
 

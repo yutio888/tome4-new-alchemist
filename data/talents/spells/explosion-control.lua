@@ -3,8 +3,8 @@ newTalent {
     type = { "spell/explosion-control", 1},
     require = spells_req_high1,
     points = 5,
-    mana = -15,
-    cooldown = 3,
+    mana = 5,
+    cooldown = 12,
     fixed_cooldown = true,
     direct_hit = true,
     requires_target = true,
@@ -25,7 +25,7 @@ newTalent {
         if self:knowTalent(self.T_THROW_BOMB_NEW) then return true end
     end,
     calcFurtherDamage = function(self, t, tg, ammo, x, y, dam)
-        return dam * 1.8
+        return dam * 1.3 * math.min(2, 1 + 0.2 * (self.consecutive_bombs or 0))
     end,
     action = function(self, t)
         local ammo = self:hasAlchemistWeapon()
@@ -37,17 +37,32 @@ newTalent {
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
         if not x or not y then return nil end
+        local nb = self.turn_procs.consecutive_bomb or 0
         bombUtil:throwBomb(self, t, ammo, tg, x, y)
         game:playSoundNear(self, "talents/arcane")
-        return true
+        self.consecutive_bombs = nb + 1
+        self.bombproc = true
+        return true, { ignore_cd = true }
+    end,
+    callbackOnActEnd = function(self, t)
+        self.consecutive_bombs = self.consecutive_bombs or 0
+        if self.consecutive_bombs > 0 then
+            if not self.bombproc then
+                self:startTalentCooldown(t)
+                self.consecutive_bombs = 0
+            end
+        end
+        self.bombproc = nil
     end,
     info = function(self, t)
         local ammo = self:hasAlchemistWeapon()
         local dam, damtype = 1, DamageType.PHYSICAL
         if ammo then dam, damtype = bombUtil:getBaseDamage(self, t, ammo) end
         return([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
+        This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this into cooldown.
+        Each successful activation will increase damage of the following beam by 20%%, up to 100%%.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
-        ]]):tformat(damDesc(self, damtype, dam * 1.8), DamageType:get(damtype).name)
+        ]]):tformat(damDesc(self, damtype, dam * 1.3), DamageType:get(damtype).name)
     end,
 }
 
@@ -64,7 +79,9 @@ newTalent {
     callbackOnAlchemistBomb = function(self, t, tgts, talent, x, y, startx, starty)
         if t == talent then
             for _, l in ipairs(tgts) do
-                l.target:knockback(startx or x, starty or y, 4)
+                if l.target:canBe("knockback") then
+                    l.target:knockback(startx or x, starty or y, 6)
+                end
             end
             return
         end
