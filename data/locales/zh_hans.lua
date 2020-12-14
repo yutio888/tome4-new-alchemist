@@ -167,12 +167,17 @@ section "tome-new-alchemist/data/talents/spells/explosion-control.lua"
 
 t("Throw Bomb: Beam Mode", "投掷炸弹：射线模式", "talent name")
 t("You need to ready gems in your quiver.", "你需要准备宝石。", "logPlayer")
+t("Current Damage: %0.2f %s", "当前伤害： %0.2f %s", "tformat")
 t([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
+        This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this into cooldown.
+        Each successful activation will increase damage of the following beams by 20%%, up to 100%%.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
-        ]], [[向一块宝石内灌输爆炸能量，触发一次宽射线类型的 %0.2f %s 伤害。 
+        %s]],[[向一块宝石内灌输爆炸能量，触发一次宽射线类型的 %0.2f %s 伤害。
+        该技能可以连续使用而不进入冷却，但任何非瞬间的其他行为会使该技能进入冷却。
+        每次成功使用，会让后续伤害增加20%%，最多增加100%%。
         你必须学会炸弹投掷技能才能使用该技能。
         使用其他投掷炸弹的技能会让该技能进入4回合冷却。
-        ]], "tformat")
+        %s]], "tformat")
 t("Throw Bomb: Cone Mode", "投掷炸弹：锥形模式", "talent name")
 t([[Throw bomb to target location, then making it explode in a radius %d cone, dealing %0.2f %s damage and knocking them back.
         You can choose the direction of the explosion.

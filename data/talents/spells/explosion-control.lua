@@ -4,7 +4,7 @@ newTalent {
     require = spells_req_high1,
     points = 5,
     mana = 5,
-    cooldown = 12,
+    cooldown = 16,
     fixed_cooldown = true,
     direct_hit = true,
     requires_target = true,
@@ -58,11 +58,17 @@ newTalent {
         local ammo = self:hasAlchemistWeapon()
         local dam, damtype = 1, DamageType.PHYSICAL
         if ammo then dam, damtype = bombUtil:getBaseDamage(self, t, ammo) end
+        local nb = self.consecutive_bombs or 0
+        local futher_info = ""
+        if nb >= 0 then
+            local ndam = dam * 1.3 * (math.min(2, 1 + 0.2 * nb))
+            futher_info = ("Current Damage: %0.2f %s"):tformat(damDesc(self, damtype, ndam), DamageType:get(damtype).name)
+        end
         return([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
-        This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this into cooldown.
-        Each successful activation will increase damage of the following beam by 20%%, up to 100%%.
+        This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this on cooldown.
+        Each successful activation will increase damage of the following beams by 20%%, up to 100%%.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
-        ]]):tformat(damDesc(self, damtype, dam * 1.3), DamageType:get(damtype).name)
+        %s]]):tformat(damDesc(self, damtype, dam * 1.3), DamageType:get(damtype).name)
     end,
 }
 

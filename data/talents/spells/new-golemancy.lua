@@ -345,13 +345,18 @@ newTalent {
     points = 1,
     cant_steal = true,
     getGemNB = function(self, t)
-        nb = 0
-        self:inventoryApplyAll(function(inven, item, obj)
-        	if obj.type == "gem" then nb = nb + obj.material_level or 1 end
-        end)
+        local nb = 0
+		for inven_id, inven in pairs(self.inven) do
+			if inven.worn then
+				for item, o in ipairs(inven) do
+					if o and item and o.type == "gem" then
+						nb = nb + o.material_level or 1
+					end
+				end
+			end
+		end
         return nb
     end,
-
     passives = function(self, t, p)
         local nb = t.getGemNB(self, t)
     	self:talentTemporaryValue(p, "combat_armor", nb * 6)
@@ -363,6 +368,9 @@ newTalent {
     callbackOnTakeoff = function(self, t, o, bypass_set)
     	self:updateTalentPassives(t)
     end,
+	on_learn = function(self, t)
+		self:updateTalentPassives(t)
+	end,
     info = function(self, t)
         return ([[Golem's armor is increased by 6 per gem's tier, and resistance is increased by 3 per gem's tier.]]):tformat()
     end,
