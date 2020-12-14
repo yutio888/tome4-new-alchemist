@@ -169,12 +169,12 @@ t("Throw Bomb: Beam Mode", "投掷炸弹：射线模式", "talent name")
 t("You need to ready gems in your quiver.", "你需要准备宝石。", "logPlayer")
 t("Current Damage: %0.2f %s", "当前伤害： %0.2f %s", "tformat")
 t([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
-        This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this into cooldown.
-        Each successful activation will increase damage of the following beams by 20%%, up to 100%%.
+        This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this on cooldown.
+        Each successful activation will increase damage of the following beams by 10%%, up to 50%%.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
         %s]],[[向一块宝石内灌输爆炸能量，触发一次宽射线类型的 %0.2f %s 伤害。
         该技能可以连续使用而不进入冷却，但任何非瞬间的其他行为会使该技能进入冷却。
-        每次成功使用，会让后续伤害增加20%%，最多增加100%%。
+        每次成功使用，会让后续伤害增加10%%，最多增加50%%。
         你必须学会炸弹投掷技能才能使用该技能。
         使用其他投掷炸弹的技能会让该技能进入4回合冷却。
         %s]], "tformat")
@@ -299,8 +299,10 @@ t("Supercharge Golem", "超载傀儡", "talent name")
 t("Your golem is currently inactive.", "你的傀儡暂时处于未激活状态。", "logPlayer")
 t([[You activate a special mode of your golem, boosting its speed by %d%% for %d turns.
         While supercharged, your golem is enraged and deals %d%% more damage.
+        Also, learn this talent will grant your golem %d spellpower and physical power.
         Damage boost scales with your spellpower.]], [[激活傀儡，加速 %d%% ， 持续 %d 回合。
         同时，傀儡造成的伤害增加 %d%% 。
+        此外，学习该技能会使傀儡的法术和物理强度上升 %d 。
         伤害加成随法术强度增加。]], "tformat")
 t("Golem Portal", "傀儡传送", "talent name")
 t([[Teleport to your golem, while your golem teleports to your location. Your foes will be confused, and those that were attacking you will have a %d%% chance to target your golem instead.
@@ -314,12 +316,10 @@ t("Golem's Fury", "傀儡之怒", "talent name")
 t([[Infuse your golem with #GOLD#ULTIMATE POWER#LAST#!
         In %d turns, your golem gains great fury, automatically dealing %0.2f elemental damage (fire/cold/lightning/acid, selected randomly) to foes in radius 6 at the start of each turn.
         While in fury state, your golem's stats are increased by %d, and if it is already supercharged, will gain %d%% additional damage boost.
-        Also, learn this talent will grant your golem %d spellpower and physical power.
         The stat and damage boost scales with your golem's spellpower.
         ]], [[激活傀儡的#GOLD#终极能量#LAST#!
         %d 回合内，傀儡会对周围6格内的敌人造成 %0.2f 随机元素伤害。
         此外，傀儡的属性上升 %d ，且如果已经处于超载状态，会额外增加 %d%% 伤害。
-        学习该技能会增加傀儡 %d 法术和物理强度。
         属性和伤害加成随傀儡的法术强度增加。
         ]], "tformat")
 -- untranslated text

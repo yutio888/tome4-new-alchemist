@@ -25,7 +25,7 @@ newTalent {
         if self:knowTalent(self.T_THROW_BOMB_NEW) then return true end
     end,
     calcFurtherDamage = function(self, t, tg, ammo, x, y, dam)
-        return dam * 1.3 * math.min(2, 1 + 0.2 * (self.consecutive_bombs or 0))
+        return dam * 1.6 * math.min(1.5, 1 + 0.1 * (self.consecutive_bombs or 0))
     end,
     action = function(self, t)
         local ammo = self:hasAlchemistWeapon()
@@ -37,22 +37,21 @@ newTalent {
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
         if not x or not y then return nil end
-        local nb = self.turn_procs.consecutive_bomb or 0
+        local nb = self.consecutive_bombs or 0
         bombUtil:throwBomb(self, t, ammo, tg, x, y)
         game:playSoundNear(self, "talents/arcane")
         self.consecutive_bombs = nb + 1
-        self.bombproc = true
+        self.turn_procs.bombproc = true
         return true, { ignore_cd = true }
     end,
     callbackOnActEnd = function(self, t)
         self.consecutive_bombs = self.consecutive_bombs or 0
         if self.consecutive_bombs > 0 then
-            if not self.bombproc then
+            if not self:hasProc("bombproc") then
                 self:startTalentCooldown(t)
                 self.consecutive_bombs = 0
             end
         end
-        self.bombproc = nil
     end,
     info = function(self, t)
         local ammo = self:hasAlchemistWeapon()
@@ -60,15 +59,15 @@ newTalent {
         if ammo then dam, damtype = bombUtil:getBaseDamage(self, t, ammo) end
         local nb = self.consecutive_bombs or 0
         local futher_info = ""
-        if nb >= 0 then
-            local ndam = dam * 1.3 * (math.min(2, 1 + 0.2 * nb))
+        if nb > 0 then
+            local ndam = dam * 1.6 * (math.min(1.5, 1 + 0.1 * nb))
             futher_info = ("Current Damage: %0.2f %s"):tformat(damDesc(self, damtype, ndam), DamageType:get(damtype).name)
         end
         return([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
         This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this on cooldown.
-        Each successful activation will increase damage of the following beams by 20%%, up to 100%%.
+        Each successful activation will increase damage of the following beams by 10%%, up to 50%%.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
-        %s]]):tformat(damDesc(self, damtype, dam * 1.3), DamageType:get(damtype).name)
+        %s]]):tformat(damDesc(self, damtype, dam * 1.3), DamageType:get(damtype).name, futher_info)
     end,
 }
 

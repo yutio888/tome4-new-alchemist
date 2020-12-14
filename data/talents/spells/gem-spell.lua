@@ -19,7 +19,7 @@ newTalent {
         t.ATTACK[damtype] = 2
         return t
     end,
-    cooldown = 4,
+    cooldown = 5,
     on_pre_use = function(self, t)
         return self:hasAlchemistWeapon()
     end,

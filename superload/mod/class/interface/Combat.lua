@@ -10,8 +10,8 @@ end
 function _M:combatTalentGemDamage(t, base, max)
     local gem = self:hasAlchemistWeapon()
     if not gem then return 0 end
-    local max = self:combatTalentScale(self:getTalentLevel(t), base, max, 0.25)
-    return self:combatTalentScale(gem.material_level, max/3, max, 3)
+    local max = self:combatTalentLimit(self:getTalentLevel(t), max * 1.5, base, max)
+    return self:combatTalentScale(gem.material_level, max/3, max, 1)
 end
 
 function _M:combatGemPower()
