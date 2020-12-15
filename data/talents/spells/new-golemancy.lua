@@ -332,8 +332,8 @@ newTalent{
 	info = function(self, t)
 		local heal = t.getHeal(self, t)
 		return ([[Take care of your golem:
-		- If it is destroyed, you will take some time to reconstruct it (this takes 15 alchemist gems and 20 turns).
-		- If it is alive but hurt, you will be able to repair it for %d (takes 2 alchemist gems). Spellpower, alchemist gem and Golem Power talent all influence the healing done.]]):
+		- If it is destroyed, you will take some time to reconstruct it (this takes 20 turns).
+		- If it is alive but hurt, you will be able to repair it for %d . Spellpower, alchemist gem and Golem Power talent all influence the healing done.]]):
 		tformat(heal)
 	end,
 }
