@@ -29,3 +29,13 @@ load("/data-new-alchemist/talents/spells/gem-spell.lua")
 load("/data-new-alchemist/talents/spells/alchemy-potions.lua")
 load("/data-new-alchemist/talents/spells/new-alchemy-potion.lua")
 load("/data-new-alchemist/talents/spells/explosion-control.lua")
+
+
+techs_req1 = Talents.main_env.techs_req1
+techs_req2 = Talents.main_env.techs_req2
+techs_req3 = Talents.main_env.techs_req3
+techs_req4 = Talents.main_env.techs_req4
+techs_req5 = Talents.main_env.techs_req5
+newTalentType{ type="golem/new-fighting", name = _t"fighting", description = _t"Golem melee capacity." }
+newTalentType{ type="golem/new-arcane", no_silence=true, is_spell=true, name = _t"arcane", description = _t"Golem arcane capacity." }
+newTalentType{ type="golem/energy", no_silence=true, is_spell=true, name=_t"energy", description=_t"Golem energy capacity."}

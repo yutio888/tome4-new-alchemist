@@ -546,38 +546,86 @@ newTalent{
 }
 
 newTalent{
-	name = "Dynamic Recharge", short_name = "DYNAMIC_RECHARGE_NEW",
+	name = "Golem Portal", short_name = "DYNAMIC_RECHARGE_NEW", image = "talents/dodging_new.png",
 	type = {"spell/new-golemancy",4},
 	require = spells_req4,
-    mode = "passive",
 	points = 5,
-	getChance = function(self, t) return math.floor(self:combatTalentLimit(t, 100, 35, 75)) end,
-	getNb = function(self, t) return self:getTalentLevel(t) <= 5 and 1 or 2 end,
-	callbackOnAlchemistBomb = function(self, t, tgts)
-	    for _, l in ipairs(tgts) do
-	        local target = l.target
-	        local golem = self.alchemy_golem
-	        if target == self.alchemy_golem then
-	            local tids = table.keys(golem.talents_cd)
-    		    local did_something = false
-    		    local nb = t.getNb(self, t)
-    		    for _, tid in ipairs(tids) do
-    			    if golem.talents_cd[tid] > 0 and rng.percent(t.getChance(self, t)) then
-    			    	golem.talents_cd[tid] = golem.talents_cd[tid] - nb
-    				    if golem.talents_cd[tid] <= 0 then golem.talents_cd[tid] = nil end
-    			    	did_something = true
-    			    end
-    		    end
-    		    if did_something then
-    			    game.logSeen(golem, "%s is energized by the attack, reducing some talent cooldowns!", golem.name:capitalize())
-    		    end
-    		    return
-    		end
-        end
+	mana = 30,
+	cant_steal = true,
+	tactical = { DEFEND = 2, ESCAPE = 2 },
+	getDuration = function(self, t) return math.floor(self:combatTalentLimit(t, 8, 2, 5)) end, -- Limit < 8
+	cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 8, 25, 15)) end, -- Limit to > 8
+	action = function(self, t)
+		local mover, golem = getGolem(self)
+		if not golem then
+			game.logPlayer(self, "Your golem is currently inactive.")
+			return
+		end
+
+		local chance = math.min(100, self:getTalentLevel(t) * 15 + 25)
+		local px, py = self.x, self.y
+		local gx, gy = golem.x, golem.y
+
+		self:move(gx, gy, true)
+		golem:move(px, py, true)
+		self:move(gx, gy, true)
+		golem:move(px, py, true)
+		game.level.map:particleEmitter(px, py, 1, "teleport")
+		game.level.map:particleEmitter(gx, gy, 1, "teleport")
+
+		for uid, e in pairs(game.level.entities) do
+			if e.getTarget then
+				local _, _, tgt = e:getTarget()
+				if e:reactionToward(self) < 0 and tgt == self and rng.percent(chance) then
+					e:setTarget(golem)
+					golem:logCombat(e, "#Target# focuses on #Source#.")
+				end
+			end
+		end
+
+		self:setEffect(self.EFF_EVASION, t.getDuration(self, t), {chance = 50})
+		golem:setEffect(golem.EFF_EVASION, t.getDuration(self, t), {chance = 50})
+		return true
 	end,
 	info = function(self, t)
-		return ([[Your bombs energize your golem.
-		All talents on cooldown on your golem have %d%% chance to be reduced by %d.]]):
-		tformat(t.getChance(self, t), t.getNb(self, t))
+		return ([[Teleport to your golem, while your golem teleports to your location. Your foes will be confused, and those that were attacking you will have a %d%% chance to target your golem instead.
+        After teleportation, you and your golem gain 50%% evasion for %d turns.]]):
+		tformat(math.min(100, self:getTalentLevel(t) * 15 + 25), t.getDuration(self, t))
 	end,
 }
+--newTalent{
+--	name = "Dynamic Recharge", short_name = "DYNAMIC_RECHARGE_NEW",
+--	type = {"spell/new-golemancy",4},
+--	require = spells_req4,
+--    mode = "passive",
+--	points = 5,
+--	getChance = function(self, t) return math.floor(self:combatTalentLimit(t, 100, 35, 75)) end,
+--	getNb = function(self, t) return self:getTalentLevel(t) <= 5 and 1 or 2 end,
+--	callbackOnAlchemistBomb = function(self, t, tgts)
+--	    for _, l in ipairs(tgts) do
+--	        local target = l.target
+--	        local golem = self.alchemy_golem
+--	        if target == self.alchemy_golem then
+--	            local tids = table.keys(golem.talents_cd)
+--    		    local did_something = false
+--    		    local nb = t.getNb(self, t)
+--    		    for _, tid in ipairs(tids) do
+--    			    if golem.talents_cd[tid] > 0 and rng.percent(t.getChance(self, t)) then
+--    			    	golem.talents_cd[tid] = golem.talents_cd[tid] - nb
+--    				    if golem.talents_cd[tid] <= 0 then golem.talents_cd[tid] = nil end
+--    			    	did_something = true
+--    			    end
+--    		    end
+--    		    if did_something then
+--    			    game.logSeen(golem, "%s is energized by the attack, reducing some talent cooldowns!", golem.name:capitalize())
+--    		    end
+--    		    return
+--    		end
+--        end
+--	end,
+--	info = function(self, t)
+--		return ([[Your bombs energize your golem.
+--		All talents on cooldown on your golem have %d%% chance to be reduced by %d.]]):
+--		tformat(t.getChance(self, t), t.getNb(self, t))
+--	end,
+--}
