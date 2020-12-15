@@ -1,6 +1,19 @@
 local _M = loadPrevious(...)
 local Talents = require "engine.interface.ActorTalents"
 _M.sustainCallbackCheck.callbackOnAlchemistBomb = "talents_on_alchemist_bomb"
+
+local transmoInven = _M.transmoInven
+function _M:transmoInven(inven, idx, o, transmo_source)
+    transmo_source = transmo_source or self.default_transmo_source
+    if (not transmo_source and not self:attr("has_transmo_orcs")) or (transmo_source and transmo_source.define_as == "APE") then return transmoInven(self, inven, idx, o, transmo_source) end
+    if o.metallic and self:knowTalent(self.T_EXTRACT_GEMS) and self:getTalentLevelRaw(self.T_EXTRACT_GEMS) >= o.material_level then
+        local talent = self:getTalentFromId(self.T_EXTRACT_GEMS)
+        talent.extractGem(self, talent, o, inven, idx)
+        return
+    end
+    return transmoInven(self, inven, idx, o, transmo_source)
+end
+
 local _getObjectOffslot = _M.getObjectOffslot
 function _M:getObjectOffslot(o)
     if o.type == "gem" then
