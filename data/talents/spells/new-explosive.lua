@@ -118,7 +118,7 @@ newTalent{
 	type = {"spell/new-explosive", 1},
 	require = spells_req1,
 	points = 5,
-	mana = 5,
+	mana = function(self, t) if self:isTalentActive(self.T_CHAIN_BLASTING) then return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 5 else return 5 end end,
 	cooldown = 4,
 	range = function(self, t) return math.floor(self:combatTalentLimit(t, 15, 5.1, 9.1)) end,
 	radius = function(self, t) return self:callTalent(self.T_EXPLOSION_EXPERT_NEW, "getRadius") end,
@@ -260,16 +260,27 @@ newTalent {
     name = "Fast Recharge", short_name = "CHAIN_BLASTING", image = "talents/shockwave_bomb.png",
     type = {"spell/new-explosive", 4},
   	require = spells_req4,
-    mode = "passive",
+    mode = "sustained",
     points = 5,
+	sustain_mana = 30,
+	getManaCost = function(self, t)
+		return 20
+	end,
     getChance = function(self, t)
         local ammo = self:hasAlchemistWeapon()
         local power = self:combatGemPower(ammo)
-        return self:combatTalentLimit(t, 35, 5, 25) * (1 + power * 0.01)
+        return self:combatTalentLimit(t, 35, 5, 25) * (1 + power * 0.005)
     end,
+	activate = function(self, t)
+		return {}
+	end,
+	deactivate = function(self, t)
+		return true
+	end,
     info = function(self, t)
         return ([[Your Throw Bomb talent now have %d%% chance to not go on cooldown.
+        Activating this talent will increase the mana cost of Throw Bomb talent by %d .
         Chances increases with your gem tier.]])
-        :tformat(t.getChance(self, t))
+        :tformat(t.getChance(self, t), t.getManaCost(self, t))
     end,
 }

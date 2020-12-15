@@ -405,11 +405,13 @@ t([[Grants protection against external elemental damage (fire, cold, lightning a
                 此外，每次你受到元素伤害时，你可以恢复 %d 法力。]], "tformat")
 t("Explosion Expert", "爆破专家", "talent name")
 t([[Your alchemist bombs now affect a radius of %d around them.
-		Explosion damage may increase by %d%% (if the explosion is not contained) to %d%% if the area of effect is confined.]], [[炼金炸弹的爆炸半径现在增加 %d 码。
+		Explosion damage may increase by %d%% (if the explosion is not contained) to %d%% if the area of effect is confined.]], [[炼金炸弹的爆炸半径现在增加为 %d 码。
 		增加 %d%% （地形开阔）～ %d%% （地形狭窄）爆炸伤害。]], "tformat")
 t("Fast Recharge", "快速充能", "talent name")
 t([[Your Throw Bomb talent now have %d%% chance to not go on cooldown.
+        Activating this talent will increase the mana cost of Throw Bomb talent by %d .
         Chances increases with your gem tier.]], [[你的炸弹投掷技能有 %d%% 概率不进入冷却。
+        激活该技能会使投掷炸弹技能的法力值消耗增加 %d 。
         几率受宝石品质加成。]], "tformat")
 -- old translated text
 t([[Imbue an alchemist gem with an explosive charge of mana and throw it.

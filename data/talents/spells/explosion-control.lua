@@ -3,7 +3,7 @@ newTalent {
     type = { "spell/explosion-control", 1},
     require = spells_req_high1,
     points = 5,
-    mana = 5,
+    mana = function(self, t) if self:isTalentActive(self.T_CHAIN_BLASTING) then return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 5  else return 5 end end,
     cooldown = 16,
     fixed_cooldown = true,
     direct_hit = true,
@@ -76,7 +76,7 @@ newTalent {
     type = { "spell/explosion-control", 1},
     require = spells_req_high1,
     points = 5,
-    mana = 20,
+    mana = function(self, t) if self:isTalentActive(self.T_CHAIN_BLASTING) then return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 20 else return 20 end end,
     cooldown = 6,
     fixed_cooldown = true,
     direct_hit = true,
@@ -143,7 +143,7 @@ newTalent {
     type = { "spell/explosion-control", 1},
     require = spells_req_high1,
     points = 5,
-    mana = 30,
+    mana = function(self, t) if self:isTalentActive(self.T_CHAIN_BLASTING) then return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 30 else return 30 end end,
     cooldown = 9,
     fixed_cooldown = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
@@ -171,7 +171,7 @@ newTalent {
                 nb = nb + 1
             end
         end
-        return dam * 3 * t.getDamageRadio(self, t, nb)
+        return dam * 3.2 * t.getDamageRadio(self, t, nb)
     end,
     getDamageRadio = function(self, t, nb)
         -- 1 target 100%
@@ -197,7 +197,7 @@ newTalent {
         local ammo = self:hasAlchemistWeapon()
         local dam, damtype = 1, DamageType.PHYSICAL
         if ammo then dam, damtype = bombUtil:getBaseDamage(self, t, ammo) end
-        dam = dam * 3
+        dam = dam * 3.2
         local dam1 = dam * t.getDamageRadio(self, t, 1)
         local dam2 = dam * t.getDamageRadio(self, t, 2)
         local dam5 = dam * t.getDamageRadio(self, t, 5)
@@ -217,7 +217,7 @@ newTalent {
     type = { "spell/explosion-control", 1},
     require = spells_req_high1,
     points = 5,
-    mana = 50,
+    mana = function(self, t) if self:isTalentActive(self.T_CHAIN_BLASTING) then return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 50 else return 50 end end,
     cooldown = 12,
     fixed_cooldown = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
