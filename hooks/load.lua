@@ -3,13 +3,10 @@ local Birther = require "engine.Birther"
 local ActorTalents = require "engine.interface.ActorTalents"
 local ActorTemporaryEffects = require "engine.interface.ActorTemporaryEffects"
 local Entity = require "engine.Entity"
-local ActorInventory = require "engine.interface.ActorInventory"
 class:bindHook("ToME:load", function()
     ActorTemporaryEffects:loadDefinition("/data-new-alchemist/timed_effects.lua")
     ActorTalents:loadDefinition("/data-new-alchemist/talents.lua")
     Birther:loadDefinition("/data-new-alchemist/birth/mage.lua")
-	ActorInventory.equipdolls.alchemist_golem.list.FINGER = {{weight=5, x=48, y=408, subshift="left"}, {weight=6, x=124, y=408, text="bottom", subshift="left"}}
-	ActorInventory.equipdolls.alchemist_golem.list.HEAD = {{weight=7, x=150, y=35, subshift="left", text="bottom"}}
 end)
 
 class:bindHook("Actor:startTalentCooldown", function(self, data)

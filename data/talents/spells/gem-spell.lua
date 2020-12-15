@@ -35,6 +35,7 @@ newTalent {
         local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
+		if not x or not y then return nil end
 		local dam = t.getDamage(self, t)
 		local damtype = self:getGemDamageType()
 		self:projectApply(tg, x, y, Map.ACTOR, function(target)
@@ -113,7 +114,6 @@ newTalent {
         local tg = self:getTalentTarget(t)
 		local x, y = self:getTarget(tg)
 		if not x or not y then return nil end
-        local _, x, y = self:canProject(tg, x, y)
         if not self:teleportRandom(x, y, 0) then
             game.logSeen(self, "%s's teleport fizzles!", self:getName():capitalize())
             game:playSoundNear(self, "talents/teleport")
