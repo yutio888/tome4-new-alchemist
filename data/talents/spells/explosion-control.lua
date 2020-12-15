@@ -67,7 +67,7 @@ newTalent {
         This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this on cooldown.
         Each successful activation will increase damage of the following beams by 10%%, up to 50%%.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
-        %s]]):tformat(damDesc(self, damtype, dam * 1.3), DamageType:get(damtype).name, futher_info)
+        %s]]):tformat(damDesc(self, damtype, dam * 1.6), DamageType:get(damtype).name, futher_info)
     end,
 }
 

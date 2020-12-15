@@ -446,6 +446,11 @@ t("Master must know the Runic Golem talent", "主人必须学会符文傀儡技�
 t("Master's Runic Golem talent too low for this gem", "主人的符文傀儡技能等级过低", "_t")
 t("Gem Golem", "宝石傀儡", "talent name")
 t("Golem's armor is increased by 6 per gem's tier, and resistance is increased by 3 per gem's tier.", "宝石每层级提供6点护甲和3%%全体伤害抗性。", "tformat")
+t([[Take care of your golem:
+		- If it is destroyed, you will take some time to reconstruct it (this takes 20 turns).
+		- If it is alive but hurt, you will be able to repair it for %d . Spellpower, alchemist gem and Golem Power talent all influence the healing done.]], [[与你的傀儡进行交互：
+		- 如果它被摧毁，你将耗费一些时间重新安装傀儡。
+		- 如果它还存活，你可以修整它使其恢复 %d 生命值。法术强度、炼金宝石和强化傀儡技能都会影响治疗量。]], "tformat")
 t("Golem Power", "傀儡之力", "talent name")
 t("Improves your golem's proficiency with weapons, increasing its attack and damage. Then Improves your golem's armour training, damage resistance, and healing efficiency.", "提高傀儡的武器熟练度，增加其命中和伤害。提高傀儡护甲熟练度、伤害抗性和治疗系数。", "_t")
 t([[Improves your golem's proficiency with weapons, increasing its Accuracy by %d, Physical Power by %d and damage by %d%%.
