@@ -45,13 +45,31 @@ function makeAlchemistGolem(self)
 
 		combat = { dam=10, atk=10, apr=0, dammod={str=1} },
 
-		body = { INVEN = 1000, QS_MAINHAND = 1, QS_OFFHAND = 1, MAINHAND = 1, OFFHAND = 1, BODY=1, GEM={max = 2, stack_limit = 1} },
-		canWearObjectCustom = function(self, o)
-			if o.type ~= "gem" then return end
-			if not self.summoner then return _t"Golem has no master" end
-			if not self.summoner:knowTalent(self.summoner.T_RUNIC_GOLEM_NEW) then return _t"Master must know the Runic Golem talent" end
-			if not o.material_level then return _t"impossible to use this gem" end
-			if o.material_level > self.summoner:getTalentLevelRaw(self.summoner.T_RUNIC_GOLEM_NEW) then return _t"Master's Runic Golem talent too low for this gem" end
+		body = { INVEN = 1000, QS_MAINHAND = 1, QS_OFFHAND = 1, MAINHAND = 1, OFFHAND = 1, BODY=1, GEM={max = 2, stack_limit = 1}
+		, FINGER = 2, HEAD = 1, NECK = 1, BELT = 1},
+
+		canWearObjectCustom = function(self, o, slot)
+			if o.type == "gem" and slot == "GEM" then
+				if not self.summoner then return _t"Golem has no master" end
+				if not self.summoner:knowTalent(self.summoner.T_RUNIC_GOLEM_NEW) then return _t"Master must know the Runic Golem talent" end
+				if not o.material_level then return _t"impossible to use this gem" end
+				if o.material_level > self.summoner:getTalentLevelRaw(self.summoner.T_RUNIC_GOLEM_NEW) then return _t"Master's Runic Golem talent too low for this gem" end
+				return nil
+			end
+			local table = {
+				["HEAD"] = 2,
+				["BELT"] = 3,
+				["NECK"] = 4,
+				["FINGER"] = 5,
+			}
+			local req = table[slot] or 0
+			if req > 0 then
+				if not self.summoner then
+					return _t "Golem has no master"
+				end
+				local tl = self.summoner:getTalentLevelRaw(self.summoner.T_GOLEM_PORTAL_NEW)
+				if req > tl then return _t "Master's Customize talent too low." end
+			end
 		end,
 		equipdoll = "alchemist_golem",
 		is_alchemist_golem = 1,
@@ -65,7 +83,7 @@ function makeAlchemistGolem(self)
 			[Talents.T_WEAPON_COMBAT]=1,
 			[Talents.T_MANA_POOL]=1,
 			[Talents.T_STAMINA_POOL]=1,
-			[Talents.T_GOLEM_KNOCKBACK]=1,
+			[Talents.T_GOLEM_KNOCKBACK_NEW]=1,
 			[Talents.T_GOLEM_DESTRUCT]=1,
 		},
 
@@ -75,12 +93,12 @@ function makeAlchemistGolem(self)
 		},
 
 		talents_types = {
-			["golem/fighting"] = true,
+			["golem/new-fighting"] = true,
 			["golem/arcane"] = true,
 		},
 		talents_types_mastery = {
 			["technique/combat-training"] = 0.3,
-			["golem/fighting"] = 0.3,
+			["golem/new-fighting"] = 0.3,
 			["golem/arcane"] = 0.3,
 		},
 		forbid_nature = 1,

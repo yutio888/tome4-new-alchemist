@@ -79,14 +79,13 @@ newTalent{
     points = 5,
     cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 0, 18, 10, true, 1.0)) end, -- Limit to > 0
     range = 10,
-    radius = function(self, t) return math.floor(self:combatTalentScale(t, 0.5, 2.5)) end,
+    radius = function(self, t) return math.floor(self:combatTalentScale(t, 1, 5)) end,
     stamina = 10,
     requires_target = true,
     target = function(self, t)
         return {type="ball", radius=self:getTalentRadius(t), range=self:getTalentRange(t), friendlyfire=false}
     end,
     tactical = { PROTECT = 3, DEFEND = 2 },
-
     getPhysicalPower = function(self, t) return self:combatTalentScale(t, 3, 12) end,
     getShield = function(self, t) return self:combatTalentScale(t, 50, 100) end,
     addShield = function(self, t)
@@ -131,7 +130,7 @@ newTalent{
 }
 
 newTalent{
-    name = "Crush", short_name = "GOLEM_CRUSH_NEW", talents = "talents/golem_crush.png",
+    name = "Crush", short_name = "GOLEM_CRUSH_NEW", image = "talents/golem_crush.png",
     type = {"golem/new-fighting", 3},
     require = techs_req3,
     points = 5,
@@ -193,14 +192,15 @@ newTalent{
         local duration = t.getPinDuration(self, t)
         return ([[Your golem rushes to the target, crushing it into the ground for %d turns and doing %d%% damage.
         Then target will be slowed for %d%% in 3 turns.
-		Pinning chance will increase with talent level.
+		Pinning chance will increase with your golem's physical power.
+		Learn this talent grants your golem %d physical power.
 		While rushing the golem becomes ethereal, passing harmlessly through creatures on the path to its target.]]):
-        tformat(duration, 100 * damage)
+        tformat(duration, 100 * damage, t.getSlow(self, t), t.getPhysicalPower(self, t))
     end,
 }
 
 newTalent{
-    name = "Pound", short_name = "GOLEM_POUND",
+    name = "Pound", short_name = "GOLEM_POUND_NEW", image = "talents/golem_pound.png",
     type = {"golem/new-fighting", 4},
     require = techs_req4,
     points = 5,
@@ -215,6 +215,7 @@ newTalent{
     getGolemDamage = function(self, t)
         return self:combatTalentWeaponDamage(t, 1, 1.5)
     end,
+    getPhysicalPower = function(self, t) return self:combatTalentScale(t, 3, 12) end,
     getDazeDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
     tactical = { ATTACKAREA = { weapon = 1.5 }, DISABLE = { stun = 1 } },
     action = function(self, t)
@@ -261,8 +262,9 @@ newTalent{
         local duration = t.getDazeDuration(self, t)
         local damage = t.getGolemDamage(self, t)
         return ([[Your golem rushes to the target and creates a shockwave with radius 2, dazing all foes for %d turns and doing %d%% damage.
-		Daze chance increases with talent level.
+		Daze chance increases with your golem's physical power.
+		Learn this talent grants your golem %d physical power.
 		While rushing the golem becomes ethereal, passing harmlessly through creatures on the path to its target.]]):
-        tformat(duration, 100 * damage)
+        tformat(duration, 100 * damage, t.getPhysicalPower(self, t))
     end,
 }

@@ -108,11 +108,10 @@ newTalent {
     info = function(self, t)
         return ([[You learn how to modify your golem, granting %d accuracy, %d defense and %d saves.
         Besides, your golem gains new equipment slots (based on raw level):
-        - At talent level 1 : Can wear a ring
-        - At talent level 2 : Can wear another ring
-        - At talent level 3 : Can wear hat
-        - At talent level 4 : Can wear belt
-        - At talent level 5 : Can wear amulet
+        - At talent level 2 : Can wear hat
+        - At talent level 3 : Can wear belt
+        - At talent level 4 : Can wear amulet
+        - At talent level 5 : Can wear two rings
         ]]):tformat(t.getAcc(self, t), t.getDefense(self, t), t.getSave(self, t))
     end,
 }

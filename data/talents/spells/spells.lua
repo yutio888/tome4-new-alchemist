@@ -39,3 +39,5 @@ techs_req5 = Talents.main_env.techs_req5
 newTalentType{ type="golem/new-fighting", name = _t"fighting", description = _t"Golem melee capacity." }
 newTalentType{ type="golem/new-arcane", no_silence=true, is_spell=true, name = _t"arcane", description = _t"Golem arcane capacity." }
 newTalentType{ type="golem/energy", no_silence=true, is_spell=true, name=_t"energy", description=_t"Golem energy capacity."}
+
+load("//data-new-alchemist/talents/spells/golem-fighting.lua")
