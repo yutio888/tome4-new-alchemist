@@ -7,7 +7,6 @@ newTalent{
 	cant_steal = true,
 	tactical = { BUFF = 10 },
 	cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 4, 25, 15)) end, -- Limit to > 4
-	tactical = { DEFEND = 1, ATTACK=1 },
 	getPower = function(self, t) return self:combatTalentSpellDamage(t, 10, 30) end,
 	getPassivePower = function(self, t) return self:combatTalentScale(t, 10, 40) end,
 	getSpeedBoost = function(self, t) return self:combatTalentScale(t, 8, 40) end,
@@ -102,9 +101,22 @@ newTalent {
     points = 5,
     mode = "passive",
     no_unlearn_last = true,
-    getAcc = function(self, t) return self:combatTalentScale(t, 12, 45) end,
-    getDefense = function(self, t) return self:combatTalentScale(t, 15, 60) end,
-    getSave = function(self, t) return self:combatTalentScale(t, 15, 60) end,
+    getAcc = function(self, t) return self:combatTalentScale(t, 12, 40) end,
+    getDefense = function(self, t) return self:combatTalentScale(t, 12, 40) end,
+    getSave = function(self, t) return self:combatTalentScale(t, 12, 40) end,
+    passives = function(self, t, p)
+        if not self.alchemy_golem then
+            return
+        end -- Safety net
+        self:talentTemporaryValue(p, "alchemy_golem",
+                {
+                    combat_def = t.getDefense(self, t),
+                    combat_atk = t.getAcc(self, t),
+                    combat_physresist = t.getSave(self, t),
+                    combat_mentalresist = t.getSave(self, t),
+                    combat_spellresist = t.getSave(self, t),
+                })
+    end,
     info = function(self, t)
         return ([[You learn how to modify your golem, granting %d accuracy, %d defense and %d saves.
         Besides, your golem gains new equipment slots (based on raw level):
@@ -121,16 +133,25 @@ newTalent {
     type = {"spell/new-advanced-golemancy", 3},
     require = spells_req_high3,
     points = 5,
-    tactical = { DISABLE = 2 },
+    tactical = { DISABLE = { confusion = 3 } },
     mana = 30,
     cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 10, 30, 20)) end, -- Limit to > 8
     radius = function(self, t) return math.floor(self:combatTalentScale(t, 2, 5)) end,
    	target = function(self, t)
    		return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), talent=t, selffire=false}
    	end,
+    direct_hit = true,
+    requires_target = true,
     cant_steal = true,
     getConfuseResist = function(self, t) return math.floor(self:combatTalentScale(t, 15, 40))end,
     getConfuseDuration = function(self, t) return math.floor(self:combatTalentScale(t, 2, 7)) end,
+    on_pre_use = function(self, t)
+        local mover, golem = getGolem(self)
+        if not golem then
+            game.logPlayer(self, "Your golem is currently inactive.")
+            return
+        end
+    end,
     action = function(self, t)
         local mover, golem = getGolem(self)
         if not golem then
@@ -148,6 +169,15 @@ newTalent {
         --self:project(tg, self.x, self.y, proj_function)
         golem:project(tg, golem.x, golem.y, proj_function)
         return true
+    end,
+    passives = function(self, t, p)
+        if not self.alchemy_golem then
+            return
+        end -- Safety net
+        self:talentTemporaryValue(p, "alchemy_golem",
+                {
+                    confusion_immune = t.getConfuseResist(self, t) * 0.01
+                })
     end,
     info = function(self, t)
         return([[You activate the disruptive rune in your golem, foes in radius %d will be disrupted for %d turns, their talents have 50%% chance to fail.
@@ -172,6 +202,13 @@ newTalent {
         	return 0
         end
         return self:combatTalentSpellDamage(t, 0, 60, golem:combatSpellpower())
+    end,
+    on_pre_use = function(self, t)
+        local mover, golem = getGolem(self)
+        if not golem then
+            game.logPlayer(self, "Your golem is currently inactive.")
+            return
+        end
     end,
     action = function(self, t)
         local mover, golem = getGolem(self)
