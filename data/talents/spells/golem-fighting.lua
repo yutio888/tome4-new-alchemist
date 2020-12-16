@@ -82,12 +82,15 @@ newTalent {
 
         return true
     end,
+    passives = function(self, t, p)
+        self:talentTemporaryValue(p, "combat_dam", t.getPhysicalPower(self, t) )
+    end,
     info = function(self, t)
         local damage = t.getDamage(self, t)
         return ([[Your golem rushes to the target, dealing %d%% damage and knocking it back 3 tiles, then stun it for %d turns.
 		Knockback chance and stun chance increases with your golem's physical power.
 		While rushing the golem becomes ethereal, passing harmlessly through creatures on the path to its target.
-		Learn this talent grants your golem %d physical power.
+		This talent grants your golem %d physical power.
 		]])
                 :tformat(100 * damage, t.getStunDuration(self, t), t.getPhysicalPower(self, t))
     end,
@@ -156,10 +159,13 @@ newTalent {
         end)
         return true
     end,
+    passives = function(self, t, p)
+        self:talentTemporaryValue(p, "combat_dam", t.getPhysicalPower(self, t) )
+    end,
     info = function(self, t)
         return ([[The golem taunts targets in a radius of %d, forcing them to attack it.
         Each taunted target will give your golem a shield of %d strenth for 2 turns, or adding to current damage shield.
-        Learn this talent grants your golem %d physical power.
+        This talent grants your golem %d physical power.
         ]]):tformat(self:getTalentRadius(t), t.getShield(self, t), t.getPhysicalPower(self, t))
     end,
 }
@@ -247,13 +253,16 @@ newTalent {
 
         return true
     end,
+    passives = function(self, t, p)
+        self:talentTemporaryValue(p, "combat_dam", t.getPhysicalPower(self, t) )
+    end,
     info = function(self, t)
         local damage = t.getDamage(self, t)
         local duration = t.getPinDuration(self, t)
         return ([[Your golem rushes to the target, crushing it into the ground for %d turns and doing %d%% damage.
         Then target will be slowed for %d%% in 3 turns.
 		Pinning chance will increase with your golem's physical power.
-		Learn this talent grants your golem %d physical power.
+		This talent grants your golem %d physical power.
 		While rushing the golem becomes ethereal, passing harmlessly through creatures on the path to its target.]]):
         tformat(duration, 100 * damage, t.getSlow(self, t), t.getPhysicalPower(self, t))
     end,
@@ -337,12 +346,15 @@ newTalent {
 
         return true
     end,
+    passives = function(self, t, p)
+        self:talentTemporaryValue(p, "combat_dam", t.getPhysicalPower(self, t) )
+    end,
     info = function(self, t)
         local duration = t.getDazeDuration(self, t)
         local damage = t.getGolemDamage(self, t)
         return ([[Your golem rushes to the target and creates a shockwave with radius 2, dazing all foes for %d turns and doing %d%% damage.
 		Daze chance increases with your golem's physical power.
-		Learn this talent grants your golem %d physical power.
+		This talent grants your golem %d physical power.
 		While rushing the golem becomes ethereal, passing harmlessly through creatures on the path to its target.]]):
         tformat(duration, 100 * damage, t.getPhysicalPower(self, t))
     end,

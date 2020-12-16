@@ -170,8 +170,14 @@ function makeAlchemistGolem(self)
         unused_talents_types = 0,
 
         no_points_on_levelup = function(self)
-            self.unused_stats = self.unused_stats + 3
-            self.unused_talents = self.unused_talents + 1
+            self.unused_stats = self.unused_stats + 2
+            if self.level % 2 == 0 then
+                self.unused_talents = self.unused_talents + 1
+            end
+            if self.level % 5 == 0 then
+                self.unused_stats = self.unused_stats + 3
+                self.unused_generics = self.unused_generics + 1
+            end
         end,
 
         keep_inven_on_death = true,
