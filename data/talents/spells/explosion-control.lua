@@ -1,28 +1,44 @@
 newTalent {
     name = "Throw Bomb: Beam Mode",
-    type = { "spell/explosion-control", 1},
+    type = { "spell/explosion-control", 1 },
     require = spells_req_high1,
     points = 5,
-    mana = function(self, t) if self:isTalentActive(self.T_CHAIN_BLASTING) then return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 5  else return 5 end end,
+    mana = function(self, t)
+        if self:isTalentActive(self.T_CHAIN_BLASTING) then
+            return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 5
+        else
+            return 5
+        end
+    end,
     cooldown = 16,
     fixed_cooldown = true,
     direct_hit = true,
     requires_target = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
-        if t == talent then return end
+        if t == talent then
+            return
+        end
         self:startTalentCooldown(t.id, 4)
     end,
     target = function(self, t)
         local ammo = self:hasAlchemistWeapon()
-        if not ammo then return end
-        return {type="widebeam", force_max_range=true, range=self:getTalentRange(t), radius = self:getTalentRadius(t), talent=t}
+        if not ammo then
+            return
+        end
+        return { type = "widebeam", force_max_range = true, range = self:getTalentRange(t), radius = self:getTalentRadius(t), talent = t }
     end,
     radius = 1,
-    range = function(self, t) return 10 end,
+    range = function(self, t)
+        return 10
+    end,
     on_pre_use = function(self, t)
         local ammo = self:hasAlchemistWeapon()
-        if not ammo then return false end
-        if self:knowTalent(self.T_THROW_BOMB_NEW) then return true end
+        if not ammo then
+            return false
+        end
+        if self:knowTalent(self.T_THROW_BOMB_NEW) then
+            return true
+        end
     end,
     calcFurtherDamage = function(self, t, tg, ammo, x, y, dam)
         return dam * 1.6 * math.min(1.5, 1 + 0.1 * (self.consecutive_bombs or 0))
@@ -36,7 +52,9 @@ newTalent {
 
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
-        if not x or not y then return nil end
+        if not x or not y then
+            return nil
+        end
         local nb = self.consecutive_bombs or 0
         bombUtil:throwBomb(self, t, ammo, tg, x, y)
         game:playSoundNear(self, "talents/arcane")
@@ -56,14 +74,16 @@ newTalent {
     info = function(self, t)
         local ammo = self:hasAlchemistWeapon()
         local dam, damtype = 1, DamageType.PHYSICAL
-        if ammo then dam, damtype = bombUtil:getBaseDamage(self, t, ammo) end
+        if ammo then
+            dam, damtype = bombUtil:getBaseDamage(self, t, ammo)
+        end
         local nb = self.consecutive_bombs or 0
         local futher_info = ""
         if nb > 0 then
             local ndam = dam * 1.6 * (math.min(1.5, 1 + 0.1 * nb))
             futher_info = ("Current Damage: %0.2f %s"):tformat(damDesc(self, damtype, ndam), DamageType:get(damtype).name)
         end
-        return([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
+        return ([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
         This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this on cooldown.
         Each successful activation will increase damage of the following beams by 10%%, up to 50%%.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
@@ -73,10 +93,16 @@ newTalent {
 
 newTalent {
     name = "Throw Bomb: Cone Mode",
-    type = { "spell/explosion-control", 1},
+    type = { "spell/explosion-control", 1 },
     require = spells_req_high1,
     points = 5,
-    mana = function(self, t) if self:isTalentActive(self.T_CHAIN_BLASTING) then return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 20 else return 20 end end,
+    mana = function(self, t)
+        if self:isTalentActive(self.T_CHAIN_BLASTING) then
+            return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 20
+        else
+            return 20
+        end
+    end,
     cooldown = 6,
     fixed_cooldown = true,
     direct_hit = true,
@@ -94,15 +120,23 @@ newTalent {
     end,
     target = function(self, t)
         local ammo = self:hasAlchemistWeapon()
-        if not ammo then return end
-        return {type="hit", range=self:getTalentRange(t)+(ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), talent=t}
+        if not ammo then
+            return
+        end
+        return { type = "hit", range = self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), talent = t }
     end,
     range = 7,
-    getSpecialRadius = function(self, t) return 6 end,
+    getSpecialRadius = function(self, t)
+        return 6
+    end,
     on_pre_use = function(self, t)
         local ammo = self:hasAlchemistWeapon()
-        if not ammo then return false end
-        if self:knowTalent(self.T_THROW_BOMB_NEW) then return true end
+        if not ammo then
+            return false
+        end
+        if self:knowTalent(self.T_THROW_BOMB_NEW) then
+            return true
+        end
     end,
     calcFurtherDamage = function(self, t, tg, ammo, x, y, dam)
         return dam * 1.8
@@ -116,12 +150,18 @@ newTalent {
 
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
-        if not x or not y then return nil end
+        if not x or not y then
+            return nil
+        end
         local _, x, y = self:canProject(tg, x, y)
-        local tg2 = {type="cone", range=0, radius=t.getSpecialRadius(self, t), cone_angle = 90, start_x=x, start_y=y, friendlyfire=false, talent=t}
+        local tg2 = { type = "cone", range = 0, radius = t.getSpecialRadius(self, t), cone_angle = 90, start_x = x, start_y = y, friendlyfire = false, talent = t }
         local x2, y2 = self:getTarget(tg2)
-        if not x2 or not y2 then return nil end
-        if x == x2 and y == y2 then return nil end
+        if not x2 or not y2 then
+            return nil
+        end
+        if x == x2 and y == y2 then
+            return nil
+        end
         bombUtil:throwBomb(self, t, ammo, tg2, x2, y2, x, y)
         game:playSoundNear(self, "talents/arcane")
         return true
@@ -129,8 +169,10 @@ newTalent {
     info = function(self, t)
         local ammo = self:hasAlchemistWeapon()
         local dam, damtype = 1, DamageType.PHYSICAL
-        if ammo then dam, damtype = bombUtil:getBaseDamage(self, t, ammo) end
-        return([[Throw bomb to target location, then making it explode in a radius %d cone, dealing %0.2f %s damage and knocking them back.
+        if ammo then
+            dam, damtype = bombUtil:getBaseDamage(self, t, ammo)
+        end
+        return ([[Throw bomb to target location, then making it explode in a radius %d cone, dealing %0.2f %s damage and knocking them back.
         You can choose the direction of the explosion.
         You must know how to throw bomb to use this talent.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
@@ -140,29 +182,47 @@ newTalent {
 
 newTalent {
     name = "Throw Bomb: Implosion",
-    type = { "spell/explosion-control", 1},
+    type = { "spell/explosion-control", 1 },
     require = spells_req_high1,
     points = 5,
-    mana = function(self, t) if self:isTalentActive(self.T_CHAIN_BLASTING) then return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 30 else return 30 end end,
+    mana = function(self, t)
+        if self:isTalentActive(self.T_CHAIN_BLASTING) then
+            return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 30
+        else
+            return 30
+        end
+    end,
     cooldown = 9,
     fixed_cooldown = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
-        if t == talent then return end
+        if t == talent then
+            return
+        end
         self:startTalentCooldown(t.id, 4)
     end,
-    range = function(self, t) return math.max(0, math.floor(self:combatTalentLimit(t, 9, 0.1, 4.1))) end,
-    radius = function(self, t) return math.max(0, math.floor(self:combatTalentLimit(t, 0, 4.1, 1.9))) end,
+    range = function(self, t)
+        return math.max(0, math.floor(self:combatTalentLimit(t, 9, 0.1, 4.1)))
+    end,
+    radius = function(self, t)
+        return math.max(0, math.floor(self:combatTalentLimit(t, 0, 4.1, 1.9)))
+    end,
     direct_hit = true,
     requires_target = true,
     target = function(self, t)
         local ammo = self:hasAlchemistWeapon()
-        if not ammo then return end
-        return {type="ball", range=self:getTalentRange(t)+(ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius=self:getTalentRadius(t), talent=t}
+        if not ammo then
+            return
+        end
+        return { type = "ball", range = self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius = self:getTalentRadius(t), talent = t }
     end,
     on_pre_use = function(self, t)
         local ammo = self:hasAlchemistWeapon()
-        if not ammo then return false end
-        if self:knowTalent(self.T_THROW_BOMB_NEW) then return true end
+        if not ammo then
+            return false
+        end
+        if self:knowTalent(self.T_THROW_BOMB_NEW) then
+            return true
+        end
     end,
     calcFurtherDamage = function(self, t, tg, ammo, x, y, dam, tgts)
         local nb = 0
@@ -177,7 +237,7 @@ newTalent {
         -- 1 target 100%
         -- 3 targets 67%
         -- infinite targets 25%
-        return 1 - self:combatLimit(nb, 0.75, 0, 1, 1/3, 3)
+        return 1 - self:combatLimit(nb, 0.75, 0, 1, 1 / 3, 3)
     end,
     action = function(self, t)
         local ammo = self:hasAlchemistWeapon()
@@ -188,7 +248,9 @@ newTalent {
 
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
-        if not x or not y then return nil end
+        if not x or not y then
+            return nil
+        end
         bombUtil:throwBomb(self, t, ammo, tg, x, y)
         game:playSoundNear(self, "talents/arcane")
         return true
@@ -196,7 +258,9 @@ newTalent {
     info = function(self, t)
         local ammo = self:hasAlchemistWeapon()
         local dam, damtype = 1, DamageType.PHYSICAL
-        if ammo then dam, damtype = bombUtil:getBaseDamage(self, t, ammo) end
+        if ammo then
+            dam, damtype = bombUtil:getBaseDamage(self, t, ammo)
+        end
         dam = dam * 3.2
         local dam1 = dam * t.getDamageRadio(self, t, 1)
         local dam2 = dam * t.getDamageRadio(self, t, 2)
@@ -214,17 +278,27 @@ newTalent {
 
 newTalent {
     name = "Throw Bomb: Chain Blast",
-    type = { "spell/explosion-control", 1},
+    type = { "spell/explosion-control", 1 },
     require = spells_req_high1,
     points = 5,
-    mana = function(self, t) if self:isTalentActive(self.T_CHAIN_BLASTING) then return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 50 else return 50 end end,
+    mana = function(self, t)
+        if self:isTalentActive(self.T_CHAIN_BLASTING) then
+            return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 50
+        else
+            return 50
+        end
+    end,
     cooldown = 12,
     fixed_cooldown = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
-        if t == talent then return end
+        if t == talent then
+            return
+        end
         self:startTalentCooldown(t.id, 4)
     end,
-    range = function(self, t) return math.floor(self:combatTalentLimit(t, 15, 5.1, 9.1)) end,
+    range = function(self, t)
+        return math.floor(self:combatTalentLimit(t, 15, 5.1, 9.1))
+    end,
     radius = function(self, t)
         return util.bound(math.floor(self:getTalentLevel(t) / 2) + 1, 1, 5)
     end,
@@ -232,22 +306,30 @@ newTalent {
     requires_target = true,
     target = function(self, t)
         local ammo = self:hasAlchemistWeapon()
-        if not ammo then return end
-        return {type="ball", range=self:getTalentRange(t)+(ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius=self:getTalentRadius(t), talent=t}
+        if not ammo then
+            return
+        end
+        return { type = "ball", range = self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius = self:getTalentRadius(t), talent = t }
     end,
     on_pre_use = function(self, t)
         local ammo = self:hasAlchemistWeapon()
-        if not ammo then return false end
-        if self:knowTalent(self.T_THROW_BOMB_NEW) then return true end
+        if not ammo then
+            return false
+        end
+        if self:knowTalent(self.T_THROW_BOMB_NEW) then
+            return true
+        end
     end,
     calcFurtherDamage = function(self, t, tg, ammo, x, y, dam)
         local blasted_time = self.alchemy_blasts
-        if not blasted_time then return dam end
+        if not blasted_time then
+            return dam
+        end
         return dam * (100 - t.getReduction(self, t, blasted_time)) / 100
     end,
     getReduction = function(self, t, nb)
         local percent = self:combatTalentLimit(t, 0, 50, 20) / 100
-        return 100 * (1- math.pow(1-percent, nb or 1))
+        return 100 * (1 - math.pow(1 - percent, nb or 1))
     end,
     action = function(self, t)
         local ammo = self:hasAlchemistWeapon()
@@ -258,7 +340,9 @@ newTalent {
 
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
-        if not x or not y then return nil end
+        if not x or not y then
+            return nil
+        end
         local blasted_tgts = {}
         local to_blast_tgts
         local tgts = bombUtil:throwBomb(self, t, ammo, tg, x, y)
@@ -266,7 +350,7 @@ newTalent {
         to_blast_tgts = tgts
         while #to_blast_tgts > 0 do
             local new_target = table.remove(to_blast_tgts, 1)
-            if new_target and new_target.target:reactionToward(self) < 0  then
+            if new_target and new_target.target:reactionToward(self) < 0 then
                 new_target = new_target.target
                 if not blasted_tgts[new_target] then
                     blasted_tgts[new_target] = true
@@ -288,11 +372,13 @@ newTalent {
     info = function(self, t)
         local ammo = self:hasAlchemistWeapon()
         local dam, damtype = 1, DamageType.PHYSICAL
-        if ammo then dam, damtype = bombUtil:getBaseDamage(self, t, ammo) end
+        if ammo then
+            dam, damtype = bombUtil:getBaseDamage(self, t, ammo)
+        end
         return ([[Throw bomb to target location dealing %0.2f %s damage in radius %d, then make a chained blast:
         Any foe inside the explosion radius will trigger a similar explosion.
         Each successive explosion deals %d%% less damage.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
-        ]]):tformat(damDesc(self, damtype, dam), DamageType:get(damtype).name, self:getTalentRadius(t),  t.getReduction(self, t))
+        ]]):tformat(damDesc(self, damtype, dam), DamageType:get(damtype).name, self:getTalentRadius(t), t.getReduction(self, t))
     end,
 }

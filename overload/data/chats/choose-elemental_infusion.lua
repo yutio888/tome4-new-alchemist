@@ -18,41 +18,41 @@
 -- darkgod@te4.org
 
 
-newChat{ id="welcome",
-	text = ([[Choose which element?]]):tformat(),
-	answers = {
-	    {   _t"Fire.",
-	        action = function(self, player)
-	            player.elemental_infusion = "fire"
-	            player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
-	        end,
-	    },
-        {   _t"Cold.",
-            action = function(self, player)
-                player.elemental_infusion = "cold"
-                player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
-            end,
-        },
-        {   _t"Acid.",
-            action = function(self, player)
-                player.elemental_infusion = "acid"
-                player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
-            end,
-        },
-        {   _t"Lightning.",
-            action = function(self, player)
-                player.elemental_infusion = "lightning"
-                player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
-            end,
-        },
-        {   _t"Nothing.",
-            action = function(self, player)
-                player.elemental_infusion = nil
-                player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
-            end,
-        },
-        {   _t"[Leave]"},
-        },
+newChat { id = "welcome",
+          text = ([[Choose which element?]]):tformat(),
+          answers = {
+              { _t "Fire.",
+                action = function(self, player)
+                    player.elemental_infusion = "fire"
+                    player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
+                end,
+              },
+              { _t "Cold.",
+                action = function(self, player)
+                    player.elemental_infusion = "cold"
+                    player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
+                end,
+              },
+              { _t "Acid.",
+                action = function(self, player)
+                    player.elemental_infusion = "acid"
+                    player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
+                end,
+              },
+              { _t "Lightning.",
+                action = function(self, player)
+                    player.elemental_infusion = "lightning"
+                    player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
+                end,
+              },
+              { _t "Nothing.",
+                action = function(self, player)
+                    player.elemental_infusion = nil
+                    player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
+                end,
+              },
+              { _t "[Leave]" },
+          },
 }
 
 return "welcome"

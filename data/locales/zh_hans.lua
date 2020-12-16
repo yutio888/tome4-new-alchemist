@@ -172,7 +172,7 @@ t([[Imbue your gem with pure mana and activate its power as a wide beam and deal
         This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this on cooldown.
         Each successful activation will increase damage of the following beams by 10%%, up to 50%%.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
-        %s]],[[向一块宝石内灌输爆炸能量，触发一次宽射线类型的 %0.2f %s 伤害。
+        %s]], [[向一块宝石内灌输爆炸能量，触发一次宽射线类型的 %0.2f %s 伤害。
         该技能可以连续使用而不进入冷却，但任何非瞬间的其他行为会使该技能进入冷却。
         每次成功使用，会让后续伤害增加10%%，最多增加50%%。
         你必须学会炸弹投掷技能才能使用该技能。
@@ -983,7 +983,6 @@ t("You need to ready 5 alchemist gems in your quiver.", "You need to ready 5 alc
 section "tome-new-alchemist/superload/mod/class/Actor.lua"
 
 t("You cannot prepare more than one bottle of special potions", "你不能准备多于一瓶特殊药剂。", "logPlayer")
-
 
 ------------------------------------------------
 section "tome-new-alchemist/superload/mod/class/Object.lua"

@@ -112,7 +112,9 @@ newTalent {
     cooldown = 15,
     no_unlearn_last = true,
     on_pre_use = alchemy_potions_adjust_pre_use,
-    getMaxCharges = function(self, t) return math.floor(self:combatTalentLimit(t, 7, 1, 4)) end,
+    getMaxCharges = function(self, t)
+        return math.floor(self:combatTalentLimit(t, 7, 1, 4))
+    end,
     --on_pre_use_ai = alchemy_potions_npc_select, -- NPC's automatically pick a tool
     action = function(self, t)
         if self:talentDialog(require("mod.dialogs.talents.PrepareAlchemistPotion").new(self)) then
@@ -157,17 +159,24 @@ newTalent {
     type = { "spell/alchemy-potion", 2 },
     points = 5,
     require = spells_req2,
-    cooldown = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 20, 10, "log") end,
+    cooldown = function(self, t)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 20, 10, "log")
+    end,
     mode = "sustained",
     no_npc_use = true,
-    getDuration = function(self, t) return math.ceil(15 - util.bound(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 0, 5, "log"), 0, 10)) end,
-    iconOverlay = function(self, t, p)
-        if not p then return "" end
-        return tostring("#RED##{bold}#"..math.floor(p.dur or 1).."#LAST##{normal}#"), "buff_font_small"
+    getDuration = function(self, t)
+        return math.ceil(15 - util.bound(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 0, 5, "log"), 0, 10))
     end,
-    activate = function(self, t) return {
-        dur = t.getDuration(self, t)
-    }
+    iconOverlay = function(self, t, p)
+        if not p then
+            return ""
+        end
+        return tostring("#RED##{bold}#" .. math.floor(p.dur or 1) .. "#LAST##{normal}#"), "buff_font_small"
+    end,
+    activate = function(self, t)
+        return {
+            dur = t.getDuration(self, t)
+        }
     end,
     deactivate = function(self, t, p)
         if p.dur <= 0 then
@@ -175,29 +184,33 @@ newTalent {
         end
         return true
     end,
-    callbackPriorities={callbackOnHit = 100},
+    callbackPriorities = { callbackOnHit = 100 },
     callbackOnHit = function(self, t, cb, src, death_note)
         local value = cb.value
         local save = math.max(self:combatMentalResist(), self:combatPhysicalResist())
         local res = self:checkHit(save, value)
         if not res then
             game.logPlayer(self, "%s got disrupted by the incoming damage, stopped reproducing potions.", self:getName())
-            self:forceUseTalent(self.T_MANAGE_POTION_2, {ignore_energy=true})
+            self:forceUseTalent(self.T_MANAGE_POTION_2, { ignore_energy = true })
         end
     end,
     callbackOnActBase = function(self, t)
         local p = self:isTalentActive(t.id)
-        if not p then return end
+        if not p then
+            return
+        end
         p.dur = p.dur - 1
         if p.dur <= 0 then
-            self:forceUseTalent(t.id, {ignore_energy=true})
+            self:forceUseTalent(t.id, { ignore_energy = true })
             return
         end
     end,
     info = function(self, t)
         local p = self:isTalentActive(t.id)
         local desc = ""
-        if p then desc = ([[Remaining turns: %d .]]):tformat(p.dur) end
+        if p then
+            desc = ([[Remaining turns: %d .]]):tformat(p.dur)
+        end
         return ([[Enter the focused state of reproducing potions for %d turns, after which you will recharge all your alchemy potions.
         Reproduing potions need focus, any incoming damage may break this state. Every time you are damaged, you must check your physical or mental save to preverse focus. If you fail to do so, this talent will automatically deactivate.
         %s]]):tformat(t.getDuration(self, t), desc)
@@ -210,12 +223,20 @@ newTalent {
     points = 5,
     require = spells_req3,
     cooldown = 20,
-    range = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 3, 7) end,
+    range = function(self, t)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 3, 7)
+    end,
     mode = "sustained",
     no_npc_use = true,
-    getSpeedUp = function(self, t) return 100 - math.min(50, 15 + self:combatTalentScale(t, 5, 15)) end,
-    activate = function(self, t) return {} end,
-    deactivate = function(self, t, p) return true end,
+    getSpeedUp = function(self, t)
+        return 100 - math.min(50, 15 + self:combatTalentScale(t, 5, 15))
+    end,
+    activate = function(self, t)
+        return {}
+    end,
+    deactivate = function(self, t, p)
+        return true
+    end,
     info = function(self, t)
         return ([[You may spray your potion in cone instead of throw onto a single target.
         However, this will make your potion less effective, your spellpower is considered as half when spraying potions.
@@ -232,23 +253,34 @@ newTalent {
     mode = "sustained",
     sustain_mana = 80,
     no_npc_use = true,
-    getTime = function(self, t) return 10 - math.floor(self:combatTalentLimit(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 10, 0, 6.9)) end,
+    getTime = function(self, t)
+        return 10 - math.floor(self:combatTalentLimit(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 10, 0, 6.9))
+    end,
     iconOverlay = function(self, t, p)
-        if not p then return "" end
-        if not p.time then return "" end
-        if p.time <= 0 then return "" end
-        local str = tostring("#RED##{bold}#"..math.floor(p.time or 1).."#LAST##{normal}#")
+        if not p then
+            return ""
+        end
+        if not p.time then
+            return ""
+        end
+        if p.time <= 0 then
+            return ""
+        end
+        local str = tostring("#RED##{bold}#" .. math.floor(p.time or 1) .. "#LAST##{normal}#")
         return str, "buff_font_small"
     end,
-    activate = function(self, t) return {
-        time = 0
-    }
+    activate = function(self, t)
+        return {
+            time = 0
+        }
     end,
     deactivate = function(self, t, p)
         return true
     end,
     callbackOnAlchemistBomb = function(self, t)
-        if not self.in_combat then return end
+        if not self.in_combat then
+            return
+        end
         local p = self:isTalentActive(t.id)
         if not p then
             return
@@ -288,7 +320,9 @@ newTalent {
     info = function(self, t)
         local p = self:isTalentActive(t.id)
         local desc = ""
-        if p and p.time > 0 then desc = ([[Remaining explosions: %d .]]):tformat(p.time) end
+        if p and p.time > 0 then
+            desc = ([[Remaining explosions: %d .]]):tformat(p.time)
+        end
         return ([[You know how to reuse the remain of your potions.
         You may restore one bottle of random potion after your bomb explodes %d times in combat.
         Some special potions cannot be restored in this way.

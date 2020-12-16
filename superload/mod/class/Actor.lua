@@ -5,7 +5,9 @@ _M.sustainCallbackCheck.callbackOnAlchemistBomb = "talents_on_alchemist_bomb"
 local transmoInven = _M.transmoInven
 function _M:transmoInven(inven, idx, o, transmo_source)
     transmo_source = transmo_source or self.default_transmo_source
-    if (not transmo_source and not self:attr("has_transmo_orcs")) or (transmo_source and transmo_source.define_as == "APE") then return transmoInven(self, inven, idx, o, transmo_source) end
+    if (not transmo_source and not self:attr("has_transmo_orcs")) or (transmo_source and transmo_source.define_as == "APE") then
+        return transmoInven(self, inven, idx, o, transmo_source)
+    end
     if o.metallic and self:knowTalent(self.T_EXTRACT_GEMS) and self:getTalentLevelRaw(self.T_EXTRACT_GEMS) >= o.material_level then
         local talent = self:getTalentFromId(self.T_EXTRACT_GEMS)
         talent.extractGem(self, talent, o, inven, idx)
@@ -121,9 +123,13 @@ end
 function _M:prepareAlchemyPotion(t)
     local max = self:getMaxPreparedPotions()
     local cur = self:getAllPreparedPotionCharges()
-    if cur >= max then return end
+    if cur >= max then
+        return
+    end
     local tid = t
-    if type(t) == "table" then tid = t.id end
+    if type(t) == "table" then
+        tid = t.id
+    end
     if not self:callTalent(t, "allowUse") then
         return nil
     end

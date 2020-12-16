@@ -1,7 +1,6 @@
-
-newTalent{
+newTalent {
     name = "Knockback", short_name = "GOLEM_KNOCKBACK_NEW", image = "talents/golem_knockback.png",
-    type = {"golem/new-fighting", 1},
+    type = { "golem/new-fighting", 1 },
     require = techs_req1,
     points = 5,
     cooldown = 10,
@@ -9,39 +8,60 @@ newTalent{
     stamina = 10,
     requires_target = true,
     target = function(self, t)
-        return {type="hit", range=self:getTalentRange(t)}
+        return { type = "hit", range = self:getTalentRange(t) }
     end,
     is_melee = true,
-    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.8, 1.6) end,
+    getDamage = function(self, t)
+        return self:combatTalentWeaponDamage(t, 0.8, 1.6)
+    end,
     tactical = { ATTACK = { weapon = 2 }, DISABLE = { knockback = 1, stun = 1 } },
-    getStunDuration = function(self, t) return self:combatTalentScale(t, 3, 7) end,
-    getPhysicalPower = function(self, t) return self:combatTalentScale(t, 3, 12) end,
+    getStunDuration = function(self, t)
+        return self:combatTalentScale(t, 3, 7)
+    end,
+    getPhysicalPower = function(self, t)
+        return self:combatTalentScale(t, 3, 12)
+    end,
     action = function(self, t)
-        if self:attr("never_move") then game.logPlayer(self, "Your golem cannot do that currently.") return end
+        if self:attr("never_move") then
+            game.logPlayer(self, "Your golem cannot do that currently.")
+            return
+        end
 
         local tg = self:getTalentTarget(t)
         local olds = game.target.source_actor
         game.target.source_actor = self
         local x, y, target = self:getTarget(tg)
         game.target.source_actor = olds
-        if not target then return nil end
+        if not target then
+            return nil
+        end
 
-        if self.ai_target then self.ai_target.target = target end
+        if self.ai_target then
+            self.ai_target.target = target
+        end
 
         if core.fov.distance(self.x, self.y, x, y) > 1 then
-            tg.radius = 1 tg.type = "ball"
+            tg.radius = 1
+            tg.type = "ball"
             local grids = {}
-            self:projectApply(tg, x, y, Map.TERRAIN, function(_, px, py) grids[#grids+1] = {x=px, y=py, dist=core.fov.distance(self.x, self.y, px, py, true)} end, function(_, px, py) return
-            not game.level.map:checkAllEntities(px, py, "block_move", self) and
-                    self:hasLOS(px, py)
+            self:projectApply(tg, x, y, Map.TERRAIN, function(_, px, py)
+                grids[#grids + 1] = { x = px, y = py, dist = core.fov.distance(self.x, self.y, px, py, true) }
+            end, function(_, px, py)
+                return
+                not game.level.map:checkAllEntities(px, py, "block_move", self) and
+                        self:hasLOS(px, py)
             end, nil, true)
             table.sort(grids, "dist")
-            if #grids == 0 then return end
+            if #grids == 0 then
+                return
+            end
             self:forceMoveAnim(grids[1].x, grids[1].y)
         end
 
         -- Attack ?
-        if core.fov.distance(self.x, self.y, x, y) > 1 then return true end
+        if core.fov.distance(self.x, self.y, x, y) > 1 then
+            return true
+        end
         local hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
 
         -- Try to knockback !
@@ -52,8 +72,9 @@ newTalent{
             else
                 game.logSeen(target, "%s resists the knockback!", target:getName():capitalize())
             end
-            if target:canBe("stun") then -- Deprecated call to checkhitold
-                target:setEffect(target.EFF_STUNNED, t.getStunDuration(self, t), {apply_power = self:combatPhysicalpower()})
+            if target:canBe("stun") then
+                -- Deprecated call to checkhitold
+                target:setEffect(target.EFF_STUNNED, t.getStunDuration(self, t), { apply_power = self:combatPhysicalpower() })
             else
                 game.logSeen(target, "%s resists the knockback!", target:getName():capitalize())
             end
@@ -72,26 +93,34 @@ newTalent{
     end,
 }
 
-newTalent{
+newTalent {
     name = "Taunt", short_name = "GOLEM_TAUNT_NEW", image = "talents/golem_taunt.png",
-    type = {"golem/new-fighting", 2},
+    type = { "golem/new-fighting", 2 },
     require = techs_req2,
     points = 5,
-    cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 0, 18, 10, true, 1.0)) end, -- Limit to > 0
+    cooldown = function(self, t)
+        return math.ceil(self:combatTalentLimit(t, 0, 18, 10, true, 1.0))
+    end, -- Limit to > 0
     range = 10,
-    radius = function(self, t) return math.floor(self:combatTalentScale(t, 1, 5)) end,
+    radius = function(self, t)
+        return math.floor(self:combatTalentScale(t, 1, 5))
+    end,
     stamina = 10,
     requires_target = true,
     target = function(self, t)
-        return {type="ball", radius=self:getTalentRadius(t), range=self:getTalentRange(t), friendlyfire=false}
+        return { type = "ball", radius = self:getTalentRadius(t), range = self:getTalentRange(t), friendlyfire = false }
     end,
     tactical = { PROTECT = 3, DEFEND = 2 },
-    getPhysicalPower = function(self, t) return self:combatTalentScale(t, 3, 12) end,
-    getShield = function(self, t) return self:combatTalentScale(t, 50, 100) end,
+    getPhysicalPower = function(self, t)
+        return self:combatTalentScale(t, 3, 12)
+    end,
+    getShield = function(self, t)
+        return self:combatTalentScale(t, 50, 100)
+    end,
     addShield = function(self, t)
         local shield_power = t.getShield(self, t)
         if not self:hasEffect(self.EFF_DAMAGE_SHIELD) then
-            self:setEffect(self.EFF_DAMAGE_SHIELD, 2, {power=shield_power})
+            self:setEffect(self.EFF_DAMAGE_SHIELD, 2, { power = shield_power })
         else
             -- Shields can't usually merge, so change the parameters manually
             local shield = self:hasEffect(self.EFF_DAMAGE_SHIELD)
@@ -106,14 +135,20 @@ newTalent{
         game.target.source_actor = self
         local x, y = self:getTarget(tg)
         game.target.source_actor = olds
-        if not x or not y then return nil end
+        if not x or not y then
+            return nil
+        end
 
         self:project(tg, x, y, function(px, py)
             local target = game.level.map(px, py, Map.ACTOR)
-            if not target then return end
+            if not target then
+                return
+            end
 
             if self:reactionToward(target) < 0 then
-                if self.ai_target then self.ai_target.target = target end
+                if self.ai_target then
+                    self.ai_target.target = target
+                end
                 target:setTarget(self)
                 self:logCombat(target, "#Source# provokes #Target# to attack it.")
                 t.addShield(self, t)
@@ -129,59 +164,84 @@ newTalent{
     end,
 }
 
-newTalent{
+newTalent {
     name = "Crush", short_name = "GOLEM_CRUSH_NEW", image = "talents/golem_crush.png",
-    type = {"golem/new-fighting", 3},
+    type = { "golem/new-fighting", 3 },
     require = techs_req3,
     points = 5,
     cooldown = 10,
     range = 8,
     stamina = 10,
     requires_target = true,
-    getDamage = function(self, t) return self:combatTalentWeaponDamage(t, 0.8, 1.6) end,
-    getPinDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
-    getPhysicalPower = function(self, t) return self:combatTalentScale(t, 3, 12) end,
-    getSlow = function(self, t) return self:combatTalentLimit(t, 50, 10, 35) end,
+    getDamage = function(self, t)
+        return self:combatTalentWeaponDamage(t, 0.8, 1.6)
+    end,
+    getPinDuration = function(self, t)
+        return math.floor(self:combatTalentScale(t, 3, 7))
+    end,
+    getPhysicalPower = function(self, t)
+        return self:combatTalentScale(t, 3, 12)
+    end,
+    getSlow = function(self, t)
+        return self:combatTalentLimit(t, 50, 10, 35)
+    end,
     tactical = { ATTACK = { weapon = 2 }, DISABLE = { pin = 1, slow = 1 } },
     is_melee = true,
-    target = function(self, t) return {type="hit", range=self:getTalentRange(t)} end,
+    target = function(self, t)
+        return { type = "hit", range = self:getTalentRange(t) }
+    end,
     action = function(self, t)
-        if self:attr("never_move") then game.logPlayer(self, "Your golem cannot do that currently.") return end
+        if self:attr("never_move") then
+            game.logPlayer(self, "Your golem cannot do that currently.")
+            return
+        end
 
         local tg = self:getTalentTarget(t)
         local olds = game.target.source_actor
         game.target.source_actor = self
         local x, y, target = self:getTarget(tg)
         game.target.source_actor = olds
-        if not target then return nil end
+        if not target then
+            return nil
+        end
 
-        if self.ai_target then self.ai_target.target = target end
+        if self.ai_target then
+            self.ai_target.target = target
+        end
 
         if core.fov.distance(self.x, self.y, x, y) > 1 then
-            tg.radius = 1 tg.type = "ball"
+            tg.radius = 1
+            tg.type = "ball"
             local grids = {}
-            self:projectApply(tg, x, y, Map.TERRAIN, function(_, px, py) grids[#grids+1] = {x=px, y=py, dist=core.fov.distance(self.x, self.y, px, py, true)} end, function(_, px, py) return
-            not game.level.map:checkAllEntities(px, py, "block_move", self) and
-                    self:hasLOS(px, py)
+            self:projectApply(tg, x, y, Map.TERRAIN, function(_, px, py)
+                grids[#grids + 1] = { x = px, y = py, dist = core.fov.distance(self.x, self.y, px, py, true) }
+            end, function(_, px, py)
+                return
+                not game.level.map:checkAllEntities(px, py, "block_move", self) and
+                        self:hasLOS(px, py)
             end, nil, true)
             table.sort(grids, "dist")
-            if #grids == 0 then return end
+            if #grids == 0 then
+                return
+            end
             self:forceMoveAnim(grids[1].x, grids[1].y)
         end
 
         -- Attack ?
-        if core.fov.distance(self.x, self.y, x, y) > 1 then return true end
+        if core.fov.distance(self.x, self.y, x, y) > 1 then
+            return true
+        end
         local hit = self:attackTarget(target, nil, t.getDamage(self, t), true)
 
         -- Try to pin
         if hit then
             if target:canBe("pin") then
-                target:setEffect(target.EFF_PINNED, t.getPinDuration(self, t), {apply_power=self:combatPhysicalpower()})
+                target:setEffect(target.EFF_PINNED, t.getPinDuration(self, t), { apply_power = self:combatPhysicalpower() })
             else
                 game.logSeen(target, "%s resists the crushing!", target:getName():capitalize())
             end
             if target:canBe("slow") then
-                target:setEffect(target.EFF_SLOW, 3, { power = t.getSlow(self, t) *0.01})
+                target:setEffect(target.EFF_SLOW, 3, { power = t.getSlow(self, t) * 0.01 })
             end
         end
 
@@ -199,9 +259,9 @@ newTalent{
     end,
 }
 
-newTalent{
+newTalent {
     name = "Pound", short_name = "GOLEM_POUND_NEW", image = "talents/golem_pound.png",
-    type = {"golem/new-fighting", 4},
+    type = { "golem/new-fighting", 4 },
     require = techs_req4,
     points = 5,
     cooldown = 15,
@@ -210,46 +270,65 @@ newTalent{
     stamina = 5,
     requires_target = true,
     target = function(self, t)
-        return {type="ballbolt", radius=self:getTalentRadius(t), friendlyfire=false, range=self:getTalentRange(t)}
+        return { type = "ballbolt", radius = self:getTalentRadius(t), friendlyfire = false, range = self:getTalentRange(t) }
     end,
     getGolemDamage = function(self, t)
         return self:combatTalentWeaponDamage(t, 1, 1.5)
     end,
-    getPhysicalPower = function(self, t) return self:combatTalentScale(t, 3, 12) end,
-    getDazeDuration = function(self, t) return math.floor(self:combatTalentScale(t, 3, 7)) end,
+    getPhysicalPower = function(self, t)
+        return self:combatTalentScale(t, 3, 12)
+    end,
+    getDazeDuration = function(self, t)
+        return math.floor(self:combatTalentScale(t, 3, 7))
+    end,
     tactical = { ATTACKAREA = { weapon = 1.5 }, DISABLE = { stun = 1 } },
     action = function(self, t)
-        if self:attr("never_move") then game.logPlayer(self, "Your golem cannot do that currently.") return end
+        if self:attr("never_move") then
+            game.logPlayer(self, "Your golem cannot do that currently.")
+            return
+        end
 
         local tg = self:getTalentTarget(t)
         local olds = game.target.source_actor
         game.target.source_actor = self
         local x, y, target = self:getTarget(tg)
         game.target.source_actor = olds
-        if not target then return nil end
+        if not target then
+            return nil
+        end
 
         if core.fov.distance(self.x, self.y, x, y) > 1 then
-            tg.radius = 1 tg.type = "ball"
+            tg.radius = 1
+            tg.type = "ball"
             local grids = {}
-            self:projectApply(tg, x, y, Map.TERRAIN, function(_, px, py) grids[#grids+1] = {x=px, y=py, dist=core.fov.distance(self.x, self.y, px, py, true)} end, function(_, px, py) return
-            not game.level.map:checkAllEntities(px, py, "block_move", self) and
-                    self:hasLOS(px, py)
+            self:projectApply(tg, x, y, Map.TERRAIN, function(_, px, py)
+                grids[#grids + 1] = { x = px, y = py, dist = core.fov.distance(self.x, self.y, px, py, true) }
+            end, function(_, px, py)
+                return
+                not game.level.map:checkAllEntities(px, py, "block_move", self) and
+                        self:hasLOS(px, py)
             end, nil, true)
             table.sort(grids, "dist")
-            if #grids == 0 then return end
+            if #grids == 0 then
+                return
+            end
             self:forceMoveAnim(grids[1].x, grids[1].y)
         end
 
-        if self.ai_target then self.ai_target.target = target end
+        if self.ai_target then
+            self.ai_target.target = target
+        end
 
         -- Attack & daze
         tg.type = "ball"
         self:project(tg, self.x, self.y, function(xx, yy)
-            if xx == self.x and yy == self.y then return end
+            if xx == self.x and yy == self.y then
+                return
+            end
             local target = game.level.map(xx, yy, Map.ACTOR)
             if target and self:attackTarget(target, nil, t.getGolemDamage(self, t), true) then
                 if target:canBe("stun") then
-                    target:setEffect(target.EFF_DAZED, t.getDazeDuration(self, t), {apply_power=self:combatPhysicalpower()})
+                    target:setEffect(target.EFF_DAZED, t.getDazeDuration(self, t), { apply_power = self:combatPhysicalpower() })
                 else
                     game.logSeen(target, "%s resists the dazing blow!", target:getName():capitalize())
                 end

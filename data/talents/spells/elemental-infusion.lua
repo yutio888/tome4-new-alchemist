@@ -1,82 +1,99 @@
 local function getElementalInsufionType(self)
     if self:knowTalent(self.T_ELEMENTAL_INFUSION) and self.elemental_infusion then
         local type = self.elemental_infusion
-        if type == "fire" then return DamageType.FIRE
-        elseif type == "acid" then return DamageType.ACID
-        elseif type == "cold" then return DamageType.COLD
-        elseif type == "lightning" then return DamageType.LIGHTNING
-        else return DamageType.PHYSICAL
+        if type == "fire" then
+            return DamageType.FIRE
+        elseif type == "acid" then
+            return DamageType.ACID
+        elseif type == "cold" then
+            return DamageType.COLD
+        elseif type == "lightning" then
+            return DamageType.LIGHTNING
+        else
+            return DamageType.PHYSICAL
         end
     end
     return nil
 end
 
-newTalent{
-	name = "Manage Elemental Infusion", image = "talents/elemental_infusion.png",
-	type = {"spell/other", 1},
-	points = 1,
-	cooldown = 5,
-	cant_steal = true,
-	no_npc_use = true,
-	action = function(self, t)
-		local Chat = require "engine.Chat"
-        local chat = Chat.new("choose-elemental_infusion", {name=_t"Choose your element"}, game.player)
+newTalent {
+    name = "Manage Elemental Infusion", image = "talents/elemental_infusion.png",
+    type = { "spell/other", 1 },
+    points = 1,
+    cooldown = 5,
+    cant_steal = true,
+    no_npc_use = true,
+    action = function(self, t)
+        local Chat = require "engine.Chat"
+        local chat = Chat.new("choose-elemental_infusion", { name = _t "Choose your element" }, game.player)
         chat:invoke()
         return true
-	end,
-	info = function(self, t)
-		return (_t[[Manage your elemental infusion.]])
-	end,
+    end,
+    info = function(self, t)
+        return (_t [[Manage your elemental infusion.]])
+    end,
 }
 
 newTalent {
     name = "Elemental Infusion",
-	type = {"spell/elemental-alchemy", 1},
-	mode = "passive",
-	require = spells_req_high1,
-	points = 5,
-	autolearn_talent = "T_MANAGE_ELEMENTAL_INFUSION",
-	getIncrease = function(self, t) return self:combatTalentScale(t, 10, 20) end,
-	passives = function(self, t, ret)
-	    local type = getElementalInsufionType(self)
-    	if type then
-    	    self:talentTemporaryValue(ret, "inc_damage", {[type] = t.getIncrease(self, t)})
-    	    if self:knowTalent(self.T_BODY_OF_ELEMENT) then
-    	        self:talentTemporaryValue(ret, "resists", {[type] = self:callTalent(self.T_BODY_OF_ELEMENT, "getResist")})
-    	        self:talentTemporaryValue(ret, "resists_pen", {[type] = self:callTalent(self.T_BODY_OF_ELEMENT, "getResistPen")})
-    	    end
-    	end
-	end,
-	on_learn = function(self, t)
-	    if not self.elemental_infusion then
-	        self.elemental_infusion = "fire"
-	    end
-	end,
-	on_unlearn = function(self, t)
+    type = { "spell/elemental-alchemy", 1 },
+    mode = "passive",
+    require = spells_req_high1,
+    points = 5,
+    autolearn_talent = "T_MANAGE_ELEMENTAL_INFUSION",
+    getIncrease = function(self, t)
+        return self:combatTalentScale(t, 10, 20)
+    end,
+    passives = function(self, t, ret)
+        local type = getElementalInsufionType(self)
+        if type then
+            self:talentTemporaryValue(ret, "inc_damage", { [type] = t.getIncrease(self, t) })
+            if self:knowTalent(self.T_BODY_OF_ELEMENT) then
+                self:talentTemporaryValue(ret, "resists", { [type] = self:callTalent(self.T_BODY_OF_ELEMENT, "getResist") })
+                self:talentTemporaryValue(ret, "resists_pen", { [type] = self:callTalent(self.T_BODY_OF_ELEMENT, "getResistPen") })
+            end
+        end
+    end,
+    on_learn = function(self, t)
+        if not self.elemental_infusion then
+            self.elemental_infusion = "fire"
+        end
+    end,
+    on_unlearn = function(self, t)
 
-	end,
-	info = function(self, t)
-		local daminc = t.getIncrease(self, t)
-		return ([[When you throw your alchemist bombs, you infuse them with %s.
+    end,
+    info = function(self, t)
+        local daminc = t.getIncrease(self, t)
+        return ([[When you throw your alchemist bombs, you infuse them with %s.
 		In addition, %s damage you do is increased by %d%% .
 		You may choose your infusion in following elements: fire, cold, lightning and acid.]]):
-		tformat(_t(self.elemental_infusion) or _t"fire", _t(self.elemental_infusion) or _t"fire", daminc)
-	end,
+        tformat(_t(self.elemental_infusion) or _t "fire", _t(self.elemental_infusion) or _t "fire", daminc)
+    end,
 }
 
 newTalent {
     name = "Infusion Enchantment",
-    type = {"spell/elemental-alchemy", 2},
+    type = { "spell/elemental-alchemy", 2 },
     mode = "passive",
     require = spells_req_high2,
     points = 5,
-    cooldown = function(self, t) return math.floor(self:combatTalentLimit(t, 1, 10, 4)) end,
-    getChance = function(self, t) return math.floor(self:combatTalentLimit(t, 100, 25, 75)) end,
-    getDuration = function(self, t) return math.floor(self:combatTalentScale(t, 1, 3)) end,
+    cooldown = function(self, t)
+        return math.floor(self:combatTalentLimit(t, 1, 10, 4))
+    end,
+    getChance = function(self, t)
+        return math.floor(self:combatTalentLimit(t, 100, 25, 75))
+    end,
+    getDuration = function(self, t)
+        return math.floor(self:combatTalentScale(t, 1, 3))
+    end,
     callbackOnAlchemistBomb = function(self, t, targets)
-        if self:isTalentCoolingDown(t) then return end
+        if self:isTalentCoolingDown(t) then
+            return
+        end
         local chance = t.getChance(self, t)
-        if not rng.percent(chance) then return end
+        if not rng.percent(chance) then
+            return
+        end
         if not self:hasProc("infusion_delay_trigger") then
             self:setProc("infusion_delay_trigger", 1)
             game:onTickEnd(self:startTalentCooldown(t))
@@ -88,19 +105,19 @@ newTalent {
             if target and target:reactionToward(self) < 0 then
                 if type == DamageType.FIRE then
                     if target:canBe("stun") then
-                        target:setEffect(target.EFF_STUNNED, dur, {src = self})
+                        target:setEffect(target.EFF_STUNNED, dur, { src = self })
                     end
                 elseif type == DamageType.COLD then
                     if target:canBe("pin") then
-                        target:setEffect(target.EFF_FROZEN_FEET, dur, {src = self})
+                        target:setEffect(target.EFF_FROZEN_FEET, dur, { src = self })
                     end
                 elseif type == DamageType.ACID then
                     if target:canBe("blind") then
-                        target:setEffect(target.EFF_BLINDED, dur, {src = self})
+                        target:setEffect(target.EFF_BLINDED, dur, { src = self })
                     end
                 elseif type == DamageType.LIGHTNING then
                     if target:canBe("stun") then
-                        target:setEffect(target.EFF_DAZED, dur, {src = self})
+                        target:setEffect(target.EFF_DAZED, dur, { src = self })
                     end
                 end
             end
@@ -119,40 +136,60 @@ newTalent {
 
 newTalent {
     name = "Energy Recycle",
-    type = {"spell/elemental-alchemy", 3},
+    type = { "spell/elemental-alchemy", 3 },
     mode = "sustained",
     require = spells_req_high3,
     points = 5,
     sustain_mana = 80,
     cooldown = 30,
     tactical = { BUFF = 10 },
-    getCDReduce = function(self, t) if self:getTalentLevel(t) > 4 then return 2 else return 1 end end,
-    getThreshold = function(self, t) return self.level * 2 end,
-    getExposure = function(self, t) return math.floor(self:combatTalentSpellDamage(t, 0, 60)) end,
-    getChance = function(self, t) return math.floor(self:combatTalentLimit(t, 100, 25, 75)) end,
+    getCDReduce = function(self, t)
+        if self:getTalentLevel(t) > 4 then
+            return 2
+        else
+            return 1
+        end
+    end,
+    getThreshold = function(self, t)
+        return self.level * 2
+    end,
+    getExposure = function(self, t)
+        return math.floor(self:combatTalentSpellDamage(t, 0, 60))
+    end,
+    getChance = function(self, t)
+        return math.floor(self:combatTalentLimit(t, 100, 25, 75))
+    end,
     activate = function(self, t)
-    	game:playSoundNear(self, "talents/lightning")
+        game:playSoundNear(self, "talents/lightning")
         local ret = {}
         if core.shader.active(4) then
-        	ret.particle = self:addParticles(Particles.new("shader_ring_rotating", 1, {z=5, rotation=0, radius=1.4, img="alchie_lightning"}, {type="lightningshield", time_factor = 4000, ellipsoidalFactor = {1.7, 1.4}}))
+            ret.particle = self:addParticles(Particles.new("shader_ring_rotating", 1, { z = 5, rotation = 0, radius = 1.4, img = "alchie_lightning" }, { type = "lightningshield", time_factor = 4000, ellipsoidalFactor = { 1.7, 1.4 } }))
         end
 
         return ret
     end,
     deactivate = function(self, t, p)
-    	self:removeParticles(p.particle)
+        self:removeParticles(p.particle)
         return true
     end,
     callbackOnDealDamage = function(self, t, val, target, dead, death_note)
-    	if val < t.getThreshold(self, t) then return end
-    	local cd = self.turn_procs.alchemist_bomb_cd
-    	self.turn_procs.alchemist_bomb_cd = true
-    	local chance = t.getChance(self, t)
-    	if not rng.percent(chance) then return end
-        if not dead then target:setEffect(target.EFF_ITEM_EXPOSED, 3, {src = self, reduce = t.getExposure(self, t), no_ct_effect = true, apply_power = self:combatSpellpower()}) end
-    	if self:knowTalent(self.T_THROW_BOMB_NEW) then
-    	    if self:isTalentCoolingDown(self.T_THROW_BOMB_NEW) then
-    	        if not cd then self:alterTalentCoolingdown(self.T_THROW_BOMB_NEW, 0-t.getCDReduce(self, t)) end
+        if val < t.getThreshold(self, t) then
+            return
+        end
+        local cd = self.turn_procs.alchemist_bomb_cd
+        self.turn_procs.alchemist_bomb_cd = true
+        local chance = t.getChance(self, t)
+        if not rng.percent(chance) then
+            return
+        end
+        if not dead then
+            target:setEffect(target.EFF_ITEM_EXPOSED, 3, { src = self, reduce = t.getExposure(self, t), no_ct_effect = true, apply_power = self:combatSpellpower() })
+        end
+        if self:knowTalent(self.T_THROW_BOMB_NEW) then
+            if self:isTalentCoolingDown(self.T_THROW_BOMB_NEW) then
+                if not cd then
+                    self:alterTalentCoolingdown(self.T_THROW_BOMB_NEW, 0 - t.getCDReduce(self, t))
+                end
             else
                 self.turn_procs.alchemist_bomb_cd = nil
             end
@@ -166,44 +203,51 @@ newTalent {
     end,
 }
 
-
 newTalent {
     name = "Body of Element",
-    type = {"spell/elemental-alchemy", 4},
+    type = { "spell/elemental-alchemy", 4 },
     mode = "sustained",
     require = spells_req_high4,
     points = 5,
     sustain_mana = 30,
     cooldown = 30,
     tactical = { BUFF = 10 },
-    getResist = function(self, t) return self:combatTalentScale(t, 20, 50) end,
-    getResistPen = function(self, t) return 0 end,
-    getDamage = function(self, t) return self:combatTalentSpellDamage(t, 5, 80) end,
+    getResist = function(self, t)
+        return self:combatTalentScale(t, 20, 50)
+    end,
+    getResistPen = function(self, t)
+        return 0
+    end,
+    getDamage = function(self, t)
+        return self:combatTalentSpellDamage(t, 5, 80)
+    end,
     activate = function(self, t)
-    	game:playSoundNear(self, "talents/fireflash")
-    	local ret = {}
-    	self:addShaderAura("body_of_fire", "awesomeaura", {time_factor=3500, alpha=1, flame_scale=1.1}, "particles_images/wings.png")
-    	self:updateTalentPassives(self.T_ELEMENTAL_INFUSION)
-    	return ret
+        game:playSoundNear(self, "talents/fireflash")
+        local ret = {}
+        self:addShaderAura("body_of_fire", "awesomeaura", { time_factor = 3500, alpha = 1, flame_scale = 1.1 }, "particles_images/wings.png")
+        self:updateTalentPassives(self.T_ELEMENTAL_INFUSION)
+        return ret
     end,
     deactivate = function(self, t, p)
-    	self:removeShaderAura("body_of_fire")
-    	game.logSeen(self, "#FF8000#The raging fire around %s calms down and disappears.", self:getName())
-    	self:updateTalentPassives(self.T_ELEMENTAL_INFUSION)
-    	return true
+        self:removeShaderAura("body_of_fire")
+        game.logSeen(self, "#FF8000#The raging fire around %s calms down and disappears.", self:getName())
+        self:updateTalentPassives(self.T_ELEMENTAL_INFUSION)
+        return true
     end,
-    getTargetCount = function(self, t) return math.floor(self:getTalentLevel(t)) end,
+    getTargetCount = function(self, t)
+        return math.floor(self:getTalentLevel(t))
+    end,
     callbackOnActBase = function(self, t)
-    	local type = getElementalInsufionType(self) or DamageType.FIRE
+        local type = getElementalInsufionType(self) or DamageType.FIRE
         local nb = t.getTargetCount(self, t)
-        local targets = table.keys(self:projectCollect({type="ball", radius=6, talent=t}, self.x, self.y, Map.ACTOR, "hostile"))
+        local targets = table.keys(self:projectCollect({ type = "ball", radius = 6, talent = t }, self.x, self.y, Map.ACTOR, "hostile"))
         if #targets > 0 then
             local dam = self:spellCrit(t.getDamage(self, t))
             while #targets > 0 and nb > 0 do
                 local target = rng.tableRemove(targets)
                 nb = nb - 1
                 DamageType:get(type).projector(self, target.x, target.y, type, dam)
-                game.level.map:particleEmitter(target.x, target.y, 1, "circle", {base_rot=0, oversize=1, a=230, limit_life=8, appear=6, speed=0, img="healred", radius=0, shader=true})
+                game.level.map:particleEmitter(target.x, target.y, 1, "circle", { base_rot = 0, oversize = 1, a = 230, limit_life = 8, appear = 6, speed = 0, img = "healred", radius = 0, shader = true })
 
             end
         end

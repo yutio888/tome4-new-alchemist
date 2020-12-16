@@ -14,7 +14,6 @@ local translation_table = {
     _t("Potion of Swiftness", "talent name"),
 }
 
-
 local function getFakeTalent(self)
     return self:getTalentFromId(self.T_MANAGE_POTION_1)
 end
@@ -79,7 +78,9 @@ local function newPotion(t)
         if auto and nb > 0 then
             local last = potion.lastUse
             --auto restore only happens after 10 turns to slow the restore out of combat
-            if not last or game.turn - 100 < last then return end
+            if not last or game.turn - 100 < last then
+                return
+            end
         end
         local c_nb = potion.nb or 0
         c_nb = c_nb + nb
@@ -94,9 +95,13 @@ local function newPotion(t)
             return
         end
         local reduce = self:isTalentActive(self.T_MANAGE_POTION_3)
-        if reduce then self:attr("spellpower_reduction", 1) end
+        if reduce then
+            self:attr("spellpower_reduction", 1)
+        end
         local res = action(self, t)
-        if reduce then self:attr("spellpower_reduction", -1) end
+        if reduce then
+            self:attr("spellpower_reduction", -1)
+        end
         if res then
             t.recharge(self, t, -1)
         end
@@ -133,7 +138,9 @@ local function newPotion(t)
         Left charges: %d]]):tformat(info(self, tc, getFakeTalent(self)), tc.charge(self, tc))
     end
     if not t.allowUse then
-        t.allowUse = function(self, t) return true end
+        t.allowUse = function(self, t)
+            return true
+        end
     end
     newTalent(t)
 end
@@ -240,11 +247,13 @@ newPotion {
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
-        if not x or not y  then
+        if not x or not y then
             return nil
         end
         local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
-        if #targets <= 0 then return nil end
+        if #targets <= 0 then
+            return nil
+        end
         for _, target in ipairs(targets) do
             target:attr("allow_on_heal", 1)
             target:heal(t.getHeal(self, t), self)
@@ -325,7 +334,7 @@ newPotion {
             end
             local e = Object.new {
                 old_feat = oe, type = oe.type, subtype = oe.subtype,
-                name = _t "fire wall", image = oe.image, add_mos = {{image = "fire_particle.png"}},
+                name = _t "fire wall", image = oe.image, add_mos = { { image = "fire_particle.png" } },
                 desc = _t "a summoned, transparent wall of fire",
                 display = '~', color = colors.LIGHT_RED, back_color = colors.RED,
                 always_remember = true,
@@ -387,17 +396,27 @@ newPotion {
 newPotion {
     name = "Dissolving Acid", short_name = "ACID_POTION", image = "talents/dissolving_acid.png", icon = "object/elixir_of_avoidance.png",
     tactical = { ATTACK = { ACID = 2 }, DISABLE = 2 },
-    getDamage = function(self, t) return self:combatTalentSpellDamage(t, 40, 150) end,
-    getRemoveCount = function(self, t) return math.floor(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 1, 3, "log")) end,
+    getDamage = function(self, t)
+        return self:combatTalentSpellDamage(t, 40, 150)
+    end,
+    getRemoveCount = function(self, t)
+        return math.floor(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 1, 3, "log"))
+    end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
-        if not x or not y then return nil end
+        if not x or not y then
+            return nil
+        end
         self:project(tg, x, y, function(px, py)
             local target = game.level.map(px, py, Map.ACTOR)
-            if not target then return end
-            if target == self then return end
-            local nb = t.getRemoveCount(self,t)
+            if not target then
+                return
+            end
+            if target == self then
+                return
+            end
+            local nb = t.getRemoveCount(self, t)
             DamageType:get(DamageType.ACID).projector(self, px, py, DamageType.ACID, (self:spellCrit(t.getDamage(self, t))))
 
             local effs = {}
@@ -406,12 +425,14 @@ newPotion {
             for tid, act in pairs(target.sustain_talents) do
                 local t = self:getTalentFromId(tid)
                 if act then
-                    effs[#effs+1] = {"talent", tid}
+                    effs[#effs + 1] = { "talent", tid }
                 end
             end
 
             for i = 1, nb do
-                if #effs == 0 then break end
+                if #effs == 0 then
+                    break
+                end
                 local eff = rng.tableRemove(effs)
 
                 if self:checkHit(self:combatSpellpower(), target:combatSpellResist(), 0, 95, 5) then
@@ -420,7 +441,7 @@ newPotion {
                 end
             end
 
-        end, nil, {type="acid"})
+        end, nil, { type = "acid" })
         game:playSoundNear(self, "talents/acid")
         return true
     end,
@@ -439,19 +460,29 @@ newPotion {
 
 newPotion {
     name = "Lightning Ball", short_name = "LIGHTNING_POTION", icon = "object/elixir_of_serendipity.png",
-    radius = function(self, t) return math.ceil(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 1, 3)) end,
+    radius = function(self, t)
+        return math.ceil(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 1, 3))
+    end,
     tactical = { DISABLE = { daze = 2, blind = 2 } },
     target = function(self, t)
         return { type = "ball", range = self:getTalentRange(t), radius = self:getTalentRadius(t), talent = t }
     end,
-    getDazeDuration = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 2, 4) end,
-    getShockDuration = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 4, 6) end,
+    getDazeDuration = function(self, t)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 2, 4)
+    end,
+    getShockDuration = function(self, t)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 4, 6)
+    end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
-        if not x or not y then return nil end
+        if not x or not y then
+            return nil
+        end
         self:projectApply(tg, x, y, Map.ACTOR, function(target)
-            if target == self then return end
+            if target == self then
+                return
+            end
             if target:canBe("stun") then
                 target:setEffect(target.EFF_DAZED, t.getDazeDuration(self, t), {})
             else
@@ -479,16 +510,24 @@ newPotion {
 newPotion {
     name = "Breath of the Frost", short_name = "FROST_POTION", image = "talents/frost_shield.png", icon = "object/elixir_of_mysticism.png",
     tactical = { DEFEND = 3 },
-    getDuration = function(self, t) return 6 end,
-    getResists = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 5, 20) end,
-    getCritShrug = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 15, 45) end,
+    getDuration = function(self, t)
+        return 6
+    end,
+    getResists = function(self, t)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 5, 20)
+    end,
+    getCritShrug = function(self, t)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 15, 45)
+    end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
-        if not x or not y then return nil end
+        if not x or not y then
+            return nil
+        end
         local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
         for _, target in ipairs(targets) do
-            target:setEffect(target.EFF_FROST_SHIELD, t.getDuration(self, t), { power = t.getResists(self, t), critdown = t.getCritShrug(self, t)})
+            target:setEffect(target.EFF_FROST_SHIELD, t.getDuration(self, t), { power = t.getResists(self, t), critdown = t.getCritShrug(self, t) })
         end
         return true
     end,
@@ -506,21 +545,31 @@ newPotion {
 newPotion {
     name = "Stoned Armour", short_name = "STONE_POTION", image = "talents/stoneskin.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { DEFEND = 2 },
-    getDuration = function(self, t) return 6 end,
-    getArmor = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 30, 100) end,
+    getDuration = function(self, t)
+        return 6
+    end,
+    getArmor = function(self, t)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 30, 100)
+    end,
     allowUse = function(self, t)
-        if self ~= game.player then return false end
-        if config.settings.cheat then return true end
+        if self ~= game.player then
+            return false
+        end
+        if config.settings.cheat then
+            return true
+        end
         local quest = game.player:hasQuest("brotherhood-of-alchemists")
         return quest and quest.winner == "Ungrol of Last Hope"
     end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
-        if not x or not y then return nil end
+        if not x or not y then
+            return nil
+        end
         local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
         for _, target in ipairs(targets) do
-            target:setEffect(target.EFF_STONED_ARMOUR, 6, {ac=t.getArmor(self, t), hard=50})
+            target:setEffect(target.EFF_STONED_ARMOUR, 6, { ac = t.getArmor(self, t), hard = 50 })
         end
         return true
     end,
@@ -532,19 +581,29 @@ newPotion {
     end,
     info = function(self, t, fake_t)
         return ([[Increase armor by %d , armor hardiness by %d%%, and decrease defense by %d for 6 turns.]])
-        :tformat(t.getArmor(self, fake_t or t), 50, t.getArmor(self, fake_t or t))
+                :tformat(t.getArmor(self, fake_t or t), 50, t.getArmor(self, fake_t or t))
     end,
 }
 
 newPotion {
     name = "Potion of Magic", short_name = "ARCANE_POTION", image = "talents/arcane_power.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { BUFF = 3 },
-    getDuration = function(self, t) return 6 end,
-    getSpellpower = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 20, 40) end,
-    getManaRegen = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 80, 300) end,
+    getDuration = function(self, t)
+        return 6
+    end,
+    getSpellpower = function(self, t)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 20, 40)
+    end,
+    getManaRegen = function(self, t)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 80, 300)
+    end,
     allowUse = function(self, t)
-        if self ~= game.player then return false end
-        if config.settings.cheat then return true end
+        if self ~= game.player then
+            return false
+        end
+        if config.settings.cheat then
+            return true
+        end
         local quest = game.player:hasQuest("brotherhood-of-alchemists")
         return quest and quest.winner == "Marus of Elvala"
     end,
@@ -552,11 +611,13 @@ newPotion {
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
-        if not x or not y then return nil end
+        if not x or not y then
+            return nil
+        end
         local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
         for _, target in ipairs(targets) do
             target:incMana(t.getManaRegen(self, t))
-            target:setEffect(target.EFF_POTION_OF_MAGIC, 6, { power = t.getSpellpower(self, t)})
+            target:setEffect(target.EFF_POTION_OF_MAGIC, 6, { power = t.getSpellpower(self, t) })
         end
         return true
     end,
@@ -574,11 +635,19 @@ newPotion {
 newPotion {
     name = "Potion of Luck", short_name = "LUCK_POTION", image = "talents/lucky_day.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { DEFEND = 2 },
-    getDuration = function(self, t) return 6 end,
-    getEvasion = function(self, t)  return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 10, 25) + (self:getLck() - 50) end,
+    getDuration = function(self, t)
+        return 6
+    end,
+    getEvasion = function(self, t)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 10, 25) + (self:getLck() - 50)
+    end,
     allowUse = function(self, t)
-        if self ~= game.player then return false end
-        if config.settings.cheat then return true end
+        if self ~= game.player then
+            return false
+        end
+        if config.settings.cheat then
+            return true
+        end
         local quest = game.player:hasQuest("brotherhood-of-alchemists")
         return quest and quest.winner == "Agrimley the hermit"
     end,
@@ -586,10 +655,12 @@ newPotion {
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
-        if not x or not y then return nil end
+        if not x or not y then
+            return nil
+        end
         local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
         for _, target in ipairs(targets) do
-            target:setEffect(target.EFF_SUPER_LUCKY, 6, { power = t.getEvasion(self, t)})
+            target:setEffect(target.EFF_SUPER_LUCKY, 6, { power = t.getEvasion(self, t) })
         end
         return true
     end,
@@ -604,12 +675,22 @@ newPotion {
 newPotion {
     name = "Potion of Swiftness", short_name = "SPEED_POTION", image = "talents/nimble_movements.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { BUFF = 3 },
-    getDuration = function(self, t) return 6 end,
-    getSpeed = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 20, 50) end,
-    getMove = function(self, t) return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 100, 400) end,
+    getDuration = function(self, t)
+        return 6
+    end,
+    getSpeed = function(self, t)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 20, 50)
+    end,
+    getMove = function(self, t)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 100, 400)
+    end,
     allowUse = function(self, t)
-        if self ~= game.player then return false end
-        if config.settings.cheat then return true end
+        if self ~= game.player then
+            return false
+        end
+        if config.settings.cheat then
+            return true
+        end
         local quest = game.player:hasQuest("brotherhood-of-alchemists")
         return quest and quest.winner == "Stire of Derth"
     end,
@@ -617,10 +698,12 @@ newPotion {
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
-        if not x or not y then return nil end
+        if not x or not y then
+            return nil
+        end
         local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
         for _, target in ipairs(targets) do
-            target:setEffect(target.EFF_SPEED_POTION, t.getDuration(self, t), { power = t.getMove(self, t), power_all = t.getSpeed(self, t)})
+            target:setEffect(target.EFF_SPEED_POTION, t.getDuration(self, t), { power = t.getMove(self, t), power_all = t.getSpeed(self, t) })
         end
         return true
     end,

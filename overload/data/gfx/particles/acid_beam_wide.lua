@@ -20,7 +20,7 @@
 -- Make the 2 main forks
 local tx = tx * engine.Map.tile_w
 local ty = ty * engine.Map.tile_h
-local basesize = math.sqrt((ty*ty)+(tx*tx))
+local basesize = math.sqrt((ty * ty) + (tx * tx))
 local basedir = math.atan2(ty, tx)
 
 local points = {}
@@ -30,9 +30,9 @@ for fork_i = 1, 20 do
     local c = 0.5
     local a = 1 or rng.float(0.3, 0.6)
     local size = fork_i == 1 and 8 or 0.5
-    local starta = basedir+math.pi/2
+    local starta = basedir + math.pi / 2
     local starts = rng.range(-12, 12)
-    points[#points+1] = {bc=bc, c=c, a=a, size=size, x=math.cos(starta) * starts, y=math.sin(starta) * starts, prev=-1}
+    points[#points + 1] = { bc = bc, c = c, a = a, size = size, x = math.cos(starta) * starts, y = math.sin(starta) * starts, prev = -1 }
 
     local nb = fork_i == 1 and 2 or 6
     for i = 0, nb - 1 do
@@ -51,27 +51,27 @@ for fork_i = 1, 20 do
         --]]
         -- [[
         local dev = 3 * rng.range(-8, 8) * (9 + fork_i) / 10
-        points[#points+1] = {
-            bc=bc, c=c, a=a,
-            movea=basedir+dev+math.pi/2,
-            size=size + rng.range(-2, 2),
-            x=math.cos(basedir) * split + math.cos(basedir+math.pi/2) * dev,
-            y=math.sin(basedir) * split + math.sin(basedir+math.pi/2) * dev,
-            prev=#points-1
+        points[#points + 1] = {
+            bc = bc, c = c, a = a,
+            movea = basedir + dev + math.pi / 2,
+            size = size + rng.range(-2, 2),
+            x = math.cos(basedir) * split + math.cos(basedir + math.pi / 2) * dev,
+            y = math.sin(basedir) * split + math.sin(basedir + math.pi / 2) * dev,
+            prev = #points - 1
         }
         --]]
     end
 
-    points[#points+1] = {bc=bc, c=c, a=a, size=size, x=tx, y=ty, prev=#points-1}
+    points[#points + 1] = { bc = bc, c = c, a = a, size = size, x = tx, y = ty, prev = #points - 1 }
 end
 local nbp = #points
 
 -- Populate the lightning based on the forks
-return { blend_mode=core.particles.BLEND_SHINY, engine=core.particles.ENGINE_LINES, generator = function()
+return { blend_mode = core.particles.BLEND_SHINY, engine = core.particles.ENGINE_LINES, generator = function()
     local p = table.remove(points, 1)
 
     return {
-        life = 12, trail=p.prev,
+        life = 12, trail = p.prev,
         size = p.size, sizev = 0, sizea = 0,
 
         x = p.x, xv = 0, xa = 0,

@@ -202,7 +202,9 @@ newTalent {
     points = 5,
     require = spells_req4,
     mode = "passive",
-    getChance = function(self, t) return self:combatTalentScale(t, 10, 25) end,
+    getChance = function(self, t)
+        return self:combatTalentScale(t, 10, 25)
+    end,
     callbackOnAlchemistBomb = function(self, t)
         local chance = t.getChance(self, t)
         if rng.percent(chance) then
@@ -210,7 +212,7 @@ newTalent {
             for _, tid in pairs(alchemy_potion_tids) do
                 if self:knowTalent(tid) then
                     if self:callTalent(tid, "charge") < self:callTalent(tid, "max_charge") then
-                        avail[#avail+1] = tid
+                        avail[#avail + 1] = tid
                     end
                 end
             end
