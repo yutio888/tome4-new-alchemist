@@ -5,10 +5,10 @@ newTalent {
     points = 5,
     mode = "passive",
     getLife = function(self, t)
-        return self:combatTalentScale(t, 50, 330)
+        return self:combatTalentScale(t, 50, 500)
     end,
     getRegen = function(self, t)
-        return self:combatTalentScale(t, 4, 16)
+        return self:combatTalentScale(t, 5, 20)
     end,
     passives = function(self, t, tmptable)
         self:talentTemporaryValue(tmptable, "max_life", t.getLife(self, t))
@@ -42,16 +42,16 @@ newTalent {
         self:talentTemporaryValue(p, "life_regen", t.getRegen(self, t))
     end,
     action = function(self, t)
+        local shield_power = self:spellCrit(t.getAbsorb(self, t))
         if self:hasEffect(self.EFF_DAMAGE_SHIELD) then
             local shield = self:hasEffect(self.EFF_DAMAGE_SHIELD)
-            local shield_power = t.getAbsorb(self, t)
 
             shield.power = shield.power + shield_power
             self.damage_shield_absorb = self.damage_shield_absorb + shield_power
             self.damage_shield_absorb_max = self.damage_shield_absorb_max + shield_power
             shield.dur = math.max(t.getDuration(self, t), shield.dur)
         else
-            self:setEffect(self.EFF_DAMAGE_SHIELD, t.getDuration(self, t), { power = t.getAbsorb(self, t) })
+            self:setEffect(self.EFF_DAMAGE_SHIELD, t.getDuration(self, t), { power = shield_power })
         end
     end,
     info = function(self, t)
@@ -64,7 +64,7 @@ newTalent {
 }
 
 newTalent {
-    name = "Power", short_name = "GOLEM_POWER", image = "talents/poewr.png",
+    name = "Power", short_name = "GOLEM_POWER", image = "talents/power.png",
     type = { "golem/energy", 3 },
     require = spells_req3,
     points = 5,
@@ -85,5 +85,26 @@ newTalent {
         return ([[Your golem gains %d physical、spell and mind power and %d life regeneration.
 		]]):tformat(t.getPower(self, t), t.getRegen(self, t))
     end,
+}
 
+newTalent {
+    name = "Recharge", short_name = "GOLEM_RECHARGE",
+    type = { "golem/energy", 4 },
+    require = spells_req4,
+    points = 5,
+    mode = "passive",
+    getChance = function(self, t)
+        return self:combatTalentScale(t, 30, 70)
+    end,
+    getRegen = function(self, t)
+        return self:combatTalentScale(t, 1, 4)
+    end,
+    passives = function(self, t, tmptable)
+        self:talentTemporaryValue(tmptable, "life_regen", t.getRegen(self, t))
+    end,
+    info = function(self, t)
+        return ([[Your bombs energize your golem, all talents on cooldown on your golem have %d%% chance to be reduced by 1.
+        This talent grants your golem %d life regeneration.
+		]]):tformat(t.getChance(self, t), t.getRegen(self, t))
+    end,
 }

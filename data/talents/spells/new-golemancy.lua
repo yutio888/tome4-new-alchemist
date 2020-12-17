@@ -99,6 +99,7 @@ function makeAlchemistGolem(self)
             [Talents.T_STAMINA_POOL] = 1,
             [Talents.T_GOLEM_KNOCKBACK_NEW] = 1,
             [Talents.T_GOLEM_DESTRUCT] = 1,
+            [Talents.T_GOLEM_RESILIENCE] = 1,
         },
 
         resolvers.equip { id = true,
@@ -108,12 +109,14 @@ function makeAlchemistGolem(self)
 
         talents_types = {
             ["golem/new-fighting"] = true,
-            ["golem/arcane"] = true,
+            ["golem/new-arcane"] = true,
+            ["golem/energy"] = true,
         },
         talents_types_mastery = {
             ["technique/combat-training"] = 0.3,
             ["golem/new-fighting"] = 0.3,
-            ["golem/arcane"] = 0.3,
+            ["golem/new-arcane"] = 0.3,
+            ["golem/energy"] = 0.3,
         },
         forbid_nature = 1,
         power_source = { arcane = true },
@@ -175,7 +178,6 @@ function makeAlchemistGolem(self)
                 self.unused_talents = self.unused_talents + 1
             end
             if self.level % 5 == 0 then
-                self.unused_stats = self.unused_stats + 3
                 self.unused_generics = self.unused_generics + 1
             end
         end,

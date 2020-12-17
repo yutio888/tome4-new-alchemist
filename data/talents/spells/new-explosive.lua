@@ -116,9 +116,25 @@ function bombUtil:throwBomb(self, t, ammo, tg, x, y, startx, starty)
             DamageType:get(damtype).projector(self, target.x, target.y, damtype, dam)
             self:triggerGemEffect(target, ammo, dam)
         end
+        if target == self.alchemy_golem and target:knowTalent(target.T_GOLEM_RECHARGE) then
+            local tids = table.keys(golem.talents_cd)
+            local chance = target:callTalent(target.T_GOLEM_RECHARGE, "getChance")
+            local did_something = false
+            local nb = 1
+            for _, tid in ipairs(tids) do
+                if golem.talents_cd[tid] > 0 and rng.percent(chance) then
+                    golem.talents_cd[tid] = golem.talents_cd[tid] - nb
+                    if golem.talents_cd[tid] <= 0 then
+                        golem.talents_cd[tid] = nil
+                    end
+                    did_something = true
+                end
+            end
+            if did_something then
+                game.logSeen(golem, "%s is energized by the attack, reducing some talent cooldowns!", golem.name:capitalize())
+            end
+        end
     end
-
-    self:fireTalentCheck("callbackOnAlchemistBomb", tgts, t, x, y, startx, starty)
     emit(self, particle, tg, x, y, startx, starty)
     return tgts
 end
