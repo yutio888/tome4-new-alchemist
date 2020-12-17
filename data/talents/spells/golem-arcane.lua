@@ -51,7 +51,7 @@ newTalent {
         return self:combatTalentScale(t, 3, 12)
     end,
     passives = function(self, t, p)
-        self:talentTemporaryValue(p, "combat_spellpower", t.getSpellPower(self, t))
+        self:talentTemporaryValue(p, "combat_spellpower", t.getSpellpower(self, t))
     end,
     info = function(self, t)
         local damage = t.getDamage(self, t)
@@ -95,7 +95,7 @@ newTalent {
         return self:combatTalentScale(t, 3, 12)
     end,
     passives = function(self, t, p)
-        self:talentTemporaryValue(p, "combat_spellpower", t.getSpellPower(self, t))
+        self:talentTemporaryValue(p, "combat_spellpower", t.getSpellpower(self, t))
     end,
     info = function(self, t)
         return ([[Your golem's skin shimmers with eldritch energies.
@@ -150,7 +150,7 @@ newTalent {
         return self:combatTalentScale(t, 3, 12)
     end,
     passives = function(self, t, p)
-        self:talentTemporaryValue(p, "combat_spellpower", t.getSpellPower(self, t))
+        self:talentTemporaryValue(p, "combat_spellpower", t.getSpellpower(self, t))
     end,
     info = function(self, t)
         local rad = self:getTalentRadius(t)
@@ -162,7 +162,7 @@ newTalent {
 }
 
 newTalent {
-    name = "Molten Skin", short_name = "GOLEM_MOLTEN_SKIN", image = "talents/golem_molten_skin.png",
+    name = "Molten Skin", short_name = "GOLEM_MOLTEN_SKIN_NEW", image = "talents/golem_molten_skin.png",
     type = { "golem/new-arcane", 4 },
     require = spells_req4,
     points = 5,
@@ -200,7 +200,7 @@ newTalent {
         return self:combatTalentScale(t, 3, 12)
     end,
     passives = function(self, t, p)
-        self:talentTemporaryValue(p, "combat_spellpower", t.getSpellPower(self, t))
+        self:talentTemporaryValue(p, "combat_spellpower", t.getSpellpower(self, t))
     end,
     info = function(self, t)
         return ([[Turns the golem's skin into molten rock. The heat generated sets ablaze everything inside a radius of 3, doing %0.2f fire damage in 3 turns for %d turns.

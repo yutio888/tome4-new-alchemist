@@ -4,6 +4,7 @@ locale "zh_hans"
 ------------------------------------------------
 ------------------------------------------------
 section "tome-new-alchemist/data/birth/mage.lua"
+
 t("New Alchemist", "炼金术士（新版）", "birth descriptor name")
 -- untranslated text
 --[==[
@@ -21,13 +22,21 @@ t("Golem becomes a Drolem", "Golem becomes a Drolem", "_t")
 --]==]
 
 
------------------------------------------------
+------------------------------------------------
 section "tome-new-alchemist/data/gems.lua"
+
+t("Deals %d%% extra fireburn damage", "造成 %d%% 额外火焰燃烧伤害", "tformat")
 t("Heals %d", "获得 %d 治疗", "tformat")
 t("Deals %d%% extra shadow flame damage and stuns for 3 turns", "造成额外%d%%暗影火焰伤害并震慑3回合", "tformat")
+t("Gain one free move in 2 turns (stacks for 3 times)", "2回合内获得1次免费移动机会（可堆叠至三倍）", "_t")
 t("Deals %d%% extra fire damage", "造成额外%d%%火焰伤害", "tformat")
 t("Deals %d%% extra darkness damage and stuns for 3 turns", "造成额外%d%%暗影伤害并震慑3回合", "tformat")
 t("Deals %d%% extra light damage and blinds for 3 turns", "造成额外%d%%光系伤害并致盲3回合", "tformat")
+-- untranslated text
+--[==[
+t("Lights terrain (power 100)", "Lights terrain (power 100)", "_t")
+--]==]
+
 
 ------------------------------------------------
 section "tome-new-alchemist/data/talents/spells/alchemy-potion.lua"
@@ -112,14 +121,25 @@ t("Create a frost shield reducing damage by %d%% and critical hits by %d%% for %
 t([[Create a frost shield in range %d, reducing %d%% all incoming damage except fire, and reducing direct critical damage by %d%%.
         Frost shield lasts %d turns.]], [[投掷药水，为距离 %d 内的目标制造冰霜护盾，减少 %d%% 非火焰伤害，同时受到的暴击伤害减少 %d%%。
         冰霜护盾持续 %d 回合。]], "tformat")
-t("Greatly enchants armor while lowering defense.", "大幅强化护甲，同时减少闪避。", "tformat")
 t("Increase armor by %d , armor hardiness by %d%%, and decrease defense by %d for 6 turns.", "增加 %d 护甲，%d%% 护甲强度，并减少 %d 闪避，效果持续6回合。", "tformat")
-t("Restore mana and gain massive spellpower.", "恢复法力并获得大量法术强度。", "tformat")
 t("Restore %d mana and gain %d spellpower in 6 turns", "恢复 %d 法力并获得 %d 法术强度，持续6回合。", "tformat")
-t("Becomes super lucky and may ignore incoming damage.", "变得非常幸运，可以躲闪伤害。", "tformat")
-t([[Becomes super lucky, have %d%% chance to ignore damage in 6 turns. Chance increases with your luck.]], [[幸运提升，6回合内 %d%% 无视伤害。几率受幸运加成。]], "tformat")
-t("Becomes much faster than before.", "大幅增加速度。", "tformat")
+t("Becomes super lucky, have %d%% chance to ignore damage in 6 turns. Chance increases with your luck.", "幸运提升，6回合内 %d%% 无视伤害。几率受幸运加成。", "tformat")
 t("Becomes extremely fast, gain %d%% movement speed and %d%% global speed for %d turns.", "速度大幅提升，增加 %d%% 移动速度和 %d%% 整体速度，持续 %d 回合", "tformat")
+-- old translated text
+t("Greatly enchants armor while lowering defense.", "大幅强化护甲，同时减少闪避。", "tformat")
+t("Restore mana and gain massive spellpower.", "恢复法力并获得大量法术强度。", "tformat")
+t("Becomes super lucky and may ignore incoming damage.", "变得非常幸运，可以躲闪伤害。", "tformat")
+t("Becomes much faster than before.", "大幅增加速度。", "tformat")
+t("Throw the smoke bomb.", "投掷烟雾弹。", "tformat")
+t("Heal and cure, rid of poison and diseases.", "治疗，并解除毒素和疾病。", "tformat")
+t("%s conjures a wall of fire!", "%s 制造出火焰之墙！", "logSeen")
+t("Create a fire wall that burns nearby foe", "制造火墙灼烧周围敌人。", "_t")
+t("Throw bottle of acid that removes sustain", "投掷酸液，解除对方的维持状态。", "_t")
+t("Throw a ball of lightning, daze and blind all targets.", "投掷闪电球，眩晕并致盲目标。", "tformat")
+t("Create a frost shield reducing damage and critical hits", "制造寒冰护盾，减少伤害。", "tformat")
+t([[Becomes super lucky, have %d%% chance to ignore damage in 6 turns.
+        Chance increases with your luck.]], [[幸运提升，6回合内 %d%% 无视伤害。
+        几率受幸运加成。]], "tformat")
 
 ------------------------------------------------
 section "tome-new-alchemist/data/talents/spells/elemental-infusion.lua"
@@ -169,6 +189,14 @@ t([[You body turn into pure element.
 t("#FF8000#The raging fire around %s calms down and disappears.", "#FF8000#The raging fire around %s calms down and disappears.", "logSeen")
 --]==]
 
+-- old translated text
+t([[You body turn into pure element.
+        You gain %d%% resistance, %d%% resistance penetration for the specific element you choose.
+        Every turn, a random elemental bolt will hit up to %d of your foes in radius 6, dealing %0.2f %s damage.
+        ]], [[你的身体部分转化为纯粹的元素形态。
+        对指定充能元素获得 %d%% 抗性， %d%% 抗性穿透。
+        此外，每回合开始时，对6格范围内至多 %d 名随机敌人造成 %0.2f %s 伤害。
+        ]], "tformat")
 
 ------------------------------------------------
 section "tome-new-alchemist/data/talents/spells/explosion-control.lua"
@@ -219,6 +247,13 @@ t([[Throw bomb to target location dealing %0.2f %s damage in radius %d, then mak
         ]], [[向指定位置投掷炸弹造成 %0.2f %s 伤害，爆炸半径 %d 格。随后制造一场连环爆破。
         任何在伤害范围内的敌人，将触发一次类似的爆炸效果。
         每触发一次爆炸，后续爆炸伤害减少 %d%% 。
+        你必须学会炸弹投掷技能才能使用该技能。
+        使用其他投掷炸弹的技能会让该技能进入4回合冷却。
+        ]], "tformat")
+-- old translated text
+t([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
+        Throwing bomb by any means will put this talent on cooldown for 4 turns.
+        ]], [[向一块宝石内灌输爆炸能量，触发一次宽射线类型的 %0.2f %s 伤害。 
         你必须学会炸弹投掷技能才能使用该技能。
         使用其他投掷炸弹的技能会让该技能进入4回合冷却。
         ]], "tformat")
@@ -301,46 +336,167 @@ t([[When you dealt damage the same type as your gem, you may trigger the special
         %s]], "tformat")
 
 ------------------------------------------------
+section "tome-new-alchemist/data/talents/spells/golem-arcane.lua"
+t([[Your golem fires a beam from his eyes, doing %0.2f fire damage, %0.2f cold damage or %0.2f lightning damage.
+		The beam will always be the maximun range it can be and will not harm friendly creatures.
+		The damage will increase with your golem's Spellpower.
+		This talent grants your golem %d Spellpower.]], [[从你的眼睛中发射一束光束，造成 %0.2f 火焰伤害， %0.2f 冰冷伤害或 %0.2f 闪电伤害。
+        该射线永远具有最大范围，并不会伤害友方单位。
+        伤害受傀儡的法术强度加成。
+        此外，傀儡的法术强度增加 %d 。]], "tformat")
+t([[Your golem's skin shimmers with eldritch energies.
+		Any damage it takes is partly reflected (%d%%) to the attacker.
+		The golem still takes full damage.
+		Damage returned will increase with your golem's Spellpower.
+		This talent grants your golem %d Spellpower.]], [[你的傀儡皮肤闪烁着艾尔德里奇能量。
+		所有对其造成的伤害有 %d%% 被反射给攻击者。
+		傀儡仍然受到全部伤害。
+		伤害反射值受傀儡的法术强度加成。
+		此外，傀儡的法术强度增加 %d 。]], "tformat")
+t([[Your golem pulls all foes within radius %d toward itself while dealing %0.2f arcane damage.
+        This talent grants your golem %d Spellpower.]], [[你的傀儡将 %d 码范围内的敌人牵引至身边，并造成 %0.2f 奥术伤害。
+        此外，傀儡的法术强度增加 %d 。]], "tformat")
+t([[Turns the golem's skin into molten rock. The heat generated sets ablaze everything inside a radius of 3, doing %0.2f fire damage in 3 turns for %d turns.
+		Burning is cumulative; the longer they stay within range, they higher the fire damage they take.
+		In addition the golem gains %d%% fire resistance.
+		Molten Skin damage will not affect friendly creatures.
+		The damage and resistance will increase with your Spellpower.
+		This talent grants your golem %d Spellpower.]], [[使傀儡的皮肤变成灼热岩浆，发出的热量可以将 3 码范围内的敌人点燃，在 3 回合内每回合造成 %0.2f 灼烧伤害持续 %d 回合。
+		灼烧可叠加，他们在火焰之中持续时间越长受到伤害越高。
+		此外傀儡获得 %d%% 火焰抵抗。
+		炽热皮肤不能影响傀儡的主人。
+		伤害和抵抗受法术强度加成。
+		此外，傀儡的法术强度增加 %d 。]], "tformat")
+
+
+------------------------------------------------
+section "tome-new-alchemist/data/talents/spells/golem-energy.lua"
+
+t([[Your golem gains %d maximum life and %d life regeneration.
+		]], [[你的傀儡获得 %d 最大生命和 %d 生命回复。
+		]], "tformat")
+t("Shield", "护盾强化", "talent name")
+t([[A protective shield surrounds your golem, absorbing %d damage in %d turns.
+        If your golem already has a damage shield, will instead increase its power by same amount.
+        The total damage the shield can absorb will increase with your Spellpower and can crit.
+        This talent grants your golem %d life regeneration.
+		]], [[获得吸收量为 %d 的护盾，持续 %d 回合。
+		如果傀儡当前已经存在护盾，则会改为强化该护盾。
+		护盾吸收量受法术强度加成，可以暴击。
+		此外，傀儡的生命回复增加 %d 。]], "tformat")
+t("Power", "能量强化", "talent name")
+t([[Your golem gains %d physical、spell and mind power and %d life regeneration.
+		]], [[傀儡获得 %d 物理、法术和精神强度，以及 %d 生命回复。]], "tformat")
+t("Recharge", "充能强化", "talent name")
+t([[Your bombs energize your golem, all talents on cooldown on your golem have %d%% chance to be reduced by 1.
+        This talent grants your golem %d life regeneration.
+		]], [[炸弹会给傀儡充能，每个冷却中的技能都有 %d%% 概率减少一回合剩余冷却时间。
+		此外，傀儡的生命回复增加 %d 。]], "tformat")
+
+
+------------------------------------------------
+section "tome-new-alchemist/data/talents/spells/golem-fighting.lua"
+
+t([[Your golem rushes to the target, dealing %d%% damage and knocking it back 3 tiles, then stun it for %d turns.
+		Knockback chance and stun chance increases with your golem's physical power.
+		While rushing the golem becomes ethereal, passing harmlessly through creatures on the path to its target.
+		This talent grants your golem %d physical power.
+		]], [[你的傀儡冲向目标，将其击退3格并造成 %d%% 伤害，随后震慑 %d 回合。
+		击退和震慑概率受物理强度加成。
+		冲锋时傀儡可以越过中间生物。
+		此外，傀儡的物理强度增加 %d 。]], "tformat")
+t([[The golem taunts targets in a radius of %d, forcing them to attack it.
+        Each taunted target will give your golem a shield of %d strenth for 2 turns, or adding to current damage shield.
+        This talent grants your golem %d physical power.
+        ]], [[你的傀儡嘲讽 %d 码半径范围的敌人，强制他们攻击傀儡。
+        每嘲讽一名目标，傀儡获得 %d 护盾，持续2回合。如果当前已有护盾，则改为强化之。
+		此外，傀儡的物理强度增加 %d 。]], "tformat")
+t([[Your golem rushes to the target, crushing it into the ground for %d turns and doing %d%% damage.
+        Then target will be slowed for %d%% in 3 turns.
+		Pinning chance will increase with your golem's physical power.
+		This talent grants your golem %d physical power.
+		While rushing the golem becomes ethereal, passing harmlessly through creatures on the path to its target.]], [[你的傀儡冲向目标，将其推倒在地持续 %d 回合，造成 %d%% 伤害， 随后目标将被减速 %d%% 3回合。
+		定身几率受物理强度加成。
+		冲锋时傀儡可以越过中间生物。
+		此外，傀儡的物理强度增加 %d 。]], "tformat")
+t([[Your golem rushes to the target and creates a shockwave with radius 2, dazing all foes for %d turns and doing %d%% damage.
+		Daze chance increases with your golem's physical power.
+		This talent grants your golem %d physical power.
+		While rushing the golem becomes ethereal, passing harmlessly through creatures on the path to its target.]], [[你的傀儡冲向目标，践踏周围 2 码范围，眩晕所有目标 %d 回合并造成 %d%% 伤害。
+		眩晕几率受物理强度加成。
+		冲锋时傀儡可以越过中间生物。
+		此外，傀儡的物理强度增加 %d 。]], "tformat")
+
+
+------------------------------------------------
 section "tome-new-alchemist/data/talents/spells/new-advanced-golemancy.lua"
 
 t("Supercharge Golem", "超载傀儡", "talent name")
 t("Your golem is currently inactive.", "你的傀儡暂时处于未激活状态。", "logPlayer")
-t([[You activate a special mode of your golem, boosting its speed by %d%% for %d turns.
-        While supercharged, your golem is enraged and deals %d%% more damage.
-        Also, learn this talent will grant your golem %d spellpower and physical power.
-        Damage boost scales with your spellpower.]], [[激活傀儡，加速 %d%% ， 持续 %d 回合。
-        同时，傀儡造成的伤害增加 %d%% 。
-        此外，学习该技能会使傀儡的法术和物理强度上升 %d 。
-        伤害加成随法术强度增加。]], "tformat")
+t([[You activate a special mode of your golem, boosting its speed by %d%% for %d turns.]], [[激活傀儡，加速 %d%% ，持续 %d 回合。]], "tformat")
+t("Disruption Rune", "干扰符文", "talent name")
+t("Golem's Fury", "傀儡之怒", "talent name")
+t("Customize", "定制傀儡", "talent name")
+t([[You learn how to modify your golem, granting %d accuracy, %d defense and %d saves.
+        Besides, your golem gains new equipment slots (based on raw level):
+        - At talent level 2 : Can wear hat
+        - At talent level 3 : Can wear belt
+        - At talent level 4 : Can wear amulet
+        - At talent level 5 : Can wear two rings
+        ]], [[你学会如何调整傀儡，增加 %d 命中, %d 闪避和 %d 豁免。
+        此外，你的傀儡获得额外装备格（基于原始等级）：
+        - 等级 2：能装备帽子
+        - 等级 3：能装备腰带
+        - 等级 4：能装备项链
+        - 等级 5：能装备两个戒指]], "tformat")
+t([[You activate the disruptive rune in your golem, foes in radius %d will be disrupted for %d turns, their talents have 50%% chance to fail.
+        Learn this talent will also grant your golem %d%% resistance to confusion effects.
+        ]], [[你激活傀儡身上的干扰符文，你和傀儡 %d 格范围内的敌人将受到 %d 回合的干扰，技能成功率下降 50%% 。
+        此外，傀儡的混乱抗性提升 %d%% 。
+        ]], "tformat")
+t([[Infuse your golem with #GOLD#ULTIMATE POWER#LAST#!
+        In %d turns, your golem gains great fury, automatically dealing %0.2f elemental damage (fire/cold/lightning/acid, selected randomly) to foes in radius 6 at the start of each turn.
+        While in fury state, your golem's stats are increased by %d .
+        The stat and damage boost scales with your golem's spellpower.
+        ]], [[激活傀儡的#GOLD#终极能量#LAST#!
+        %d 回合内，傀儡会对周围6格内的敌人造成 %0.2f 随机元素伤害。
+        此外，傀儡的属性上升 %d 。
+        属性和伤害随傀儡的法术强度增加。
+        ]], "tformat")
+
+-- old translated text
 t("Golem Portal", "傀儡传送", "talent name")
 t([[Teleport to your golem, while your golem teleports to your location. Your foes will be confused, and those that were attacking you will have a %d%% chance to target your golem instead.
         After teleportation, you and your golem gain 50%% evasion for %d turns.]], [[交换你和傀儡的位置，敌人有 %d%% 概率选择傀儡为目标。
         传送后，你和傀儡获得 50%% 闪避， 持续 %d 回合。]], "tformat")
-t("Disruption Rune", "干扰符文", "talent name")
 t([[You activate the disruptive rune in your golem, foes in radius %d will be disrupted for %d turns, their talents have 50%% chance to fail.
         ]], [[你激活傀儡身上的干扰符文，你和傀儡 %d 格范围内的敌人将受到 %d 回合的干扰，技能成功率下降 50%% 。
         ]], "tformat")
-t("Golem's Fury", "傀儡之怒", "talent name")
 t([[Infuse your golem with #GOLD#ULTIMATE POWER#LAST#!
         In %d turns, your golem gains great fury, automatically dealing %0.2f elemental damage (fire/cold/lightning/acid, selected randomly) to foes in radius 6 at the start of each turn.
-        While in fury state, your golem's stats are increased by %d, and if it is already supercharged, will gain %d%% additional damage boost.
-        The stat and damage boost scales with your golem's spellpower.
+        While in fury state, your golem's stats are increased by %d , and your golem deals %d%% more damage.
+        The damage, stat and damage boost scales with your golem's spellpower.
         ]], [[激活傀儡的#GOLD#终极能量#LAST#!
         %d 回合内，傀儡会对周围6格内的敌人造成 %0.2f 随机元素伤害。
-        此外，傀儡的属性上升 %d ，且如果已经处于超载状态，会额外增加 %d%% 伤害。
-        属性和伤害加成随傀儡的法术强度增加。
+        此外，傀儡的属性上升 %d ，且额外增加 %d%% 伤害。
+        伤害，属性和伤害加成随傀儡的法术强度增加。
         ]], "tformat")
--- untranslated text
---[==[
-t("#Target# focuses on #Source#.", "#Target# focuses on #Source#.", "logCombat")
---]==]
-
--- old translated text
 t([[You activate a special mode of your golem, boosting its speed by %d%% for %d turns.
 		While supercharged, your golem is enraged and deals %d%% more damage.
         Damage boost scales with your spellpower.]], [[激活傀儡，加速 %d%%， 持续 %d 回合。
         同时，傀儡造成的伤害增加 %d%% 。
         伤害加成随法术强度增加。]], "tformat")
+t([[Infuse your golem with #GOLD#ULTIMATE POWER#LAST#!
+        In %d turns, your golem gains great fury, automatically dealing %0.2f elemental damage (fire/cold/lightning/acid, selected randomly) to foes in radius 6 at the start of each turn.
+        While in fury state, your golem's stats are increased by %d, and if it is already supercharged, will gain %d%% additional damage boost.
+        Also, learn this talent will grant your golem %d spellpower and physical power.
+        The stat and damage boost scales with your golem's spellpower.
+        ]], [[激活傀儡的#GOLD#终极能量#LAST#!
+        %d 回合内，傀儡会对周围6格内的敌人造成 %0.2f 随机元素伤害。
+        此外，傀儡的属性上升 %d ，且如果已经处于超载状态，会额外增加 %d%% 伤害。
+        学习该技能会增加傀儡 %d 法术和物理强度。
+        属性和伤害加成随傀儡的法术强度增加。
+        ]], "tformat")
 
 ------------------------------------------------
 section "tome-new-alchemist/data/talents/spells/new-alchemy-potion.lua"
@@ -421,6 +577,11 @@ t([[Your Throw Bomb talent now have %d%% chance to not go on cooldown.
         Chances increases with your gem tier.]], [[你的炸弹投掷技能有 %d%% 概率不进入冷却。
         激活该技能会使投掷炸弹技能的法力值消耗增加 %d 。
         几率受宝石品质加成。]], "tformat")
+-- untranslated text
+--[==[
+t("%s is energized by the attack, reducing some talent cooldowns!", "%s is energized by the attack, reducing some talent cooldowns!", "logSeen")
+--]==]
+
 -- old translated text
 t([[Imbue an alchemist gem with an explosive charge of mana and throw it.
 		The gem will explode for %0.1f %s damage.
@@ -446,19 +607,22 @@ t("Chain Blasting", "连环爆破", "talent name")
 t([[Your alchemist bombs now have %d%% chance to not go on cooldown.
         Chances increases with your gem tier.]], [[炸弹投掷有 %d%% 概率不进入冷却。
         几率受宝石品质加成。]], "tformat")
+t([[Your Throw Bomb talent now have %d%% chance to not go on cooldown.
+        Chances increases with your gem tier.]], [[你的炸弹投掷技能有 %d%% 概率不进入冷却。
+        几率受宝石品质加成。]], "tformat")
 
 ------------------------------------------------
 section "tome-new-alchemist/data/talents/spells/new-golemancy.lua"
 
 t("Master must know the Runic Golem talent", "主人必须学会符文傀儡技能", "_t")
 t("Master's Runic Golem talent too low for this gem", "主人的符文傀儡技能等级过低", "_t")
-t("Gem Golem", "宝石傀儡", "talent name")
-t("Golem's armor is increased by 6 per gem's tier, and resistance is increased by 3 per gem's tier.", "宝石每层级提供6点护甲和3%%全体伤害抗性。", "tformat")
 t([[Take care of your golem:
 		- If it is destroyed, you will take some time to reconstruct it (this takes 20 turns).
-		- If it is alive but hurt, you will be able to repair it for %d . Spellpower, alchemist gem and Golem Power talent all influence the healing done.]], [[与你的傀儡进行交互：
+		- If it is alive but hurt, you will be able to repair it for %d . Spellpower, gem and Golem Power talent all influence the healing done.]], [[与你的傀儡进行交互：
 		- 如果它被摧毁，你将耗费一些时间重新安装傀儡。
-		- 如果它还存活，你可以修整它使其恢复 %d 生命值。法术强度、炼金宝石和强化傀儡技能都会影响治疗量。]], "tformat")
+		- 如果它还存活，你可以修整它使其恢复 %d 生命值。法术强度、宝石和强化傀儡技能都会影响治疗量。]], "tformat")
+t("Gem Golem", "宝石傀儡", "talent name")
+t("Golem's armor is increased by 3 per gem's tier, and resistance is increased by 1 per gem's tier.", "宝石每层级提供3点护甲和1%%全体伤害抗性。", "tformat")
 t("Golem Power", "傀儡之力", "talent name")
 t("Improves your golem's proficiency with weapons, increasing its attack and damage. Then Improves your golem's armour training, damage resistance, and healing efficiency.", "提高傀儡的武器熟练度，增加其命中和伤害。提高傀儡护甲熟练度、伤害抗性和治疗系数。", "_t")
 t([[Improves your golem's proficiency with weapons, increasing its Accuracy by %d, Physical Power by %d and damage by %d%%.
@@ -488,10 +652,16 @@ t([[You invoke the power of your gem, healing you and your golem for %d.
         If your golem is below 50%% life, it will gain a shield which can absorb %d damage for 5 turns.]], [[激活宝石的能量，治疗你和傀儡 %d 生命。
         如果傀儡已经死亡，则以 50%% 血量复活之。
         如果傀儡血量少于 50%% ，则额外获得 %d 吸收量的护盾，持续5回合。]], "tformat")
-t("Dynamic Recharge", "动态充能", "talent name")
-t([[Your bombs energize your golem.
-		All talents on cooldown on your golem have %d%% chance to be reduced by %d.]], [[你的炸弹会给傀儡充能。
-		你的傀儡的所有冷却中技能有 %d%% 概率减少 %d 回合冷却时间。]], "tformat")
+t("Golem Portal", "傀儡传送", "talent name")
+t("Your golem is currently inactive.", "你的傀儡暂时处于未激活状态。", "logPlayer")
+t([[Teleport to your golem, while your golem teleports to your location. Your foes will be confused, and those that were attacking you will have a %d%% chance to target your golem instead.
+        After teleportation, you and your golem gain 50%% evasion for %d turns.]], [[交换你和傀儡的位置，敌人有 %d%% 概率选择傀儡为目标。
+        传送后，你和傀儡获得 50%% 闪避， 持续 %d 回合。]], "tformat")
+-- new text
+--[==[
+t("Master's Customize talent too low.", "Master's Customize talent too low.", "_t")
+--]==]
+
 -- untranslated text
 --[==[
 t("Golem has no master", "Golem has no master", "_t")
@@ -510,21 +680,21 @@ t("refitting", "refitting", "_t")
 t("refitted", "refitted", "_t")
 t("You have been interrupted!", "You have been interrupted!", "logPlayer")
 t("You need to ready gems in your quiver to heal your golem.", "You need to ready gems in your quiver to heal your golem.", "logPlayer")
-t([[Take care of your golem:
-		- If it is destroyed, you will take some time to reconstruct it (this takes 15 alchemist gems and 20 turns).
-		- If it is alive but hurt, you will be able to repair it for %d (takes 2 alchemist gems). Spellpower, alchemist gem and Golem Power talent all influence the healing done.]], [[Take care of your golem:
-		- If it is destroyed, you will take some time to reconstruct it (this takes 15 alchemist gems and 20 turns).
-		- If it is alive but hurt, you will be able to repair it for %d (takes 2 alchemist gems). Spellpower, alchemist gem and Golem Power talent all influence the healing done.]], "tformat")
 t("Not enough space to resurrect!", "Not enough space to resurrect!", "logPlayer")
-t("%s is energized by the attack, reducing some talent cooldowns!", "%s is energized by the attack, reducing some talent cooldowns!", "logSeen")
+t("#Target# focuses on #Source#.", "#Target# focuses on #Source#.", "logCombat")
 --]==]
 
 -- old translated text
+t("Dynamic Recharge", "动态充能", "talent name")
+t([[Your bombs energize your golem.
+		All talents on cooldown on your golem have %d%% chance to be reduced by %d.]], [[你的炸弹会给傀儡充能。
+		你的傀儡的所有冷却中技能有 %d%% 概率减少 %d 回合冷却时间。]], "tformat")
 t([[You invoke the power of your gem, healing you and your golem for %d.
 		If your golem is dead, it will be resurrected at 50%% life.
         If your golem is below 50%% life, it will gain a shield which can absorb %d damage for 5 turns.]], [[激活宝石的能量，治疗你和傀儡 %d 生命。
         如果傀儡已经死亡，则以 50%% 血量复活之。
         如果傀儡血量少于 50%% ，则额外获得 %d 吸收量的护盾，持续5回合。]], "tformat")
+t("Golem's armor is increased by 6 per gem's tier, and resistance is increased by 3 per gem's tier.", "宝石每层级提供6点护甲和3%%全体伤害抗性。", "tformat")
 
 ------------------------------------------------
 section "tome-new-alchemist/data/talents/spells/spells.lua"
@@ -538,6 +708,18 @@ t("prepare some alchemy potions.", "准备炼金药剂。", "_t")
 t("some useful alchemy potions.", "有用的炼金药剂。", "_t")
 t("explostion-control", "爆炸控制", "_t")
 t("Control your alchemist bomb.", "控制炼金炸弹。", "_t")
+
+t("energy", "能量", "_t")
+t("Golem energy capacity.", "傀儡的能量系能力。", "_t")
+t("arcane", "奥术", "_t")
+-- new text
+--[==[
+t("golem", "golem", "talent category")
+t("fighting", "fighting", "_t")
+t("Golem melee capacity.", "Golem melee capacity.", "_t")
+t("Golem arcane capacity.", "Golem arcane capacity.", "_t")
+--]==]
+
 -- untranslated text
 --[==[
 t("spell", "spell", "talent category")
@@ -561,13 +743,12 @@ t("#Target# has been disrupted by the rune!", "#Target# 被符文干扰！", "_t
 t("#Target# is free from the disruption.", "#Target# 不再被干扰。", "_t")
 t("arcane", "奥术", "effect subtype")
 t("Supercharge Golem", "超载傀儡", "_t")
-t("The target is supercharged, increasing speed by %d%% and damage done by %d%%.", "速度增加 %d%%，伤害增加 %d%%。", "tformat")
+t("The target is supercharged, increasing speed by %d%%.", "傀儡的速度增加 %d%%。", "tformat")
 t("#Target# is overloaded with power.", "#Target# 充满了能量。", "_t")
 t("+Supercharge", "+超载傀儡", "_t")
 t("#Target# seems less dangerous.", "#Target# 看起来不那么危险了。", "_t")
 t("-Supercharge", "-超载傀儡", "_t")
 t("Ultimate power", "终极力量", "_t")
-t("The target gains ultimate power, increasing stats by %d and damage done by %d%%, and dealing %0.2f elemental damage in radius 6 each turn.", "目标获得了终极力量，属性增加 %d， 伤害增加 %d%%, 每回合对6格内的目标造成 %0.2f 随机元素伤害。", "tformat")
 t("+Ultimate power", "+终极力量", "_t")
 t("-Ultimate power", "-终极力量", "_t")
 t("fire", "火焰", "effect subtype")
@@ -604,6 +785,7 @@ t("Emerald Affinity", "祖母绿吸收", "_t")
 t("Increases affinity for all damage by %d%%.", "增加伤害吸收 %d%%。", "tformat")
 t("Onyx Heal Enchant", "玛瑙治疗强化", "_t")
 t("Increases healing factor by %d%%.", "增加治疗系数 %d%%。", "tformat")
+t("The target gains ultimate power, increasing stats by %d, and dealing %0.2f elemental damage in radius 6 each turn.", "目标获得了终极力量，属性增加 %d， 每回合对6格内的目标造成 %0.2f 随机元素伤害。", "tformat")
 
 -- untranslated text
 --[==[
@@ -612,18 +794,15 @@ t("#Target# is less thorny now.", "#Target# is less thorny now.", "_t")
 t("#Target# is surging arcane power.", "#Target# is surging arcane power.", "_t")
 t("#Target# is no longer surging arcane power.", "#Target# is no longer surging arcane power.", "_t")
 t("tactic", "tactic", "effect subtype")
+t("speed", "speed", "effect subtype")
+t("healing", "healing", "effect subtype")
+t("regeneration", "regeneration", "effect subtype")
+t("heal", "heal", "effect subtype")
 --]==]
 
-
-------------------------------------------------
-section "tome-new-alchemist/hooks/load.lua"
-
-
--- untranslated text
---[==[
-t("#ANTIQUE_WHITE#%s: #ffffff#%d / %d", "#ANTIQUE_WHITE#%s: #ffffff#%d / %d", "tformat")
---]==]
-
+-- old translated text
+t("The target gains ultimate power, increasing stats by %d , and dealing %0.2f elemental damage in radius 6 each turn.", "目标获得了终极力量，属性增加 %d， 每回合对6格内的目标造成 %0.2f 随机元素伤害。", "tformat")
+t("The target gains ultimate power, increasing stats by %d and damage done by %d%%, and dealing %0.2f elemental damage in radius 6 each turn.", "目标获得了终极力量，属性增加 %d， 伤害增加 %d%%, 每回合对6格内的目标造成 %0.2f 随机元素伤害。", "tformat")
 
 ------------------------------------------------
 section "tome-new-alchemist/init.lua"
@@ -669,6 +848,8 @@ t("Equip which tool for #YELLOW#%s#LAST#?", "Equip which tool for #YELLOW#%s#LAS
 ------------------------------------------------
 section "tome-new-alchemist/overload/data/general/objects/gem.lua"
 
+t("Gain one free move in 2 turns (stacks for 3 times)", "2回合内获得1次免费移动机会（可堆叠至三倍）", "_t")
+t("Gain 25 armor in 3 turns (stacks for 3 times)", "3回合内获得25护甲（可堆叠至三倍）", "_t")
 t("50% chance to silence for 2 turns", "50% 概率沉默2回合", "_t")
 t("Deals %d%% extra fireburn damage", "造成 %d%% 额外火焰燃烧伤害", "tformat")
 t("Regen 150 life in 3 turns (stacks for 3 times)", "3回合内回复150生命（可堆叠至三倍）", "_t")
@@ -680,12 +861,6 @@ t("Increases healing factor by 30% for 3 turns (stacks for 3 times)", "3回合�
 t("50% chance to cleanse one magical debuff", "50%概率解除一项魔法负面状态", "_t")
 t("gain 20 defense for 5 turns", "5回合内闪避上升20", "_t")
 t("Deals %d%% extra poison damage", "造成%d%%额外毒素伤害", "tformat")
--- new text
---[==[
-t("Gain one free move in 2 turns (stacks for 3 times", "Gain one free move in 2 turns (stacks for 3 times", "_t")
-t("Gain 25 armor in 3 turns (stacks for 3 times", "Gain 25 armor in 3 turns (stacks for 3 times", "_t")
---]==]
-
 -- untranslated text
 --[==[
 t("gem", "gem", "entity type")
@@ -746,15 +921,24 @@ t("spinel", "spinel", "entity name")
 t("alchemist spinel", "alchemist spinel", "entity name")
 t("citrine", "citrine", "entity name")
 t("alchemist citrine", "alchemist citrine", "entity name")
-t("Lights terrain (power 1)", "Lights terrain (power 1)", "_t")
+t("Lights terrain (power 100)", "Lights terrain (power 100)", "_t")
 t("agate", "agate", "entity name")
 t("alchemist agate", "alchemist agate", "entity name")
 --]==]
 
 -- old translated text
-t("Gain one free move in 2 turns (stacks for 3 times)", "2回合内获得1次免费移动机会（可堆叠至三倍）", "_t")
-t("Gain 25 armor in 3 turns (stacks for 3 times)", "3回合内获得25护甲（可堆叠至三倍）", "_t")
 t("15% chance to disarm", "15% 概率缴械", "_t")
+t("Deals %d%% extra poison damage", "造成%d%%额外毒素伤害", "_t")
+
+------------------------------------------------
+section "tome-new-alchemist/overload/mod/class/AddonAlchemist.lua"
+
+
+-- untranslated text
+--[==[
+t("#ANTIQUE_WHITE#%s: #ffffff#%d / %d", "#ANTIQUE_WHITE#%s: #ffffff#%d / %d", "tformat")
+--]==]
+
 
 ------------------------------------------------
 section "tome-new-alchemist/overload/mod/class/uiset/ClassicPlayerDisplay.lua"
@@ -976,6 +1160,16 @@ t("Inventory", "Inventory", "_t")
 
 
 ------------------------------------------------
+section "tome-new-alchemist/superload/data/talents/spells/explosives.lua"
+
+
+-- untranslated text
+--[==[
+t("You need to ready alchemist gems in your quiver.", "You need to ready alchemist gems in your quiver.", "logPlayer")
+--]==]
+
+
+------------------------------------------------
 section "tome-new-alchemist/superload/data/talents/spells/stone-alchemy.lua"
 
 t([[Invoke your gem to mark impassable terrain next to you. You immediately enter it and appear on the other side of the obstacle, up to %d grids away.
@@ -996,3 +1190,4 @@ t("You cannot prepare more than one bottle of special potions", "你不能准备
 section "tome-new-alchemist/superload/mod/class/Object.lua"
 
 t("Gem related talents", "宝石相关技能", "_t")
+

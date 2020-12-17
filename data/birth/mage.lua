@@ -41,7 +41,7 @@ newBirthDescriptor {
         ["spell/divination"] = { false, 0 },
     },
     talents = {
-        [ActorTalents.T_GOLEM_POWER_NEW] = 1,
+        --[ActorTalents.T_GOLEM_POWER_NEW] = 1,
         [ActorTalents.T_THROW_BOMB_NEW] = 1,
         [ActorTalents.T_CHANNEL_STAFF] = 1,
     },

@@ -38,8 +38,8 @@ artifact_gems["/data/general/objects/brotherhood-artifacts.lua"] = {
 
 artifact_gems["/data/general/objects/world-artifacts-far-east.lua"] = {
     ["Goedalath Rock"] = {
-alchemist_power = 70,
-alchemist_bomb = {
+        alchemist_power = 70,
+        alchemist_bomb = {
             splash = {
                 type = "SHADOWFLAME",
                 dam = 50,
@@ -85,15 +85,17 @@ artifact_gems["/data/general/objects/world-artifacts.lua"] = {
         }
     },
 }
-
-artifact_gems["/data/zones/briagh-lair/objects.lua"] = {
-    ["Resonating Diamond"] = {
-        alchemist_power = 70,
-        alchemist_bomb = {
-            power = 20,
-        }
-    },
-}
+--
+--artifact_gems["/data/zones/briagh-lair/objects.lua"] = {
+--    ["Resonating Diamond"] = {
+--        require = { flag = { "gem related talents" }, },
+--        slot = "QUIVER",
+--        alchemist_power = 70,
+--        alchemist_bomb = {
+--            power = 20,
+--        }
+--    },
+--}
 
 artifact_gems["/data/zones/golem-gravetard/objects.lua"] = {
     ["Atamathon's Ruby Eye"] = {
@@ -103,15 +105,17 @@ artifact_gems["/data/zones/golem-gravetard/objects.lua"] = {
         }
     },
 }
-
-artifact_gems["/data/zones/reknor/objects.lua"] = {
-    ["Resonating Diamond"] = {
-        alchemist_power = 70,
-        alchemist_bomb = {
-            power = 20,
-        }
-    },
-}
+--
+--artifact_gems["/data/zones/reknor/objects.lua"] = {
+--    ["Resonating Diamond"] = {
+--        require = { flag = { "gem related talents" }, },
+--        slot = "QUIVER",
+--        alchemist_power = 70,
+--        alchemist_bomb = {
+--            power = 20,
+--        }
+--    },
+--}
 
 artifact_gems["/data/zones/sandworm-lair/objects.lua"] = {
     ["Atamathon's Lost Ruby Eye"] = {
@@ -121,16 +125,17 @@ artifact_gems["/data/zones/sandworm-lair/objects.lua"] = {
         }
     },
 }
-
-
-artifact_gems["/data/zones/tannen-tower/objects.lua"] = {
-    ["Resonating Diamond"] = {
-        alchemist_power = 70,
-        alchemist_bomb = {
-            power = 20,
-        }
-    },
-}
+--
+--artifact_gems["/data/zones/tannen-tower/objects.lua"] = {
+--    ["Resonating Diamond"] = {
+--        require = { flag = { "gem related talents" }, },
+--        slot = "QUIVER",
+--        alchemist_power = 70,
+--        alchemist_bomb = {
+--            power = 20,
+--        }
+--    },
+--}
 
 artifact_gems["/data-orcs/general/objects/boss-artifacts.lua"] = {
     ["Ureslak's Focus"] = {

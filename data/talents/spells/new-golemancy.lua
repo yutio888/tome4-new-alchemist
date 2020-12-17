@@ -90,16 +90,15 @@ function makeAlchemistGolem(self)
         infravision = 10,
         rank = 3,
         size_category = 4,
-
+        resists_cap = { all = 70 },
+        inc_damage = { all = -30 },
         resolvers.talents {
             [Talents.T_ARMOUR_TRAINING] = 3,
             [Talents.T_GOLEM_ARMOUR] = 1,
             [Talents.T_WEAPON_COMBAT] = 1,
             [Talents.T_MANA_POOL] = 1,
             [Talents.T_STAMINA_POOL] = 1,
-            [Talents.T_GOLEM_KNOCKBACK_NEW] = 1,
             [Talents.T_GOLEM_DESTRUCT] = 1,
-            [Talents.T_GOLEM_RESILIENCE] = 1,
         },
 
         resolvers.equip { id = true,
@@ -168,8 +167,8 @@ function makeAlchemistGolem(self)
         end,
 
         unused_stats = 0,
-        unused_talents = 0,
-        unused_generics = 0,
+        unused_talents = 1,
+        unused_generics = 1,
         unused_talents_types = 0,
 
         no_points_on_levelup = function(self)
@@ -410,7 +409,7 @@ newTalent {
         local heal = t.getHeal(self, t)
         return ([[Take care of your golem:
 		- If it is destroyed, you will take some time to reconstruct it (this takes 20 turns).
-		- If it is alive but hurt, you will be able to repair it for %d . Spellpower, alchemist gem and Golem Power talent all influence the healing done.]]):
+		- If it is alive but hurt, you will be able to repair it for %d . Spellpower, gem and Golem Power talent all influence the healing done.]]):
         tformat(heal)
     end,
 }
@@ -436,8 +435,8 @@ newTalent {
     end,
     passives = function(self, t, p)
         local nb = t.getGemNB(self, t)
-        self:talentTemporaryValue(p, "combat_armor", nb * 6)
-        self:talentTemporaryValue(p, "resists", { all = nb * 3 })
+        self:talentTemporaryValue(p, "combat_armor", nb * 3)
+        self:talentTemporaryValue(p, "resists", { all = nb })
     end,
     callbackOnWear = function(self, t, o, bypass_set)
         self:updateTalentPassives(t)
@@ -449,7 +448,7 @@ newTalent {
         self:updateTalentPassives(t)
     end,
     info = function(self, t)
-        return ([[Golem's armor is increased by 6 per gem's tier, and resistance is increased by 3 per gem's tier.]]):tformat()
+        return ([[Golem's armor is increased by 3 per gem's tier, and resistance is increased by 1 per gem's tier.]]):tformat()
     end,
 
 }

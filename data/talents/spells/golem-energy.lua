@@ -1,5 +1,5 @@
 newTalent {
-    name = "Resilience", short_name = "GOLEM_RESILIENCE", image = "talents/strong.png",
+    name = "Resilience", short_name = "GOLEM_RESILIENCE_PASSIVE", image = "talents/strong.png",
     type = { "golem/energy", 1 },
     require = spells_req1,
     points = 5,
@@ -53,18 +53,19 @@ newTalent {
         else
             self:setEffect(self.EFF_DAMAGE_SHIELD, t.getDuration(self, t), { power = shield_power })
         end
+        return true
     end,
     info = function(self, t)
         return ([[A protective shield surrounds your golem, absorbing %d damage in %d turns.
         If your golem already has a damage shield, will instead increase its power by same amount.
- 		The total damage the shield can absorb will increase with your Spellpower and can crit.
- 		This talent grants your golem %d life regeneration.
-		]]):tformat(t.getAbsorb(self, t), t.getDuration(self, t))
+        The total damage the shield can absorb will increase with your Spellpower and can crit.
+        This talent grants your golem %d life regeneration.
+		]]):tformat(t.getAbsorb(self, t), t.getDuration(self, t), t.getRegen(self, t))
     end,
 }
 
 newTalent {
-    name = "Power", short_name = "GOLEM_POWER", image = "talents/power.png",
+    name = "Power", short_name = "GOLEM_POWER_PASSIVE", image = "talents/power.png",
     type = { "golem/energy", 3 },
     require = spells_req3,
     points = 5,
@@ -88,7 +89,7 @@ newTalent {
 }
 
 newTalent {
-    name = "Recharge", short_name = "GOLEM_RECHARGE",
+    name = "Recharge", short_name = "GOLEM_RECHARGE", image = "talents/dynamic_recharge.png",
     type = { "golem/energy", 4 },
     require = spells_req4,
     points = 5,

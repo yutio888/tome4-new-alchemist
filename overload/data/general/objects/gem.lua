@@ -23,10 +23,12 @@ newEntity {
     define_as = "BASE_GEM",
     type = "gem", subtype = "white",
     display = "*", color = colors.YELLOW,
-    encumber = 0, slot = "GEM", use_no_wear = true,
+    encumber = 0, use_no_wear = true,
     identified = true,
     stacking = true,
     auto_pickup = true, pickup_sound = "actions/gem",
+    require = { flag = { "gem related talents" }, },
+    slot = "QUIVER",
     desc = _t [[Gems can be sold for money or used in arcane rituals.]],
 }
 
@@ -80,8 +82,6 @@ local function newGem(name, image, cost, rarity, color, min_level, max_level, ti
                 color_attributes = gem_color_attributes[color],
                 alchemist_power = power,
                 alchemist_bomb = bomb,
-                require = { flag = { "gem related talents" }, },
-                slot = "QUIVER",
     }
     -- Alchemist gems, not lootable, only created by talents
     newEntity { base = "BASE_GEM", define_as = "ALCHEMIST_GEM_" .. name:gsub(" ", "_"):upper(), name = "alchemist " .. name:lower(), type = 'alchemist-gem', subtype = color,

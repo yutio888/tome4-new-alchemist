@@ -26,7 +26,7 @@ newEffect {
     name = "SUPERCHARGE_GOLEM_NEW", image = "talents/supercharge_golem_new.png",
     desc = _t "Supercharge Golem",
     long_desc = function(self, eff)
-        return ("The target is supercharged, increasing speed by %d%% and damage done by %d%%."):tformat(eff.speed, eff.power)
+        return ("The target is supercharged, increasing speed by %d%%."):tformat(eff.speed, eff.power)
     end,
     type = "magical",
     subtype = { arcane = true },
@@ -56,7 +56,7 @@ newEffect {
     name = "ULTIMATE_POWER", image = "talents/supercharge_golem_new.png",
     desc = _t "Ultimate power",
     long_desc = function(self, eff)
-        return ("The target gains ultimate power, increasing stats by %d and damage done by %d%%, and dealing %0.2f elemental damage in radius 6 each turn."):tformat(eff.stats, eff.power, eff.dam)
+        return ("The target gains ultimate power, increasing stats by %d and damage done by %d%%, and dealing %0.2f elemental damage in radius 6 each turn."):tformat(eff.stats, eff.power, eff.power, eff.dam)
     end,
     type = "magical",
     subtype = { arcane = true },
