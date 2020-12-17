@@ -158,17 +158,17 @@ newTalent {
         end
 
         local stats = t.getStatsBoost(self, t)
-        local power = 0
-        if golem:hasEffect(golem.EFF_SUPERCHARGE_GOLEM_NEW) then
-            power = stats
-        end
-        golem:setEffect(golem.EFF_ULTIMATE_POWER, t.getDuration(self, t), {stats = stats , power = power, dam = t.getDamage(self, t)})
+		local max_inc = 0
+		for k, e in pairs(self.inc_damage) do
+			max_inc = math.max(max_inc, self:combatGetDamageIncrease(k))
+		end
+        golem:setEffect(golem.EFF_ULTIMATE_POWER, t.getDuration(self, t), {stats = stats , power = t.getStatsBoost(self, t) * max_inc / 100, dam = t.getDamage(self, t)})
         return true
     end,
     info = function(self, t)
         return([[Infuse your golem with #GOLD#ULTIMATE POWER#LAST#!
         In %d turns, your golem gains great fury, automatically dealing %0.2f elemental damage (fire/cold/lightning/acid, selected randomly) to foes in radius 6 at the start of each turn.
-        While in fury state, your golem's stats are increased by %d, and if it is already supercharged, will gain %d%% additional damage boost.
+        While in fury state, your golem's stats are increased by %d, and will inherit %d%% of your highest damage increases.
         The stat and damage boost scales with your golem's spellpower.
         ]]):tformat(t.getDuration(self, t), t.getDamage(self, t),  t.getStatsBoost(self, t), t.getStatsBoost(self, t))
     end,
