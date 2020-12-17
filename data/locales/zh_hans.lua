@@ -21,6 +21,14 @@ t("Golem becomes a Drolem", "Golem becomes a Drolem", "_t")
 --]==]
 
 
+-----------------------------------------------
+section "tome-new-alchemist/data/gems.lua"
+t("Heals %d", "获得 %d 治疗", "tformat")
+t("Deals %d%% extra shadow flame damage and stuns for 3 turns", "造成额外%d%%暗影火焰伤害并震慑3回合", "tformat")
+t("Deals %d%% extra fire damage", "造成额外%d%%火焰伤害", "tformat")
+t("Deals %d%% extra darkness damage and stuns for 3 turns", "造成额外%d%%暗影伤害并震慑3回合", "tformat")
+t("Deals %d%% extra light damage and blinds for 3 turns", "造成额外%d%%光系伤害并致盲3回合", "tformat")
+
 ------------------------------------------------
 section "tome-new-alchemist/data/talents/spells/alchemy-potion.lua"
 
