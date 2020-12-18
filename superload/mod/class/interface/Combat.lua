@@ -48,7 +48,7 @@ function _M:triggerGemAreaEffect(gem, grids)
     if gem.alchemist_bomb and gem.alchemist_bomb.leech then
         local nb = self.turn_procs.alchemist_bomb_leech or 0
         self.turn_procs.alchemist_bomb_leech = nb + 1
-        self:heal(math.max(dam, self.max_life * gem.alchemist_bomb.leech) / (100 * math.pow(2, nb)), gem)
+        self:heal(self.max_life * gem.alchemist_bomb.leech / (100 * math.pow(2, nb)), gem)
     end
     if gem.alchemist_bomb and gem.alchemist_bomb.mana then
         local nb = self.turn_procs.alchemist_bomb_mana or 0
