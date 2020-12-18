@@ -86,7 +86,7 @@ newTalent {
     require = spells_req2,
     points = 5,
     range = function(self, t)
-        return self:combatTalentScale(t, 1, 3)
+        return math.floor(self:combatTalentScale(t, 1, 3.2))
     end,
     radius = function(self, t)
         return 5
@@ -128,6 +128,10 @@ newTalent {
         end
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
+        if not x or not y then
+            return nil
+        end
+        local _, x, y= self:canProject(tg, x, y)
         if not x or not y then
             return nil
         end
