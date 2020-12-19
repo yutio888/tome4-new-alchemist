@@ -156,14 +156,6 @@ newTalent {
     getConfuseDuration = function(self, t)
         return math.floor(self:combatTalentScale(t, 2, 7))
     end,
-    on_pre_use = function(self, t)
-        local mover, golem = getGolem(self)
-        if not golem then
-            game.logPlayer(self, "Your golem is currently inactive.")
-            return
-        end
-        return true
-    end,
     action = function(self, t)
         local mover, golem = getGolem(self)
         if not golem then
@@ -224,14 +216,6 @@ newTalent {
             return 0
         end
         return self:combatTalentSpellDamage(t, 0, 60, golem:combatSpellpower())
-    end,
-    on_pre_use = function(self, t)
-        local mover, golem = getGolem(self)
-        if not golem then
-            game.logPlayer(self, "Your golem is currently inactive.")
-            return
-        end
-        return true
     end,
     action = function(self, t)
         local mover, golem = getGolem(self)

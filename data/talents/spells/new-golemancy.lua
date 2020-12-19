@@ -22,7 +22,7 @@ function getGolem(self)
     if not self.alchemy_golem then
         return nil
     end
-    if game.level:hasEntity(self.alchemy_golem) then
+    if game.level and game.level:hasEntity(self.alchemy_golem) then
         return self.alchemy_golem, self.alchemy_golem
     elseif self:hasEffect(self.EFF_GOLEM_MOUNT) then
         return self, self.alchemy_golem
