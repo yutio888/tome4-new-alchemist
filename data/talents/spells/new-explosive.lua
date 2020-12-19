@@ -135,6 +135,8 @@ function bombUtil:throwBomb(self, t, ammo, tg, x, y, startx, starty)
             end
         end
     end
+
+    self:fireTalentCheck("callbackOnAlchemistBomb", tgts, t, x, y, startx, starty)
     emit(self, particle, tg, x, y, startx, starty)
     return tgts
 end
