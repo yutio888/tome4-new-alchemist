@@ -8,7 +8,7 @@ function _M:transmoInven(inven, idx, o, transmo_source)
     if (not transmo_source and not self:attr("has_transmo_orcs")) or (transmo_source and transmo_source.define_as == "APE") then
         return transmoInven(self, inven, idx, o, transmo_source)
     end
-    if o.metallic and self:knowTalent(self.T_EXTRACT_GEMS) and self:getTalentLevelRaw(self.T_EXTRACT_GEMS) >= o.material_level then
+    if o.metallic and self:knowTalent(self.T_EXTRACT_GEMS) and self:getTalentLevelRaw(self.T_EXTRACT_GEMS) >= o.material_level and inven then
         local talent = self:getTalentFromId(self.T_EXTRACT_GEMS)
         talent.extractGem(self, talent, o, inven, idx)
         return
