@@ -396,3 +396,19 @@ newEffect {
         return old_eff
     end,
 }
+
+newEffect{
+    name = "AMETRINE_DEFENSE", image = "talents/phase_door.png",
+    desc = _t"Ametrine Defense",
+    long_desc = function(self, eff) return ("The target's defense is boosted by %d."):tformat(eff.defense) end,
+    type = "physical",
+    subtype = { evade=true },
+    status = "beneficial",
+    parameters = { defense=10 },
+    activate = function(self, eff)
+        eff.defenseChangeId = self:addTemporaryValue("combat_def", eff.defense)
+    end,
+    deactivate = function(self, eff)
+        self:removeTemporaryValue("combat_def", eff.defenseChangeId)
+    end,
+}

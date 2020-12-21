@@ -786,7 +786,8 @@ t("Increases affinity for all damage by %d%%.", "增加伤害吸收 %d%%。", "t
 t("Onyx Heal Enchant", "玛瑙治疗强化", "_t")
 t("Increases healing factor by %d%%.", "增加治疗系数 %d%%。", "tformat")
 t("The target gains ultimate power, increasing stats by %d, and dealing %0.2f elemental damage in radius 6 each turn.", "目标获得了终极力量，属性增加 %d， 每回合对6格内的目标造成 %0.2f 随机元素伤害。", "tformat")
-
+t("Ametrine Defense", "紫晶闪避", "_t")
+t("The target's defense is boosted by %d.", "目标闪避上升 %d。", "tformat")
 -- untranslated text
 --[==[
 t("#Target#'s skin looks a bit thorny.", "#Target#'s skin looks a bit thorny.", "_t")

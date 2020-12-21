@@ -235,7 +235,7 @@ newGem("Aquamarine", "object/aquamarine.png", 2, 10, "blue", 10, 20, 2, 35,
 newGem("Ametrine", "object/ametrine.png", 1, 8, "yellow", 1, 10, 1, 20,
         { combat_def = 10 },
         { splash = { desc = _t "gain 20 defense for 5 turns" }, special_area = function(self, gem)
-            self:setEffect(self.EFF_OUT_OF_PHASE, 5, { defense = 20 })
+            self:setEffect(self.EFF_AMETRINE_DEFENSE, 5, { defense = 20 })
         end }
 )
 newGem("Zircon", "object/zircon.png", 1, 8, "yellow", 1, 10, 1, 20,
