@@ -84,7 +84,7 @@ local function newGem(name, image, cost, rarity, color, min_level, max_level, ti
                 alchemist_bomb = bomb,
     }
     -- Alchemist gems, not lootable, only created by talents
-    newEntity { base = "BASE_GEM", define_as = "ALCHEMIST_GEM_" .. name:gsub(" ", "_"):upper(), name = "alchemist " .. name:lower(), type = 'alchemist-gem', subtype = color,
+    newEntity { define_as = "ALCHEMIST_GEM_" .. name:gsub(" ", "_"):upper(), name = "alchemist " .. name:lower(), type = 'alchemist-gem', subtype = color,
                 slot = "QUIVER",
                 moddable_tile = resolvers.moddable_tile("gembag"),
                 use_no_wear = false,
@@ -93,6 +93,14 @@ local function newGem(name, image, cost, rarity, color, min_level, max_level, ti
                 material_level = tier,
                 alchemist_power = power,
                 alchemist_bomb = bomb,
+                type = "gem", subtype = "white",
+                display = "*",
+                encumber = 0,
+                identified = true,
+                stacking = true,
+                auto_pickup = true, pickup_sound = "actions/gem",
+                slot = "QUIVER",
+                desc = _t [[Gems can be sold for money or used in arcane rituals.]],
     }
 end
 
