@@ -30,6 +30,10 @@ newEntity {
     require = { flag = { "gem related talents" }, },
     slot = "QUIVER",
     desc = _t [[Gems can be sold for money or used in arcane rituals.]],
+    combat = {
+        capacity = 0,
+        shots_left = 0,
+    }
 }
 
 local gem_color_attributes = {

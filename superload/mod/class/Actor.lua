@@ -1,6 +1,7 @@
 local _M = loadPrevious(...)
 local Talents = require "engine.interface.ActorTalents"
 _M.sustainCallbackCheck.callbackOnAlchemistBomb = "talents_on_alchemist_bomb"
+_M.sustainCallbackCheck.callbackOnPotion = "talents_on_potion"
 
 local transmoInven = _M.transmoInven
 function _M:transmoInven(inven, idx, o, transmo_source)
@@ -37,7 +38,7 @@ function _M:checkCanWearGem()
         end
     end
     if self:attr("gem related talents") then
-        self:attr("gem related talents", -1)
+        self["gem related talents"] = nil
     end
 end
 

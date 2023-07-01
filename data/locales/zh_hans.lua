@@ -117,10 +117,14 @@ t([[Throw a ball of lightning of radius %d, daze and blind all targets for %d tu
         ]], [[投掷半径 %d 的闪电球，眩晕并致盲目标 %d 回合。
         如果目标免疫了眩晕，则会被闪电震撼，减半震慑和定身免疫，持续 %d 回合。
         ]], "tformat")
-t("Create a frost shield reducing damage by %d%% and critical hits by %d%% for %d turns.", "制造寒冰护盾，减少 %d%% 伤害和 %d%% 暴击伤害，持续 %d 回合。", "tformat")
-t([[Create a frost shield in range %d, reducing %d%% all incoming damage except fire, and reducing direct critical damage by %d%%.
-        Frost shield lasts %d turns.]], [[投掷药水，为距离 %d 内的目标制造冰霜护盾，减少 %d%% 非火焰伤害，同时受到的暴击伤害减少 %d%%。
-        冰霜护盾持续 %d 回合。]], "tformat")
+t("Create a frost shield reducing non-fire damage by %d for %d turns.", "制造寒冰护盾，减少 %d 非火焰伤害 ，持续 %d 回合。", "tformat")
+t([[Create a frost shield in range %d, reducing %d%% all incoming damage except fire.
+        Frost shield lasts %d turns.
+        If you're about to get hit by more than 20%% of your max life, this potion will automatically activate.
+        ]],
+[[投掷药水，为距离 %d 内的目标制造冰霜护盾，减少 %d 非火焰伤害。
+        冰霜护盾持续 %d 回合。
+        如果你即将承受超过 20%% 最大生命的伤害，这个药剂会自动激活。]], "tformat")
 t("Increase armor by %d , armor hardiness by %d%%, and decrease defense by %d for 6 turns.", "增加 %d 护甲，%d%% 护甲强度，并减少 %d 闪避，效果持续6回合。", "tformat")
 t("Restore %d mana and gain %d spellpower in 6 turns", "恢复 %d 法力并获得 %d 法术强度，持续6回合。", "tformat")
 t("Becomes super lucky, have %d%% chance to ignore damage in 6 turns. Chance increases with your luck.", "幸运提升，6回合内 %d%% 无视伤害。几率受幸运加成。", "tformat")
@@ -150,22 +154,29 @@ t("Manage your elemental infusion.", "调整元素充能。", "_t")
 t("Elemental Infusion", "元素充能", "talent name")
 t([[When you throw your alchemist bombs, you infuse them with %s.
 		In addition, %s damage you do is increased by %d%% .
-		You may choose your infusion in following elements: fire, cold, lightning and acid.]], [[投掷炸弹时，用 %s 能量填充之。
+		You may choose your infusion in following elements: fire, cold, lightning, acid, light, darkness, arcane, physical.]], [[投掷炸弹时，用 %s 能量填充之。
         此外，你造成的 %s 伤害提升 %d%% 。
-        你可以选择以下元素：火焰、寒冷、闪电和酸性。]], "tformat")
+        你可以选择以下元素：火焰、寒冷、闪电、酸蚀、光明、黑暗、奥术、物理。]], "tformat")
 t("fire", "火焰", "_t")
 t("Infusion Enchantment", "充能强化", "talent name")
-t([[You alchemist bomb now has a %d%% chance to disable your foes for %d turns, the inflicted effect changes with your elemental infusion:
+t([[If your alchemist bomb crits, it will have a %d%% chance to disable your foes for %d turns, the inflicted effect changes with your elemental infusion:
         -- Fire: Stun
         -- Cold: Frozen feet
-        -- Acid: Blind
+        -- Acid: Disarm
         -- Lightning: Daze
-        This can trigger every %d turns.
-        ]], [[你的炼金炸弹有 %d%% 触发 %d 回合的控制效果:
-        -- 火焰: 震慑
-        -- 寒冷: 冻足
-        -- 酸性: 致盲
-        -- 闪电: 眩晕
+        -- Light: Blind
+        -- Darkness: Reduces damage by 30%%
+        -- Arcane: Silence
+        -- Physical: Pin
+        This can trigger every %d turns.]], [[你的炼金炸弹暴击时，有 %d%% 触发 %d 回合的控制效果:
+        -- 火焰：震慑
+        -- 寒冷：冻足
+        -- 酸性：缴械
+        -- 闪电：眩晕
+        -- 光明：致盲
+        -- 黑暗：减少 30%% 伤害
+        -- 奥术：沉默
+        -- 物理：定身
         该效果每 %d 回合只能触发一次。
         ]], "tformat")
 t("Energy Recycle", "能量循环", "talent name")
@@ -177,12 +188,11 @@ t([[If you have chosen your elemental infusion, every time you deal damage the s
         冷却时间缩短效果每回合最多触发一次。
         ]], "tformat")
 t("Body of Element", "元素之躯", "talent name")
-t([[You body turn into pure element.
-        You gain %d%% resistance for the specific element you choose.
-        Every turn, a random elemental bolt will hit up to %d of your foes in radius 6, dealing %0.2f %s damage.
-        ]], [[你的身体部分转化为纯粹的元素形态。
-        对指定充能元素获得 %d%% 抗性。
-        此外，每回合开始时，对6格范围内至多 %d 名随机敌人造成 %0.2f %s 伤害。
+t("elemental storm", "元素风暴", "_t")
+t([[You body turn into pure element. You gain %d%% resistance and %d%% resistance penetration for the specific element you choose.
+        You can activate this talent, to conjure a storm of selected element in radius %d for %d turns, dealing %0.2f %s damage each turn.
+        ]], [[你的身体部分转化为纯粹的元素形态。对指定充能元素获得 %d%% 抗性， %d%% 抗性穿透。
+        你可以主动开启这个技能，制造一场 %d 格范围的元素风暴，持续 %d 回合，所有敌对生物每回合受到 %0.2f %s 伤害。
         ]], "tformat")
 -- untranslated text
 --[==[
@@ -206,24 +216,24 @@ t("You need to ready gems in your quiver.", "你需要准备宝石。", "logPlay
 t("Current Damage: %0.2f %s", "当前伤害： %0.2f %s", "tformat")
 t([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
         This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this on cooldown.
-        Each successful activation will increase damage of the following beams by 10%%, up to 100%%.
+        Each successful activation will increase damage of the following beams by %d%%, up to 100%%.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
         %s]], [[向一块宝石内灌输爆炸能量，触发一次宽射线类型的 %0.2f %s 伤害。
-        该技能可以连续使用而不进入冷却，但任何非瞬间的其他行为会使该技能进入冷却。
-        每次成功使用，会让后续伤害增加10%%，最多增加100%%。
-        你必须学会炸弹投掷技能才能使用该技能。
-        使用其他投掷炸弹的技能会让该技能进入4回合冷却。
-        %s]], "tformat")
+该技能可以连续使用而不进入冷却，但任何非瞬间的其他行为会使该技能进入冷却。
+每次成功使用，会让后续伤害增加%d%%，最多增加100%%。
+你必须学会炸弹投掷技能才能使用该技能。
+使用其他投掷炸弹的技能会让该技能进入4回合冷却。
+%s]], "tformat")
 t("Throw Bomb: Cone Mode", "投掷炸弹：锥形模式", "talent name")
 t([[Throw bomb to target location, then making it explode in a radius %d cone, dealing %0.2f %s damage and knocking them back.
         You can choose the direction of the explosion.
         You must know how to throw bomb to use this talent.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
         ]], [[向指定位置投掷炸弹，并触发 %d 范围锥形爆炸，造成 %0.2f %s 伤害并击退敌方目标。
-        你可以选择爆炸方向。
-        你必须学会炸弹投掷技能才能使用该技能。
-        使用其他投掷炸弹的技能会让该技能进入4回合冷却。
-        ]], "tformat")
+你可以选择爆炸方向。
+你必须学会炸弹投掷技能才能使用该技能。
+使用其他投掷炸弹的技能会让该技能进入4回合冷却。
+]], "tformat")
 t("Throw Bomb: Implosion", "投掷炸弹：聚爆", "talent name")
 t([[Throw bomb to target location dealing at most %0.2f %s damage in radius %d.
         The damage decreases with the number of targets inside:
@@ -232,24 +242,24 @@ t([[Throw bomb to target location dealing at most %0.2f %s damage in radius %d.
         - 10: deal %0.2f damage
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
         ]], [[向指定位置投掷炸弹造成 %0.2f %s 伤害，爆炸半径 %d 格。
-        范围内目标越多，伤害越低：
-        - 2 : 造成 %0.2f 伤害
-        - 5 : 造成 %0.2f 伤害
-        - 10: 造成 %0.2f 伤害
-        你必须学会炸弹投掷技能才能使用该技能。
-        使用其他投掷炸弹的技能会让该技能进入4回合冷却。
-        ]], "tformat")
+范围内目标越多，伤害越低：
+- 2 : 造成 %0.2f 伤害
+- 5 : 造成 %0.2f 伤害
+- 10: 造成 %0.2f 伤害
+你必须学会炸弹投掷技能才能使用该技能。
+使用其他投掷炸弹的技能会让该技能进入4回合冷却。
+]], "tformat")
 t("Throw Bomb: Chain Blast", "投掷炸弹：连环爆破", "talent name")
 t([[Throw bomb to target location dealing %0.2f %s damage in radius %d, then make a chained blast:
         Any foe inside the explosion radius will trigger a similar explosion.
         Each successive explosion deals %d%% less damage.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
         ]], [[向指定位置投掷炸弹造成 %0.2f %s 伤害，爆炸半径 %d 格。随后制造一场连环爆破。
-        任何在伤害范围内的敌人，将触发一次类似的爆炸效果。
-        每触发一次爆炸，后续爆炸伤害减少 %d%% 。
-        你必须学会炸弹投掷技能才能使用该技能。
-        使用其他投掷炸弹的技能会让该技能进入4回合冷却。
-        ]], "tformat")
+任何在伤害范围内的敌人，将触发一次类似的爆炸效果。
+每触发一次爆炸，后续爆炸伤害减少 %d%% 。
+你必须学会炸弹投掷技能才能使用该技能。
+使用其他投掷炸弹的技能会让该技能进入4回合冷却。
+]], "tformat")
 -- old translated text
 t([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
@@ -264,7 +274,7 @@ section "tome-new-alchemist/data/talents/spells/gem-spell.lua"
 t("Gem Blast", "宝石爆破", "talent name")
 t("You need to ready gems in your quiver.", "你需要准备宝石。", "logPlayer")
 t([[Activate your gem's power and fire a bolt of energy to target, dealing %0.2f %s damage.
-        If the bolt hits, it will trigger the special effect of gem, and knock the target for 2 tiles.
+        If the bolt hits, it will trigger the special effect of gem, and knock back the target for 2 tiles.
         The damage scales with your gem tier and spellpower, and the damage type changes with your gem.
         ]], [[激活宝石发射能量箭，对目标造成 %0.2f %s 伤害。
         如果攻击命中，则会触发宝石的特殊效果，并击退对方2格。
@@ -280,13 +290,9 @@ t( [[Invoke the power of gem, teleports you to up to %d tiles away, to a targete
         伤害受宝石和法术强度加成，伤害类型受宝石影响。
         ]], "tformat")
 t("Flickering Gem", "闪烁宝石", "talent name")
-t([[Each time you trigger gem effect, you will gather the magical power to protect you, giving you a shield of %d for 3 turns.
-        If you have a damage shield, then the existed shield will be strengthed instead.
-        This can trigger once per turn.
-        ]], [[每次你激活宝石的能量时，可以收集残余的魔法能量，制造 %d 护盾，持续3回合。
-        如果你已经有护盾了，那么则改为增强当前护盾吸收量。
-        这个效果每回合最多触发一次。
-        ]], "tformat")
+t([[Invoke the power of gem, making a flash of light, confuses you and other foes in radius 10 for %d turns.
+        Then trigger the beneficial effect of the gem on yourself.]], [[激活宝石，制造一次强烈的闪光，令你和周围所有敌人混乱 %d 回合。
+        然后对你触发宝石特殊正面效果。]], "tformat")
 t("One with Gem", "宝石协调", "talent name")
 t("This has beed disabled for %d turns", "该技能在 %d 回合内不会触发。", "tformat")
 t([[When you dealt damage the same type as your gem, you may trigger the special effect of your gem.
@@ -418,7 +424,10 @@ section "tome-new-alchemist/data/talents/spells/new-advanced-golemancy.lua"
 
 t("Supercharge Golem", "超载傀儡", "talent name")
 t("Your golem is currently inactive.", "你的傀儡暂时处于未激活状态。", "logPlayer")
-t([[You activate a special mode of your golem, boosting its speed by %d%% for %d turns.]], [[激活傀儡，加速 %d%% ，持续 %d 回合。]], "tformat")
+t("%s's golem is fully restored!", "%s的傀儡完全恢复了！", "logSeen")
+t([[You activate a special mode of your golem, boosting its speed by %d%% for %d turns.
+        If your golem is inactive, then it will become resurrected with half hit point, otherwise fully restore the hit point of your golem upon activation.]], [[激活傀儡，加速 %d%% ，持续 %d 回合。
+        如果傀儡没有激活，则以半血复活。否则，立刻回满血。]], "tformat")
 t("Disruption Rune", "干扰符文", "talent name")
 t("Golem's Fury", "傀儡之怒", "talent name")
 t("Customize", "定制傀儡", "talent name")
@@ -502,27 +511,28 @@ t("Reproduce", "装填", "talent name")
 t("%s got disrupted by the incoming damage, stopped reproducing potions.", "%s 被伤害干扰，无法继续装填药剂。", "logPlayer")
 t("%s reproduce all the potions.", "%s 装填药剂完毕。", "logPlayer")
 t("Remaining turns: %d .", "剩余回合： %d 。", "tformat")
-t([[Enter the focused state of reproducing potions for %d turns, after which you will recharge all your alchemy potions.
-        Reproduing potions need focus, any incoming damage may break this state. Every time you are damaged, you must check your physical or mental save to preverse focus. If you fail to do so, this talent will automatically deactivate.
-        %s]], [[进入专注地装填状态，持续 %d 回合，结束后你将重新装载所有药剂。
-        制作药剂需要专注，当你受到伤害后，需要使用物理或精神豁免（取较高者）通过判定来维持专注。如果豁免失败，该技能将自动关闭。
+t([[Enter the focused state of reproducing potions。 Every %d turns, you will recharge all your alchemy potions.
+        Reproduing potions need focus, any incoming damage may break this state. Every time you are damaged, you must check your physical/spell save to preverse focus. If you fail to save, your reproduction will reset.
+        %s]], [[进入专注地装填状态，每隔 %d 回合，你将重新装载所有药剂。
+        制作药剂需要专注，当你受到伤害后，需要使用物理或法术豁免通过判定来维持专注。如果豁免失败，装填工作将从头开始。
         %s]], "tformat")
 t("Potion Sprayer", "药剂喷射器", "talent name")
 t([[You may spray your potion in cone instead of throw onto a single target.
-        However, this will make your potion less effective, your spellpower is considered as half when spraying potions.
         Besides, learning this talent will make your potions cost %d%% less turn.
-        ]], [[你可以在锥形范围内喷射药剂。但这么做会降低药剂的效力，喷射药剂时你的法术强度视为减半。
+        ]], [[你可以在锥形范围内喷射药剂。
         此外，学习此技能会让喷射药剂消耗的时间减少 %d%% 。
         ]], "tformat")
 t("Ingredient Recycle", "材料回收", "talent name")
 t("Remaining explosions: %d .", "剩余爆炸数： %d 。", "tformat")
 t([[You know how to reuse the remain of your potions.
-        You may restore one bottle of random potion after your bomb explodes %d times in combat.
-        Some special potions cannot be restored in this way.
-        %s]], [[你知道如何利用药剂的剩余材料。
-        在战斗中，你每触发 %d 次炼金炸弹爆炸，就可以回复一瓶随机药剂。
-        有些特殊药剂无法通过这种方式回复。
-        %s]], "tformat")
+        Every time you consume a potion, you store %d power.
+        The stored power last 6 turns, and reduces by 10%% each turn not consumed.
+        You may activate this talent to release the power as a heal, and every 100 point you heal (before healing mod), you'll regain a potion.
+        The heal can crit.]], [[你知道如何利用药剂的剩余材料。
+        每次你使用药剂时，获得 %d 能量。
+        能量存储 6 回合，每回合损失 10%%。
+        你可以激活这个技能，给与自身等量治疗。每治疗 100 点（不计算治疗系数），你可以随机获得一瓶药剂。
+        治疗量可以暴击。]], "tformat")
 -- untranslated text
 --[==[
 t([[#YELLOW#%s (prepared, level %s)#LAST#:
@@ -545,28 +555,32 @@ t([[Imbue an alchemist gem with an explosive charge of mana and throw it.
 		Each kind of gem will also provide a specific effect.
 		The damage will improve with better gems and with your Spellpower.
 		Using this talent will put other bomb talent go on cooldown.]], [[向一块宝石内灌输爆炸能量并扔出它。 
-		宝石将会爆炸并造成 %0.1f 的 %s 伤害。 
-		每个种类的宝石都会提供一个特殊的效果。 
-                伤害受宝石品质和法术强度加成。
-                使用该技能会让其他炸弹投掷进入冷却。]], "tformat")
+宝石将会爆炸并造成 %0.1f 的 %s 伤害。
+每个种类的宝石都会提供一个特殊的效果。
+伤害受宝石品质和法术强度加成。
+使用该技能会让其他炸弹投掷进入冷却。]], "tformat")
 t("Alchemist Protection", "炼金保护", "talent name")
 t([[Grants protection against external elemental damage (fire, cold, lightning and acid) by %d%%.
-		Besides, each time you're hit by elemental damage, you may regain %d mana.]], [[提高对外界元素（火焰、寒冷、闪电和酸性）伤害的抗性 %d%% 。
-                此外，每次你受到元素伤害时，你可以恢复 %d 法力。]], "tformat")
+		You can activate this talent, to grant yourself extra %d%% elemental resistance for %d turns.
+		At talent level 3, the flow of elemental energy will cleanse and block elemental detrimental effects.]],
+[[增加对外界元素（火焰、寒冷、闪电和酸性）伤害的抗性 %d%% 。
+你可以主动激活这个技能，获得额外 %d%% 元素抗性，持续 %d 回合。
+技能等级 3 以后，元素能量将解除你身上的所有元素类负面状态，并在剩余回合内阻挡元素类负面状态。]], "tformat")
 t("Explosion Expert", "爆破专家", "talent name")
-t([[Your alchemist bombs now affect a radius of %d around them.
-		Explosion damage may increase by %d%% (if the explosion is not contained) to %d%% if the area of effect is confined.]], [[炼金炸弹的爆炸半径现在增加为 %d 码。
+t([[Your alchemist bombs now affect a radius of %d around them. (This only works for the basic Throwing Bomb talent.)
+		Explosion damage may increase by %d%% (if the explosion is not contained) to %d%% if the area of effect is confined.]], [[投掷炼金炸弹的爆炸半径现在增加为 %d 码，只对基础投掷生效。
 		增加 %d%% （地形开阔）～ %d%% （地形狭窄）爆炸伤害。]], "tformat")
-t("Fast Recharge", "快速充能", "talent name")
-t([[Your Throw Bomb talent now have %d%% chance to not go on cooldown.
-        Activating this talent will increase the mana cost of Throw Bomb talent by %d .
-        Chances increases with your gem tier and spellpower.]], [[你的炸弹投掷技能有 %d%% 概率不进入冷却。
-        激活该技能会使投掷炸弹技能的法力值消耗增加 %d 。
-        几率受宝石品质和法术强度加成。]], "tformat")
--- untranslated text
---[==[
-t("%s is energized by the attack, reducing some talent cooldowns!", "%s is energized by the attack, reducing some talent cooldowns!", "logSeen")
---]==]
+t("Explosion Shield", "爆炸护盾", "talent name")
+t("available", "可用", "_t")
+t([[Your mastery of explosive material makes you much more resilient against all kinds of critical hits.
+        All direct critical hits (physical, mental, spells) against you have a %d%% lower critical multiplier
+        Besides, each time your bomb deals a critical hit, you'll gain a shield of %d for 5 turns, or if you already have a shield, increasing its shield power instead. This effect has a cooldown of 4 turns. (Current: %s)
+        The power of the shield can crit.]],
+[[你对爆炸材料的试验让你更加能够抵抗伤害。
+增加 %d%% 被爆伤害减免。
+此外，每次炸弹暴击时，你获得 %d 护盾，持续 5回合。如果你当前存在护盾，那么改为补充当前护盾等量的吸收量。这个效果有 4回合冷却（当前： %s )。
+护盾吸收量可以暴击。]], "tformat")
+t("%s is energized by the attack, reducing some talent cooldowns!", "%s 被充能，减少了技能冷却时间！", "logSeen")
 
 -- old translated text
 t([[Imbue an alchemist gem with an explosive charge of mana and throw it.
@@ -574,10 +588,10 @@ t([[Imbue an alchemist gem with an explosive charge of mana and throw it.
 		Each kind of gem will also provide a specific effect.
                 The damage will improve with better gems and with your Spellpower.
                 Using this talent will put other bomb talent go on cooldown.]], [[向一块宝石内灌输爆炸能量并扔出它。 
-		宝石将会爆炸并造成 %0.1f 的 %s 伤害。 
-		每个种类的宝石都会提供一个特殊的效果。 
-                伤害受宝石品质和法术强度加成。
-                使用该技能会让其他炸弹投掷进入冷却。]], "tformat")
+宝石将会爆炸并造成 %0.1f 的 %s 伤害。
+每个种类的宝石都会提供一个特殊的效果。
+伤害受宝石品质和法术强度加成。
+使用该技能会让其他炸弹投掷进入冷却。]], "tformat")
 t([[Grants protection against external elemental damage (fire, cold, lightning and acid) by %d%%.
                 Besides, each time you're hit by elemental damage, you may regain %d mana.]], [[提高对外界元素（火焰、寒冷、闪电和酸性）伤害的抗性 %d%% 。
                 此外，每次你受到元素伤害时，你可以恢复 %d 法力。]], "tformat")
@@ -596,6 +610,11 @@ t([[Your alchemist bombs now have %d%% chance to not go on cooldown.
 t([[Your Throw Bomb talent now have %d%% chance to not go on cooldown.
         Chances increases with your gem tier.]], [[你的炸弹投掷技能有 %d%% 概率不进入冷却。
         几率受宝石品质加成。]], "tformat")
+t([[Your Throw Bomb talent now have %d%% chance to not go on cooldown.
+        Activating this talent will increase the mana cost of Throw Bomb talent by %d .
+        Chances increases with your gem tier and spellpower.]], [[你的炸弹投掷技能有 %d%% 概率不进入冷却。
+        激活该技能会使投掷炸弹技能的法力值消耗增加 %d 。
+        几率受宝石品质和法术强度加成。]], "tformat")
 
 ------------------------------------------------
 section "tome-new-alchemist/data/talents/spells/new-golemancy.lua"
@@ -635,9 +654,9 @@ t([[Insert a pair of gems into your golem, providing it with the gem bonuses and
 t("Double Heal", "双重治疗", "talent name")
 t([[You invoke the power of your gem, healing you and your golem for %d.
         If your golem is dead, it will be resurrected at 50%% life.
-        If your golem is below 50%% life, it will gain a shield which can absorb %d damage for 5 turns.]], [[激活宝石的能量，治疗你和傀儡 %d 生命。
+        If your golem is active, it will gain a shield which can absorb %d damage for 5 turns.]], [[激活宝石的能量，治疗你和傀儡 %d 生命。
         如果傀儡已经死亡，则以 50%% 血量复活之。
-        如果傀儡血量少于 50%% ，则额外获得 %d 吸收量的护盾，持续5回合。]], "tformat")
+        否则，傀儡获得 %d 吸收量的护盾，持续5回合。]], "tformat")
 t("Golem Portal", "傀儡传送", "talent name")
 t("Your golem is currently inactive.", "你的傀儡暂时处于未激活状态。", "logPlayer")
 t([[Teleport to your golem, while your golem teleports to your location. Your foes will be confused, and those that were attacking you will have a %d%% chance to target your golem instead.
@@ -742,7 +761,7 @@ t("Fire Burnt", "烧伤", "_t")
 t("The target is burnt by the fiery fire, reducing damage dealt by %d%%", "目标被火焰烧伤，造成的伤害减少 %d%%。", "tformat")
 t("ice", "寒冰", "effect subtype")
 t("Frost Shield", "寒霜护盾", "_t")
-t("The target is protected by the frost, reducing all damage except fire by %d%%, and reducing critical damage received by %d%%.", "目标被寒霜保护，除火焰外的伤害降低 %d%%，受到的暴击伤害减少 %d%%。", "tformat")
+t("The target is protected by the frost, reducing all damage except fire by %d.", "目标被寒霜保护，除火焰外的伤害降低 %d。", "tformat")
 t("%s(%d frost reduce#LAST#%s)#LAST#", "%s(%d 寒霜护盾#LAST#%s)#LAST#", "tformat")
 t("nature", "自然", "effect subtype")
 t("Stoned Armour", "岩石护甲", "_t")
@@ -774,6 +793,9 @@ t("Increases healing factor by %d%%.", "增加治疗系数 %d%%。", "tformat")
 t("The target gains ultimate power, increasing stats by %d, and dealing %0.2f elemental damage in radius 6 each turn.", "目标获得了终极力量，属性增加 %d， 每回合对6格内的目标造成 %0.2f 随机元素伤害。", "tformat")
 t("Ametrine Defense", "紫晶闪避", "_t")
 t("The target's defense is boosted by %d.", "目标闪避上升 %d。", "tformat")
+t("Elemental Protection", "元素保护", "_t")
+t("Increases %d%% elemental resistance.%s", "增加 %d%% 元素伤害抗性。%s", "tformat")
+t(" Blocks fire/cold/lightning/acid detrimental effects", "阻挡火焰/寒冷/闪电/酸性负面状态。", "_t")
 -- untranslated text
 --[==[
 t("#Target#'s skin looks a bit thorny.", "#Target#'s skin looks a bit thorny.", "_t")
@@ -811,6 +833,10 @@ t("Acid.", "酸性", "_t")
 t("Lightning.", "闪电", "_t")
 t("Nothing.", "取消充能", "_t")
 t("[Leave]", "[离开]", "_t")
+t("Physical.", "物理", "_t")
+t("Light.", "光明", "_t")
+t("Darkness.", "黑暗", "_t")
+t("Arcane.", "奥术", "_t")
 -- old translated text
 t("Dissolving Acid", "溶解之酸", "talent name")
 
@@ -1159,9 +1185,7 @@ t("You need to ready alchemist gems in your quiver.", "You need to ready alchemi
 ------------------------------------------------
 section "tome-new-alchemist/superload/data/talents/spells/stone-alchemy.lua"
 
-t([[Invoke your gem to mark impassable terrain next to you. You immediately enter it and appear on the other side of the obstacle, up to %d grids away.
-        Using this talent may disable One with Gem for 5 turns.]], [[激活宝石来标记一块不可通过区域，你可以立即越过障碍物并出现在另一端，最大范围 %d 格。
-        使用该技能会使宝石协调暂时失效5回合。]], "tformat")
+t([[Invoke your gem to mark impassable terrain next to you. You immediately enter it and appear on the other side of the obstacle, up to %d grids away.]], [[激活宝石来标记一块不可通过区域，你可以立即越过障碍物并出现在另一端，最大范围 %d 格。]], "tformat")
 -- untranslated text
 --[==[
 t("You need to ready 5 alchemist gems in your quiver.", "You need to ready 5 alchemist gems in your quiver.", "logPlayer")

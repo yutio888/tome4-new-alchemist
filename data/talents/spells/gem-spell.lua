@@ -17,16 +17,16 @@ newTalent {
     end,
     tactical = function(self, t, aitarget)
         local damtype = self:getGemDamageType()
-        local t = { ATTACK = {} }
+        local t = { ATTACK = {}, ESCAPE = { knockback = 1}, DISABLE = { knockback = 1 } }
         t.ATTACK[damtype] = 2
         return t
     end,
-    cooldown = 3,
+    cooldown = 2,
     on_pre_use = function(self, t)
         return self:hasAlchemistWeapon()
     end,
     getDamage = function(self, t)
-        return self:combatTalentGemDamage(t, 20, 400)
+        return self:combatTalentGemDamage(t, 40, 200)
     end,
     action = function(self, t)
         local gem = self:hasAlchemistWeapon()
@@ -72,7 +72,7 @@ newTalent {
     end,
     info = function(self, t)
         return ([[Activate your gem's power and fire a bolt of energy to target, dealing %0.2f %s damage.
-        If the bolt hits, it will trigger the special effect of gem, and knock the target for 2 tiles.
+        If the bolt hits, it will trigger the special effect of gem, and knock back the target for 2 tiles.
         The damage scales with your gem tier and spellpower, and the damage type changes with your gem.
         ]]):tformat(damDesc(self, self:getGemDamageType(), t.getDamage(self, t)), _t(self:getGemDamageType():lower()))
     end,
@@ -93,7 +93,7 @@ newTalent {
     direct_hit = true,
     tactical = function(self, t, aitarget)
         local damtype = self:getGemDamageType()
-        local t = { ATTACKAREA = {} }
+        local t = { ATTACKAREA = {}, CLOSEIN = 2, }
         t.ATTACKAREA[damtype] = 2
         return t
     end,
@@ -109,7 +109,7 @@ newTalent {
         return self:hasAlchemistWeapon()
     end,
     getDamage = function(self, t)
-        return self:combatTalentGemDamage(t, 10, 300)
+        return self:combatTalentGemDamage(t, 30, 250)
     end,
     on_learn = function(self, t)
         self:checkCanWearGem()
@@ -177,20 +177,37 @@ newTalent {
     type = { "spell/gem-spell", 3 },
     require = spells_req3,
     points = 5,
-    no_npc_use = true,
-    mode = "sustained",
-    cooldown = 25,
-    sustain_mana = 40,
-    getShield = function(self, t) return math.floor(self:combatTalentSpellDamageBase(t, 30, 150)) end,
-    activate = function(self, t)
-        return {}
+    tactical = { DISABLE = { CONFUSION = 1 } },
+    cooldown = 15,
+    mana = -10,
+    radius = 10,
+    getDuration = function(self, t)
+        return self:combatTalentScale(t, 3, 7)
     end,
-    deactivate = function() return true end,
+    target = function(self, t)
+        local ammo = self:hasAlchemistWeapon()
+        if not ammo then
+            return
+        end
+        return { selffire = true, player_selffire = true, friendlyfire = false, type = "ball", range = self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius = self:getTalentRadius(t), talent = t }
+    end,
+    action = function(self, t)
+        local gem = self:hasAlchemistWeapon()
+        if not gem then
+            game.logPlayer(self, "You need to ready gems in your quiver.")
+            return
+        end
+        local tg = self:getTalentTarget(t)
+        self:project(tg, self.x, self.y, DamageType.CONFUSION, {
+            dur = t.getConfuseDuration(self, t),
+            dam = 50,
+        })
+        self:triggerGemAreaEffect(gem, nil)
+        game:playSoundNear(self, "talents/flame")
+    end,
     info = function(self, t)
-        return ([[Each time you trigger gem effect, you will gather the magical power to protect you, giving you a shield of %d for 3 turns.
-        If you have a damage shield, then the existed shield will be strengthed instead.
-        This can trigger once per turn.
-        ]]):tformat(t.getShield(self, t))
+        return ([[Invoke the power of gem, making a flash of light, confuses you and other foes in radius 10 for %d turns.
+        Then trigger the beneficial effect of the gem on yourself.]]):tformat(t.getDuration(self, t))
     end,
 
 }
@@ -201,8 +218,8 @@ newTalent {
     require = spells_req4,
     points = 5,
     mode = "sustained",
-    no_npc_use = true,
     cooldown = 50,
+    no_energy = true,
     tactical = { BUFF = 3 },
     on_learn = function(self, t)
         self:checkCanWearGem()
@@ -214,7 +231,7 @@ newTalent {
         return 1
     end,
     getCost = function(self, t)
-        return self:combatTalentLimit(t, 0, 20, 5)
+        return self:combatTalentLimit(t, 0, 12, 3)
     end,
     iconOverlay = function(self, t, p)
         if not p then

@@ -67,19 +67,19 @@ function _M:triggerGemAreaEffect(gem, grids)
     if gem.alchemist_bomb and gem.alchemist_bomb.special_area then
         gem.alchemist_bomb.special_area(self, gem, grids)
     end
-    if self:isTalentActive(self.T_FLICKERING_GEM) and not self:hasProc("flickering_gem_shield") then
-        self:setProc("flickering_gem_shield")
-        local t = self:getTalentFromId(self.T_FLICKERING_GEM)
-        local shield = self:safeSpellCrit(t.getShield(self, t))
-        if self:hasEffect(self.EFF_DAMAGE_SHIELD) then
-            local eff = self:hasEffect(self.EFF_DAMAGE_SHIELD)
-            eff.power = eff.power + shield
-            self.damage_shield_absorb = self.damage_shield_absorb + shield
-            self.damage_shield_absorb_max = self.damage_shield_absorb_max + shield
-        else
-            self:setEffect(self.EFF_DAMAGE_SHIELD, 3, {power = shield})
-        end
-    end
+    --if self:isTalentActive(self.T_FLICKERING_GEM) and not self:hasProc("flickering_gem_shield") then
+    --    self:setProc("flickering_gem_shield")
+    --    local t = self:getTalentFromId(self.T_FLICKERING_GEM)
+    --    local shield = self:safeSpellCrit(t.getShield(self, t))
+    --    if self:hasEffect(self.EFF_DAMAGE_SHIELD) then
+    --        local eff = self:hasEffect(self.EFF_DAMAGE_SHIELD)
+    --        eff.power = eff.power + shield
+    --        self.damage_shield_absorb = self.damage_shield_absorb + shield
+    --        self.damage_shield_absorb_max = self.damage_shield_absorb_max + shield
+    --    else
+    --        self:setEffect(self.EFF_DAMAGE_SHIELD, 3, {power = shield})
+    --    end
+    --end
 end
 
 function _M:triggerGemEffect(target, gem, dam)

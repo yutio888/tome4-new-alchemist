@@ -115,6 +115,7 @@ newTalent {
     getMaxCharges = function(self, t)
         return math.floor(self:combatTalentLimit(t, 7, 1, 4))
     end,
+    no_npc_use = true,
     --on_pre_use_ai = alchemy_potions_npc_select, -- NPC's automatically pick a tool
     action = function(self, t)
         if self:talentDialog(require("mod.dialogs.talents.PrepareAlchemistPotion").new(self)) then
@@ -160,20 +161,20 @@ newTalent {
     points = 5,
     require = spells_req2,
     cooldown = function(self, t)
-        return self:combatTalentScale(t, 20, 8)
+        return 5
     end,
-    mana = 10,
+    sustain_mana = 10,
     mode = "sustained",
     no_npc_use = true,
     no_energy = true,
     getDuration = function(self, t)
-        return math.ceil(15 - self:combatTalentLimit(t, 12, 0, 10))
+        return math.ceil(15 - self:combatTalentLimit(t, 12, 3, 6))
     end,
     iconOverlay = function(self, t, p)
         if not p then
             return ""
         end
-        return tostring("#RED##{bold}#" .. math.floor(p.dur or 1) .. "#LAST##{normal}#"), "buff_font_small"
+        return tostring("#RED##{bold}#" .. math.floor(p.dur or 0) .. "#LAST##{normal}#"), "buff_font_small"
     end,
     activate = function(self, t)
         return {
@@ -186,11 +187,12 @@ newTalent {
     callbackPriorities = { callbackOnHit = 100 },
     callbackOnHit = function(self, t, cb, src, death_note)
         local value = cb.value
-        local save = math.max(self:combatMentalResist(), self:combatPhysicalResist())
-        local res = self:checkHit(save, value)
+        local res = self:checkHit(self:combatPhysicalResist(), value)
+        res = res or self:checkHit(self:combatSpellResist(), value)
         if not res then
             game.logPlayer(self, "%s got disrupted by the incoming damage, stopped reproducing potions.", self:getName())
-            self:forceUseTalent(self.T_MANAGE_POTION_2, { ignore_energy = true })
+            local p = self:isTalentActive(t.id)
+            p.dur = t.getDuration(self, t)
         end
     end,
     callbackOnActBase = function(self, t)
@@ -202,7 +204,7 @@ newTalent {
         if p.dur <= 0 then
             game.logPlayer(self, "%s reproduce all the potions.", self:getName())
             self:restoreAllPotions()
-            self:forceUseTalent(t.id, { ignore_energy = true })
+            p.dur = t.getDuration(self, t)
             return
         end
     end,
@@ -212,8 +214,8 @@ newTalent {
         if p then
             desc = ([[Remaining turns: %d .]]):tformat(p.dur)
         end
-        return ([[Enter the focused state of reproducing potions for %d turns, after which you will recharge all your alchemy potions.
-        Reproduing potions need focus, any incoming damage may break this state. Every time you are damaged, you must check your physical or mental save to preverse focus. If you fail to do so, this talent will automatically deactivate.
+        return ([[Enter the focused state of reproducing potions。 Every %d turns, you will recharge all your alchemy potions.
+        Reproduing potions need focus, any incoming damage may break this state. Every time you are damaged, you must check your physical/spell save to preverse focus. If you fail to save, your reproduction will reset.
         %s]]):tformat(t.getDuration(self, t), desc)
     end,
 }
@@ -240,93 +242,71 @@ newTalent {
     end,
     info = function(self, t)
         return ([[You may spray your potion in cone instead of throw onto a single target.
-        However, this will make your potion less effective, your spellpower is considered as half when spraying potions.
         Besides, learning this talent will make your potions cost %d%% less turn.
         ]]):tformat(100 - t.getSpeedUp(self, t))
     end,
 }
 
 newTalent {
-    name = "Ingredient Recycle",
+    name = "Ingredient Recycle", short_name = "INGREDIENT_RECYCLE",
     type = { "spell/alchemy-potion", 4 },
     points = 5,
     require = spells_req4,
-    mode = "sustained",
-    sustain_mana = 80,
+    mana = 10,
     no_npc_use = true,
-    getTime = function(self, t)
-        return 10 - math.floor(self:combatTalentLimit(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 10, 0, 6.9))
+    cooldown = 25,
+    getPp = function(self, t)
+        return math.ceil(self:combatTalentLimit(t, 200, 30, 100))
     end,
-    iconOverlay = function(self, t, p)
-        if not p then
-            return ""
-        end
-        if not p.time then
-            return ""
-        end
-        if p.time <= 0 then
-            return ""
-        end
-        local str = tostring("#RED##{bold}#" .. math.floor(p.time or 1) .. "#LAST##{normal}#")
-        return str, "buff_font_small"
+    callbackOnPotion = function(self, t)
+        self._potion_pts = self._potion_pts + t.getPp(self, t)
+        self._potion_pts_turns = 6
     end,
-    activate = function(self, t)
-        return {
-            time = 0
-        }
-    end,
-    deactivate = function(self, t, p)
-        return true
-    end,
-    callbackOnAlchemistBomb = function(self, t)
-        if not self.in_combat then
-            return
+    callbackOnActBase = function(self, t)
+        if self._potion_pts_turns then
+            self._potion_pts_turns = self._potion_pts_turns -1
+            if self._potion_pts_turns <= 0 then
+                self._potion_pts_turns = nil
+                self._potion_pts = 0
+            else
+                self._potion_pts = math.ceil(self._potion_pts * 0.9)
+            end
         end
-        local p = self:isTalentActive(t.id)
-        if not p then
-            return
-        end
-        p.time = p.time - 1
-        if p.time <= 0 then
-            p.time = t.getTime(self, t)
-            local avail = {}
-            for _, tid in pairs(alchemy_potion_tids) do
-                if self:knowTalent(tid) then
-                    local talent = self:getTalentFromId(tid)
-                    if not talent.isSpecialPotion and self:callTalent(tid, "charge") < self:callTalent(tid, "max_charge") then
-                        avail[#avail + 1] = tid
+    end,
+    is_heal = true,
+    action = function(self, t)
+        local pts = self._potion_pts
+        self._potion_pts = nil
+        self._potion_pts_turns = nil
+        pts = self:spellCrit(pts)
+        local nb = math.floor(pts / 100)
+        local avail = {}
+        for _, tid in pairs(alchemy_potion_tids) do
+            if self:knowTalent(tid) then
+                local talent = self:getTalentFromId(tid)
+                if self:callTalent(tid, "charge") < self:callTalent(tid, "max_charge") then
+                    local v = self:callTalent(tid, "max_charge") - self:callTalent(tid, "charge")
+                    for i = 1, v do
+                        avail[#avail + i] = tid
+                        i = i + 1
                     end
                 end
             end
-            if #avail > 0 then
+            while #avail > 0 and nb > 0 do
                 local potion = rng.tableRemove(avail)
                 if potion then
                     self:callTalent(potion, "recharge", 1)
                 end
+                nb = nb - 1
             end
-            return
         end
-    end,
-    callbackOnCombat = function(self, t, state)
-        local p = self:isTalentActive(t.id)
-        if not p then
-            return
-        end
-        if state then
-            p.time = t.getTime(self, t)
-        else
-            p.time = 0
-        end
+        self:heal(pts)
     end,
     info = function(self, t)
-        local p = self:isTalentActive(t.id)
-        local desc = ""
-        if p and p.time > 0 then
-            desc = ([[Remaining explosions: %d .]]):tformat(p.time)
-        end
         return ([[You know how to reuse the remain of your potions.
-        You may restore one bottle of random potion after your bomb explodes %d times in combat.
-        Some special potions cannot be restored in this way.
-        %s]]):tformat(t.getTime(self, t), desc)
+        Every time you consume a potion, you store %d power.
+        The stored power last 6 turns, and reduces by 10%% each turn not consumed.
+        You may activate this talent to release the power as a heal, and every 100 point you heal (before healing mod), you'll regain a potion.
+        The heal can crit.]]):tformat(t.getPp(self, t))
     end,
 }

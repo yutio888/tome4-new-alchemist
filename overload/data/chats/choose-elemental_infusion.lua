@@ -45,9 +45,27 @@ newChat { id = "welcome",
                     player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
                 end,
               },
-              { _t "Nothing.",
+              { _t "Physical.",
                 action = function(self, player)
-                    player.elemental_infusion = nil
+                    player.elemental_infusion = "physical"
+                    player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
+                end,
+              },
+              { _t "Light.",
+                action = function(self, player)
+                    player.elemental_infusion = "light"
+                    player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
+                end,
+              },
+              { _t "Darkness.",
+                action = function(self, player)
+                    player.elemental_infusion = "darkness"
+                    player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
+                end,
+              },
+              { _t "Arcane.",
+                action = function(self, player)
+                    player.elemental_infusion = "arcane"
                     player:updateTalentPassives(player.T_ELEMENTAL_INFUSION)
                 end,
               },

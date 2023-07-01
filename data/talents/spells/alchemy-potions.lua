@@ -21,6 +21,7 @@ end
 local function newPotion(t)
     t.type = { "spell/alchemy-potions", 1 }
     local _range = t.range
+    t.no_npc_use = true
     t.never_fail = true -- potions are similar to object skill, that should never fail
     t.range = function(self, t)
         if self:isTalentActive(self.T_MANAGE_POTION_3) then
@@ -74,6 +75,7 @@ local function newPotion(t)
         local potion = self:getPotionInfo(t)
         if nb < 0 then
             potion.lastUse = game.turn
+            self:fireTalentCheck("callbackOnPotion")
         end
         if auto and nb > 0 then
             local last = potion.lastUse
@@ -94,14 +96,7 @@ local function newPotion(t)
         if t.charge(self, t) <= 0 then
             return
         end
-        local reduce = self:isTalentActive(self.T_MANAGE_POTION_3)
-        if reduce then
-            self:attr("spellpower_reduction", 1)
-        end
         local res = action(self, t)
-        if reduce then
-            self:attr("spellpower_reduction", -1)
-        end
         if res then
             t.recharge(self, t, -1)
         end
@@ -242,7 +237,7 @@ newPotion {
     end,
     is_heal = true, ignore_is_heal_test = true,
     getHeal = function(self, t)
-        return self:combatTalentSpellDamageBase(t, 20, 300)   -- relatively low heal due to no cd & full cleanse
+        return self:combatTalentSpellDamageBase(t, 20, 300)
     end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
@@ -282,7 +277,7 @@ newPotion {
 
 newPotion {
     name = "Fiery Wall", short_name = "FIRE_POTION", image = "talents/fire_wall.png", icon = "object/elixir_of_explosive_force.png",
-    tactical = { ATTACKAREA = { Fire = 1 } },
+    tactical = { ATTACKAREA = { FIRE = 1 } },
     target = function(self, t)
         local halflength = math.floor(t.getLength(self, t) / 2)
         return { type = "wall", range = self:getTalentRange(t), halflength = halflength, talent = t, halfmax_spots = halflength + 1 }
@@ -510,6 +505,7 @@ newPotion {
 newPotion {
     name = "Breath of the Frost", short_name = "FROST_POTION", image = "talents/frost_shield.png", icon = "object/elixir_of_mysticism.png",
     tactical = { DEFEND = 3 },
+    no_energy = true,
     getDuration = function(self, t)
         return 6
     end,
@@ -519,6 +515,12 @@ newPotion {
     getCritShrug = function(self, t)
         return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 15, 45)
     end,
+    callbackOnTakeDamageBeforeResists = function(self, t, src, x, y, type, dam, tmp)
+        if dam > self.max_life / 5 and t.charge(self, t) > 0 then
+            t.recharge(self, t, -1)
+            self:setEffect(self.EFF_FROST_SHIELD, t.getDuration(self, t), { power = t.getResists(self, t) })
+        end
+    end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
@@ -527,17 +529,19 @@ newPotion {
         end
         local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
         for _, target in ipairs(targets) do
-            target:setEffect(target.EFF_FROST_SHIELD, t.getDuration(self, t), { power = t.getResists(self, t), critdown = t.getCritShrug(self, t) })
+            target:setEffect(target.EFF_FROST_SHIELD, t.getDuration(self, t), { power = t.getResists(self, t) })
         end
         return true
     end,
     short_info = function(self, t)
         local fake_t = getFakeTalent(self)
-        return ([[Create a frost shield reducing damage by %d%% and critical hits by %d%% for %d turns.]]):tformat(t.getResists(self, fake_t or t), t.getCritShrug(self, fake_t or t), t.getDuration(self, fake_t or t))
+        return ([[Create a frost shield reducing non-fire damage by %d for %d turns.]]):tformat(t.getResists(self, fake_t or t), t.getDuration(self, fake_t or t))
     end,
     info = function(self, t, fake_t)
-        return ([[Create a frost shield in range %d, reducing %d%% all incoming damage except fire, and reducing direct critical damage by %d%%.
-        Frost shield lasts %d turns.]])
+        return ([[Create a frost shield in range %d, reducing %d%% all incoming damage except fire.
+        Frost shield lasts %d turns.
+        If you're about to get hit by more than 20%% of your max life, this potion will automatically activate.
+        ]])
                 :tformat(t.range(self, fake_t or t), t.getResists(self, fake_t or t), t.getCritShrug(self, fake_t or t), t.getDuration(self, fake_t or t))
     end,
 }
@@ -545,6 +549,7 @@ newPotion {
 newPotion {
     name = "Stoned Armour", short_name = "STONE_POTION", image = "talents/stoneskin.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { DEFEND = 2 },
+    no_energy = true,
     getDuration = function(self, t)
         return 6
     end,
@@ -588,6 +593,7 @@ newPotion {
 newPotion {
     name = "Potion of Magic", short_name = "ARCANE_POTION", image = "talents/arcane_power.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { BUFF = 3 },
+    no_energy = true,
     getDuration = function(self, t)
         return 6
     end,
@@ -635,6 +641,7 @@ newPotion {
 newPotion {
     name = "Potion of Luck", short_name = "LUCK_POTION", image = "talents/lucky_day.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { DEFEND = 2 },
+    no_energy = true,
     getDuration = function(self, t)
         return 6
     end,
@@ -675,6 +682,7 @@ newPotion {
 newPotion {
     name = "Potion of Swiftness", short_name = "SPEED_POTION", image = "talents/nimble_movements.png", icon = "object/elixir_of_invulnerability.png",
     tactical = { BUFF = 3 },
+    no_energy = true,
     getDuration = function(self, t)
         return 6
     end,

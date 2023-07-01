@@ -122,21 +122,20 @@ newEffect {
     name = "FROST_SHIELD", image = "talents/frost_shield.png",
     desc = _t "Frost Shield",
     long_desc = function(self, eff)
-        return ("The target is protected by the frost, reducing all damage except fire by %d%%, and reducing critical damage received by %d%%."):tformat(eff.power, eff.critdown or 0)
+        return ("The target is protected by the frost, reducing all damage except fire by %d."):tformat(eff.power)
     end,
     type = "magical",
     subtype = { ice = true },
     status = "beneficial",
     parameters = {},
     activate = function(self, eff)
-        self:effectTemporaryValue(eff, "ignore_direct_crits", eff.critdown or 0)
     end,
     callbackOnTakeDamage = function(self, eff, src, x, y, type, dam, state)
         if type == DamageType.FIRE then
             return
         end
         local d_color = DamageType:get(type).text_color or "#ORCHID#"
-        local reduce = dam * util.bound(eff.power * 0.01, 0, 1)
+        local reduce = math.max(dam, eff.power)
         if reduce > 0 then
             game:delayedLogDamage(src, self, 0, ("%s(%d frost reduce#LAST#%s)#LAST#"):tformat(d_color, reduce, d_color), false)
         else
@@ -410,5 +409,32 @@ newEffect{
     end,
     deactivate = function(self, eff)
         self:removeTemporaryValue("combat_def", eff.defenseChangeId)
+    end,
+}
+newEffect {
+    name = "ELEMENTAL_PROTECTION", image = "talents/alchemist_protection.png",
+    desc = _t "Elemental Protection",
+    long_desc = function(self, eff)
+        return ("Increases %d%% elemental resistance.%s"):tformat(eff.power,
+         eff.cleanse and _t" Blocks fire/cold/lightning/acid detrimental effects" or "")
+    end,
+    type = "magical",
+    subtype = { elemental = true },
+    status = "beniicial",
+    parameters = { },
+    activate = function(self, eff)
+        self:effectTemporaryValue(eff, "resists", {
+            [DamageType.FIRE] = eff.power,
+            [DamageType.COLD] = eff.power,
+            [DamageType.LIGHTNING] = eff.power,
+            [DamageType.ACID] = eff.power,
+        })
+    end,
+    callbackOnTemporaryEffect = function(self, eff, eff_id, e, p)
+        if not eff.cleanse then return end
+        if e.status == "beneficial" then return end
+        if e.subtype.fire or e.subtype.cold or e.subtype.lightning or e.subtype.acid then
+            return true
+        end
     end,
 }

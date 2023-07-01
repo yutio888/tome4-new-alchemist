@@ -3,15 +3,16 @@ newTalent {
     type = { "spell/explosion-control", 1 },
     require = spells_req_high1,
     points = 5,
-    mana = function(self, t)
-        if self:isTalentActive(self.T_CHAIN_BLASTING) then
-            return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 5
-        else
-            return 5
-        end
+    tactical = function(self, t, aitarget)
+        local damtype = self:getGemDamageType()
+        local t = { ATTACK = {} }
+        t.ATTACK[damtype] = 4
+        return t
     end,
-    cooldown = 16,
-    fixed_cooldown = true,
+    mana = function(self, t)
+        return 5
+    end,
+    cooldown = 3,
     direct_hit = true,
     requires_target = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
@@ -25,7 +26,8 @@ newTalent {
         if not ammo then
             return
         end
-        return { type = "widebeam", force_max_range = true, range = self:getTalentRange(t), radius = self:getTalentRadius(t), talent = t }
+        return { type = "widebeam", force_max_range = true, range = self:getTalentRange(t), radius = self:getTalentRadius(t), talent = t,
+        friendlyfire = false, selffire = false, }
     end,
     radius = 1,
     range = function(self, t)
@@ -40,8 +42,24 @@ newTalent {
             return true
         end
     end,
-    calcFurtherDamage = function(self, t, tg, ammo, x, y, dam)
-        return dam * 1.3 * math.min(2, 1 + 0.1 * (self.consecutive_bombs or 0))
+    getInc = 15,
+    calcFurtherDamage = function(self, t, tg, ammo, x, y, dam, tgts, grids)
+        local nb = 0
+        -- Compare theorical AOE zone with actual zone and adjust damage accordingly
+        if self:knowTalent(self.T_EXPLOSION_EXPERT_NEW) then
+            if grids then
+                for px, ys in pairs(grids or {}) do
+                    for py, _ in pairs(ys) do
+                        nb = nb + 1
+                    end
+                end
+            end
+            if nb > 0 then
+                dam = dam + dam * self:callTalent(self.T_EXPLOSION_EXPERT_NEW, "minmax", nb, 30)
+            end
+        end
+
+        return dam * math.min(2, 1 + t.getInc * 0.01 * (self.consecutive_bombs or 0))
     end,
     action = function(self, t)
         local ammo = self:hasAlchemistWeapon()
@@ -80,14 +98,14 @@ newTalent {
         local nb = self.consecutive_bombs or 0
         local futher_info = ""
         if nb > 0 then
-            local ndam = dam * 1.3 * (math.min(2, 1 + 0.1 * nb))
+            local ndam = dam * (math.min(2, 1 + t.getInc * 0.01 * nb))
             futher_info = ("Current Damage: %0.2f %s"):tformat(damDesc(self, damtype, ndam), DamageType:get(damtype).name)
         end
         return ([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
         This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this on cooldown.
-        Each successful activation will increase damage of the following beams by 10%%, up to 100%%.
+        Each successful activation will increase damage of the following beams by %d%%, up to 100%%.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
-        %s]]):tformat(damDesc(self, damtype, dam * 1.3), DamageType:get(damtype).name, futher_info)
+        %s]]):tformat(damDesc(self, damtype, dam), DamageType:get(damtype).name, t.getInc , futher_info)
     end,
 }
 
@@ -96,17 +114,15 @@ newTalent {
     type = { "spell/explosion-control", 1 },
     require = spells_req_high1,
     points = 5,
+    no_npc_use = true,
     mana = function(self, t)
-        if self:isTalentActive(self.T_CHAIN_BLASTING) then
-            return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 20
-        else
-            return 20
-        end
+        return 10
     end,
     cooldown = 6,
     fixed_cooldown = true,
     direct_hit = true,
     requires_target = true,
+    bombMod = 1.2,
     callbackOnAlchemistBomb = function(self, t, tgts, talent, x, y, startx, starty)
         if t == talent then
             for _, l in ipairs(tgts) do
@@ -138,8 +154,22 @@ newTalent {
             return true
         end
     end,
-    calcFurtherDamage = function(self, t, tg, ammo, x, y, dam)
-        return dam * 1.8
+    calcFurtherDamage = function(self, t, tg, ammo, x, y, dam, tgts, grids)
+        local nb = 0
+        -- Compare theorical AOE zone with actual zone and adjust damage accordingly
+        if self:knowTalent(self.T_EXPLOSION_EXPERT_NEW) then
+            if grids then
+                for px, ys in pairs(grids or {}) do
+                    for py, _ in pairs(ys) do
+                        nb = nb + 1
+                    end
+                end
+            end
+            if nb > 0 then
+                dam = dam + dam * self:callTalent(self.T_EXPLOSION_EXPERT_NEW, "minmax", nb, 44)
+            end
+        end
+        return dam * t.bombMod
     end,
     action = function(self, t)
         local ammo = self:hasAlchemistWeapon()
@@ -172,11 +202,12 @@ newTalent {
         if ammo then
             dam, damtype = bombUtil:getBaseDamage(self, t, ammo)
         end
+        dam = dam * t.bombMod
         return ([[Throw bomb to target location, then making it explode in a radius %d cone, dealing %0.2f %s damage and knocking them back.
         You can choose the direction of the explosion.
         You must know how to throw bomb to use this talent.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
-        ]]):tformat(t.getSpecialRadius(self, t), damDesc(self, damtype, dam * 1.8), DamageType:get(damtype).name)
+        ]]):tformat(t.getSpecialRadius(self, t), damDesc(self, damtype, dam), DamageType:get(damtype).name)
     end,
 }
 
@@ -185,13 +216,17 @@ newTalent {
     type = { "spell/explosion-control", 1 },
     require = spells_req_high1,
     points = 5,
-    mana = function(self, t)
-        if self:isTalentActive(self.T_CHAIN_BLASTING) then
-            return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 30
-        else
-            return 30
-        end
+    no_npc_use = true,
+    tactical = function(self, t, aitarget)
+        local damtype = self:getGemDamageType()
+        local t = { ATTACK = {} }
+        t.ATTACK[damtype] = 2
+        return t
     end,
+    mana = function(self, t)
+        return 20
+    end,
+    bombMod = 1.1,
     cooldown = 9,
     fixed_cooldown = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
@@ -201,10 +236,10 @@ newTalent {
         self:startTalentCooldown(t.id, 4)
     end,
     range = function(self, t)
-        return math.max(0, math.floor(self:combatTalentLimit(t, 9, 0.1, 4.1)))
+        return math.max(3, math.floor(self:combatTalentLimit(t, 9, 0.1, 4.1)))
     end,
     radius = function(self, t)
-        return math.max(0, math.floor(self:combatTalentLimit(t, 0, 4.1, 1.9)))
+        return math.max(1, math.floor(self:combatTalentLimit(t, 0, 4.1, 1.9)))
     end,
     direct_hit = true,
     requires_target = true,
@@ -213,7 +248,8 @@ newTalent {
         if not ammo then
             return
         end
-        return { type = "ball", range = self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius = self:getTalentRadius(t), talent = t }
+        return { type = "ball", range = self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius = self:getTalentRadius(t), talent = t,
+        friendlyfire = false, selffire = false,}
     end,
     on_pre_use = function(self, t)
         local ammo = self:hasAlchemistWeapon()
@@ -224,14 +260,28 @@ newTalent {
             return true
         end
     end,
-    calcFurtherDamage = function(self, t, tg, ammo, x, y, dam, tgts)
+    calcFurtherDamage = function(self, t, tg, ammo, x, y, dam, tgts, grids)
+        local nb = 0
+        -- Compare theorical AOE zone with actual zone and adjust damage accordingly
+        if self:knowTalent(self.T_EXPLOSION_EXPERT_NEW) then
+            if grids then
+                for px, ys in pairs(grids or {}) do
+                    for py, _ in pairs(ys) do
+                        nb = nb + 1
+                    end
+                end
+            end
+            if nb > 0 then
+                dam = dam + dam * self:callTalent(self.T_EXPLOSION_EXPERT_NEW, "minmax", nb, bombUtil.theoretical_nbs[5])
+            end
+        end
         local nb = 0
         for i, l in ipairs(tgts) do
             if l.target:reactionToward(self) < 0 then
                 nb = nb + 1
             end
         end
-        return dam * 3.2 * t.getDamageRadio(self, t, nb)
+        return dam * t.getDamageRadio(self, t, nb) * t.bombMod
     end,
     getDamageRadio = function(self, t, nb)
         -- 1 target 100%
@@ -261,7 +311,7 @@ newTalent {
         if ammo then
             dam, damtype = bombUtil:getBaseDamage(self, t, ammo)
         end
-        dam = dam * 3.2
+        dam = dam * t.bombMod
         local dam1 = dam * t.getDamageRadio(self, t, 1)
         local dam2 = dam * t.getDamageRadio(self, t, 2)
         local dam5 = dam * t.getDamageRadio(self, t, 5)
@@ -282,14 +332,16 @@ newTalent {
     require = spells_req_high1,
     points = 5,
     mana = function(self, t)
-        if self:isTalentActive(self.T_CHAIN_BLASTING) then
-            return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 50
-        else
-            return 50
-        end
+        return 25
     end,
     cooldown = 12,
     fixed_cooldown = true,
+    tactical = function(self, t, aitarget)
+        local damtype = self:getGemDamageType()
+        local t = { ATTACK = {} }
+        t.ATTACK[damtype] = 2
+        return t
+    end,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
         if t == talent then
             return
@@ -309,7 +361,8 @@ newTalent {
         if not ammo then
             return
         end
-        return { type = "ball", range = self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius = self:getTalentRadius(t), talent = t }
+        return { type = "ball", range = self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius = self:getTalentRadius(t), talent = t,
+        friendlyfire = false, selffire = false}
     end,
     on_pre_use = function(self, t)
         local ammo = self:hasAlchemistWeapon()
@@ -320,15 +373,31 @@ newTalent {
             return true
         end
     end,
-    calcFurtherDamage = function(self, t, tg, ammo, x, y, dam)
+    bombMod = 0.8,
+    calcFurtherDamage = function(self, t, tg, ammo, x, y, dam, tgts, grids)
+        local nb = 0
+        -- Compare theorical AOE zone with actual zone and adjust damage accordingly
+        if self:knowTalent(self.T_EXPLOSION_EXPERT_NEW) then
+            if grids then
+                for px, ys in pairs(grids or {}) do
+                    for py, _ in pairs(ys) do
+                        nb = nb + 1
+                    end
+                end
+            end
+            if nb > 0 then
+                local radius = self:getTalentRadius(t)
+                dam = dam + dam * self:callTalent(self.T_EXPLOSION_EXPERT_NEW, "minmax", nb, bombUtil["theoretical_nbs"][radius])
+            end
+        end
         local blasted_time = self.alchemy_blasts
         if not blasted_time then
             return dam
         end
-        return dam * (100 - t.getReduction(self, t, blasted_time)) / 100
+        return dam * (100 - t.getReduction(self, t, blasted_time)) / 100 * t.bombMod
     end,
     getReduction = function(self, t, nb)
-        local percent = self:combatTalentLimit(t, 0, 50, 20) / 100
+        local percent = self:combatTalentLimit(t, 10, 40, 20) / 100
         return 100 * (1 - math.pow(1 - percent, nb or 1))
     end,
     action = function(self, t)
@@ -375,6 +444,7 @@ newTalent {
         if ammo then
             dam, damtype = bombUtil:getBaseDamage(self, t, ammo)
         end
+        dam = dam * t.bombMod
         return ([[Throw bomb to target location dealing %0.2f %s damage in radius %d, then make a chained blast:
         Any foe inside the explosion radius will trigger a similar explosion.
         Each successive explosion deals %d%% less damage.

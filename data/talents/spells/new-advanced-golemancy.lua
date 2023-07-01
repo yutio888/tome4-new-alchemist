@@ -62,6 +62,28 @@ newTalent {
         local dur = t.getDuration(self, t)
         local speed = t.getSpeedBoost(self, t)
 
+        -- ressurect the golem
+        if not game.level:hasEntity(self.alchemy_golem) or self.alchemy_golem.dead then
+            self.alchemy_golem.dead = nil
+
+            -- Find space
+            local x, y = util.findFreeGrid(self.x, self.y, 5, true, {[Map.ACTOR]=true})
+            if not x then
+                game.logPlayer(self, "Not enough space to supercharge!")
+                return
+            end
+            game.zone:addEntity(game.level, self.alchemy_golem, "actor", x, y)
+            self.alchemy_golem:setTarget(nil)
+            self.alchemy_golem.ai_state.tactic_leash_anchor = self
+            self.alchemy_golem:removeAllEffects()
+            self.alchemy_golem.max_level = self.max_level
+            self.alchemy_golem:forceLevelup(new_level)
+            self.alchemy_golem:incLife(self.alchemy_golem.max_life / 2, true)
+        else
+            self.alchemy_golem.life = math.max(self.alchemy_golem.life, self.alchemy_golem.max_life)
+            game.logSeen("%s's golem is fully restored!", self:getName())
+        end
+
         local mover, golem = getGolem(self)
         if not golem then
             game.logPlayer(self, "Your golem is currently inactive.")
@@ -76,60 +98,11 @@ newTalent {
     info = function(self, t)
         local dur = t.getDuration(self, t)
         local speed = t.getSpeedBoost(self, t)
-        return ([[You activate a special mode of your golem, boosting its speed by %d%% for %d turns.]]):
+        return ([[You activate a special mode of your golem, boosting its speed by %d%% for %d turns.
+        If your golem is inactive, then it will become resurrected with half hit point, otherwise fully restore the hit point of your golem upon activation.]]):
         tformat(speed, dur)
     end,
 }
---
---newTalent{
---	name = "Golem Portal", short_name = "GOLEM_PORTAL_NEW",
---	type = {"spell/new-advanced-golemancy",2},
---	require = spells_req_high2,
---	points = 5,
---	mana = 30,
---	cant_steal = true,
---	tactical = { DEFEND = 2, ESCAPE = 2 },
---	getDuration = function(self, t) return math.floor(self:combatTalentLimit(t, 8, 2, 5)) end, -- Limit < 8
---	cooldown = function(self, t) return math.ceil(self:combatTalentLimit(t, 8, 25, 15)) end, -- Limit to > 8
---	action = function(self, t)
---		local mover, golem = getGolem(self)
---		if not golem then
---			game.logPlayer(self, "Your golem is currently inactive.")
---			return
---		end
---
---		local chance = math.min(100, self:getTalentLevel(t) * 15 + 25)
---		local px, py = self.x, self.y
---		local gx, gy = golem.x, golem.y
---
---		self:move(gx, gy, true)
---		golem:move(px, py, true)
---		self:move(gx, gy, true)
---		golem:move(px, py, true)
---		game.level.map:particleEmitter(px, py, 1, "teleport")
---		game.level.map:particleEmitter(gx, gy, 1, "teleport")
---
---		for uid, e in pairs(game.level.entities) do
---			if e.getTarget then
---				local _, _, tgt = e:getTarget()
---				if e:reactionToward(self) < 0 and tgt == self and rng.percent(chance) then
---					e:setTarget(golem)
---					golem:logCombat(e, "#Target# focuses on #Source#.")
---				end
---			end
---		end
---
---        self:setEffect(self.EFF_EVASION, t.getDuration(self, t), {chance = 50})
---        golem:setEffect(golem.EFF_EVASION, t.getDuration(self, t), {chance = 50})
---		return true
---	end,
---	info = function(self, t)
---		return ([[Teleport to your golem, while your golem teleports to your location. Your foes will be confused, and those that were attacking you will have a %d%% chance to target your golem instead.
---        After teleportation, you and your golem gain 50%% evasion for %d turns.]]):
---		tformat(math.min(100, self:getTalentLevel(t) * 15 + 25), t.getDuration(self, t))
---	end,
---}
-
 
 newTalent {
     name = "Disruption Rune",
@@ -137,6 +110,7 @@ newTalent {
     require = spells_req_high3,
     points = 5,
     tactical = { DISABLE = { confusion = 3 } },
+    no_energy = true,
     mana = 30,
     cooldown = function(self, t)
         return math.ceil(self:combatTalentLimit(t, 10, 30, 20))
@@ -198,8 +172,8 @@ newTalent {
     require = spells_req_high4,
     points = 5,
     tactical = { BUFF = 9 },
-    mana = 120,
-    cooldown = 50,
+    mana = 50,
+    cooldown = 30,
     getDuration = function(self, t)
         return math.ceil(self:combatTalentScale(t, 5, 15))
     end,

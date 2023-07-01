@@ -97,8 +97,8 @@ function bombUtil:getBaseDamage(self, t, ammo, tg)
     return dam, damtype, particle, arg
 end
 function bombUtil:throwBomb(self, t, ammo, tg, x, y, startx, starty)
-    local dam, damtype, particle, emit = bombUtil:getBaseDamage(self, t, ammo, tg)
-    dam = self:spellCrit(dam)
+    local dam, damtype, particle, emit, crit = bombUtil:getBaseDamage(self, t, ammo, tg)
+    dam, crit = self:spellCrit(dam)
     local golem
     if self.alchemy_golem then
         golem = game.level:hasEntity(self.alchemy_golem) and self.alchemy_golem or nil
@@ -136,7 +136,7 @@ function bombUtil:throwBomb(self, t, ammo, tg, x, y, startx, starty)
         end
     end
 
-    self:fireTalentCheck("callbackOnAlchemistBomb", tgts, t, x, y, startx, starty)
+    self:fireTalentCheck("callbackOnAlchemistBomb", tgts, t, x, y, startx, starty, crit)
     emit(self, particle, tg, x, y, startx, starty)
     return tgts
 end
@@ -165,7 +165,7 @@ newTalent {
         if not ammo then
             return
         end
-        return { type = "ball", range = self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius = self:getTalentRadius(t), talent = t }
+        return { selffire = false, friendlyfire = false, type = "ball", range = self:getTalentRange(t) + (ammo and ammo.alchemist_bomb and ammo.alchemist_bomb.range or 0), radius = self:getTalentRadius(t), talent = t }
     end,
     on_learn = function(self, t)
         self:checkCanWearGem()
@@ -252,20 +252,32 @@ newTalent {
     name = "Alchemist Protection", short_name = "NEW_ALCHEMIST_PROTECTION", image = "talents/alchemist_protection.png",
     type = { "spell/new-explosive", 2 },
     require = spells_req2,
-    mode = "passive",
     points = 5,
     getResists = function(self, t)
-        return self:combatTalentSpellDamageBase(t, 10, 30) + 5
+        return self:combatTalentSpellDamageBase(t, 5, 10) + 5
     end,
+    cooldown = function(self, t)
+        return 20 - self:combatTalentLimit(t, 18, 0, 10)
+    end,
+    mana = 5,
+    getDur = function(self, t) return 8 end,
     passives = function(self, t, ret)
-        self:talentTemporaryValue(ret, "resists", { [DamageType.FIRE] = t.getResists(self, t),
-                                                    [DamageType.COLD] = t.getResists(self, t),
-                                                    [DamageType.LIGHTNING] = t.getResists(self, t),
-                                                    [DamageType.ACID] = t.getResists(self, t),
+        self:talentTemporaryValue(ret, "resists", {
+            [DamageType.FIRE] = t.getResists(self, t),
+            [DamageType.COLD] = t.getResists(self, t),
+            [DamageType.LIGHTNING] = t.getResists(self, t),
+            [DamageType.ACID] = t.getResists(self, t),
         })
     end,
+    action = function(self, t)
+        local cleanse = self:getTalentLevel(t) >= 3
+        if cleanse then
+            self:removeEffectsFilter(self, { status = "detrimental", subtype = { fire = true, cold = true, lightning = true, acid = true} }, 999)
+        end
+        self:setEffect(self.EFF_ELEMENTAL_PROTECTION, t.getDur(self, t), {power = t.getResists(self, t), cleanse = cleanse})
+    end,
     getMana = function(self, t)
-        return self:combatTalentScale(t, 3, 20)
+        return self:combatTalentLimit(t, 25, 5, 12)
     end,
     callbackOnTakeDamage = function(self, t, src, x, y, type, dam, state)
         if type == DamageType.FIRE or type == DamageType.ACID or type == DamageType.COLD or type == DamageType.LIGHTNING then
@@ -274,8 +286,9 @@ newTalent {
     end,
     info = function(self, t)
         return ([[Grants protection against external elemental damage (fire, cold, lightning and acid) by %d%%.
-		Besides, each time you're hit by elemental damage, you may regain %d mana.]]):
-        tformat(t.getResists(self, t), t.getMana(self, t))
+		You can activate this talent, to grant yourself extra %d%% elemental resistance for %d turns.
+		At talent level 3, the flow of elemental energy will cleanse and block elemental detrimental effects.]]):
+        tformat(t.getResists(self, t), t.getResists(self, t), t.getDur(self, t))
     end,
 }
 
@@ -293,8 +306,8 @@ newTalent {
         return math.max(0, self:combatTalentScale(t, 1, 5))
     end,
     reduction = 2,
-    minmax = function(self, t, grids)
-        local theoretical_nb = bombUtil.theoretical_nbs[t.getRadius(self, t)]
+    minmax = function(self, t, grids, expected_grids)
+        local theoretical_nb = expected_grids or bombUtil.theoretical_nbs[t.getRadius(self, t)]
         if grids then
             local lostgrids = math.max(theoretical_nb - grids, t.mingrids(self, t))
             local mult = math.max(0, math.log10(lostgrids)) / (6 - math.min(self:getTalentLevel(self.T_EXPLOSION_EXPERT_NEW), 5))
@@ -309,35 +322,70 @@ newTalent {
     end,
     info = function(self, t)
         local min, max = t.minmax(self, t)
-        return ([[Your alchemist bombs now affect a radius of %d around them.
+        return ([[Your alchemist bombs now affect a radius of %d around them. (This only works for the basic Throwing Bomb talent.)
 		Explosion damage may increase by %d%% (if the explosion is not contained) to %d%% if the area of effect is confined.]]):
         tformat(t.getRadius(self, t), min * 100, max * 100)
     end,
 }
 
 newTalent {
-    name = "Fast Recharge", short_name = "CHAIN_BLASTING", image = "talents/shockwave_bomb.png",
+    name = "Explosion Shield", short_name = "CHAIN_BLASTING", image = "talents/shockwave_bomb.png",
     type = { "spell/new-explosive", 4 },
     require = spells_req4,
     mode = "sustained",
     points = 5,
-    sustain_mana = 30,
-    getManaCost = function(self, t)
-        return 20
+    tactical = {  SPECIAL = 2 },
+    sustain_mana = 5,
+    critResist = function(self, t)
+        return self:combatTalentLimit(t, 75, 10, 50)
     end,
-    getChance = function(self, t)
-        return self:combatTalentLimit(t, 35, 5, 25) * (1 + self:combatGemPower() * 0.003 + self:combatSpellpower() * 0.002)
+    getShieldFlat = function(self, t)
+        return self:combatTalentSpellDamageBase(t, 50, 200)
+    end,
+    callbackOnAlchemistBomb = function(self, t, tgts, t, x, y, startx, starty, crit)
+        if crit and not self._bomb_shield then
+            self._bomb_shield = 4
+            local shield_power = self:spellCrit(t.getShieldFlat(self, t))
+            if self:hasEffect(self.EFF_DAMAGE_SHIELD) then
+                local shield = self:hasEffect(self.EFF_DAMAGE_SHIELD)
+                shield.power = shield.power + shield_power
+                shield.power_max = shield.power_max + shield_power
+                shield.dur = math.max(2, shield.dur)
+            else
+                self:setEffect(self.EFF_DAMAGE_SHIELD, 5, { power = shield_power})
+            end
+        end
+    end,
+    callbackOnActBase = function(self, t)
+        if self._bomb_shield then
+            self._bomb_shield = self._bomb_shield - 1
+            if self._bomb_shield <= 0 then
+                self._bomb_shield = nil
+            end
+        end
     end,
     activate = function(self, t)
-        return {}
+        local ret = {}
+        self:talentTemporaryValue(ret, "ignore_direct_crits", t.critResist(self, t))
+        return ret
     end,
     deactivate = function(self, t)
         return true
     end,
+    iconOverlay = function(self, t, p)
+        local val = self._bomb_shield or 0
+        if val <= 0 then return "" end
+        return tostring(math.ceil(val)), "buff_font_small"
+    end,
     info = function(self, t)
-        return ([[Your Throw Bomb talent now have %d%% chance to not go on cooldown.
-        Activating this talent will increase the mana cost of Throw Bomb talent by %d .
-        Chances increases with your gem tier and spellpower.]])
-                :tformat(t.getChance(self, t), t.getManaCost(self, t))
+        local cd = _t"available"
+        if self._bomb_shield then
+            cd = ("%d"):format(self._bomb_shield)
+        end
+        return ([[Your mastery of explosive material makes you much more resilient against all kinds of critical hits.
+        All direct critical hits (physical, mental, spells) against you have a %d%% lower critical multiplier
+        Besides, each time your bomb deals a critical hit, you'll gain a shield of %d for 5 turns, or if you already have a shield, increasing its shield power instead. This effect has a cooldown of 4 turns. (Current: %s)
+        The power of the shield can crit.]])
+                :tformat(t.critResist(self, t), t.getShieldFlat(self, t), cd)
     end,
 }

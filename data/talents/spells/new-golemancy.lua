@@ -618,9 +618,7 @@ newTalent {
             return true
         end
 
-        if golem.life < golem.max_life / 2 then
-            golem:setEffect(golem.EFF_DAMAGE_SHIELD, 5, { power = heal / 2 })
-        end
+        golem:setEffect(golem.EFF_DAMAGE_SHIELD, 5, { power = heal / 2 })
         golem:attr("allow_on_heal", 1)
         golem:heal(heal, self)
         golem:attr("allow_on_heal", -1)
@@ -631,7 +629,7 @@ newTalent {
         local power = t.getHeal(self, t)
         return ([[You invoke the power of your gem, healing you and your golem for %d.
         If your golem is dead, it will be resurrected at 50%% life.
-        If your golem is below 50%% life, it will gain a shield which can absorb %d damage for 5 turns.]]):
+        If your golem is active, it will gain a shield which can absorb %d damage for 5 turns.]]):
         tformat(power, power / 2)
     end,
 }

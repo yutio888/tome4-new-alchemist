@@ -1,4 +1,6 @@
 getBirthDescriptor("class", "Mage").descriptor_choices.subclass["New Alchemist"] = "allow"
+getBirthDescriptor("class", "Mage").descriptor_choices.subclass["Alchemist"] = "disallow"
+getBirthDescriptor("subclass", "Alchemist").not_on_random_boss = true
 newBirthDescriptor {
     type = "subclass",
     name = "New Alchemist",
@@ -14,7 +16,6 @@ newBirthDescriptor {
         _t "#GOLD#Life per level:#LIGHT_BLUE# -1",
     },
     power_source = { arcane = true },
-    not_on_random_boss = true, -- many talents haven't write proper ai tactics yet
     stats = { mag = 5, con = 3, wil = 1, },
     birth_example_particles = {
         function(actor)

@@ -7,7 +7,7 @@ if gem_portal then
     gem_portal.action = function(self, t)
         local ammo = self:hasAlchemistWeapon()
         if not ammo then
-            game.logPlayer(self, "You need to ready 5 alchemist gems in your quiver.")
+            game.logPlayer(self, "You need to ready gems in your quiver.")
             return
         end
 
@@ -26,7 +26,6 @@ if gem_portal then
         end
 
         self:probabilityTravel(x, y, t.getRange(self, t))
-        self:setProc("trigger_gem", true, 5)
 
         if ox == self.x and oy == self.y then
             return
@@ -37,8 +36,7 @@ if gem_portal then
     end
     gem_portal.info = function(self, t)
         local range = t.getRange(self, t)
-        return ([[Invoke your gem to mark impassable terrain next to you. You immediately enter it and appear on the other side of the obstacle, up to %d grids away.
-        Using this talent may disable One with Gem for 5 turns.]]):
+        return ([[Invoke your gem to mark impassable terrain next to you. You immediately enter it and appear on the other side of the obstacle, up to %d grids away.]]):
         tformat(range)
     end
 end
