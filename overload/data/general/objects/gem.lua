@@ -97,7 +97,6 @@ local function newGem(name, image, cost, rarity, color, min_level, max_level, ti
                 material_level = tier,
                 alchemist_power = power,
                 alchemist_bomb = bomb,
-                type = "gem", subtype = "white",
                 display = "*",
                 encumber = 0,
                 identified = true,
