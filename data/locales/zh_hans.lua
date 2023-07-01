@@ -426,8 +426,8 @@ t("Supercharge Golem", "超载傀儡", "talent name")
 t("Your golem is currently inactive.", "你的傀儡暂时处于未激活状态。", "logPlayer")
 t("%s's golem is fully restored!", "%s的傀儡完全恢复了！", "logSeen")
 t([[You activate a special mode of your golem, boosting its speed by %d%% for %d turns.
-        If your golem is inactive, then it will become resurrected with half hit point, otherwise fully restore the hit point of your golem upon activation.]], [[激活傀儡，加速 %d%% ，持续 %d 回合。
-        如果傀儡没有激活，则以半血复活。否则，立刻回满血。]], "tformat")
+        If your golem is inactive, then it will become resurrected. Then fully restore the hit point of your golem upon activation.]], [[激活傀儡，加速 %d%% ，持续 %d 回合。
+        如果傀儡没有激活，则复活之。然后，立刻回满傀儡的血量。]], "tformat")
 t("Disruption Rune", "干扰符文", "talent name")
 t("Golem's Fury", "傀儡之怒", "talent name")
 t("Customize", "定制傀儡", "talent name")
@@ -525,11 +525,11 @@ t([[You may spray your potion in cone instead of throw onto a single target.
 t("Ingredient Recycle", "材料回收", "talent name")
 t("Remaining explosions: %d .", "剩余爆炸数： %d 。", "tformat")
 t([[You know how to reuse the remain of your potions.
-        Every time you consume a potion, you store %d power.
+        Every time you consume a potion, you store %d power (current %d ).
         The stored power last 6 turns, and reduces by 10%% each turn not consumed.
         You may activate this talent to release the power as a heal, and every 100 point you heal (before healing mod), you'll regain a potion.
         The heal can crit.]], [[你知道如何利用药剂的剩余材料。
-        每次你使用药剂时，获得 %d 能量。
+        每次你使用药剂时，获得 %d 能量（当前 %d ）。
         能量存储 6 回合，每回合损失 10%%。
         你可以激活这个技能，给与自身等量治疗。每治疗 100 点（不计算治疗系数），你可以随机获得一瓶药剂。
         治疗量可以暴击。]], "tformat")
@@ -796,6 +796,7 @@ t("The target's defense is boosted by %d.", "目标闪避上升 %d。", "tformat
 t("Elemental Protection", "元素保护", "_t")
 t("Increases %d%% elemental resistance.%s", "增加 %d%% 元素伤害抗性。%s", "tformat")
 t(" Blocks fire/cold/lightning/acid detrimental effects", "阻挡火焰/寒冷/闪电/酸性负面状态。", "_t")
+t("You have %d power stored.", "你拥有 %d 能量。", "tormat")
 -- untranslated text
 --[==[
 t("#Target#'s skin looks a bit thorny.", "#Target#'s skin looks a bit thorny.", "_t")

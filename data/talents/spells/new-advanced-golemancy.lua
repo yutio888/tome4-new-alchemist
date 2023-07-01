@@ -78,11 +78,9 @@ newTalent {
             self.alchemy_golem:removeAllEffects()
             self.alchemy_golem.max_level = self.max_level
             self.alchemy_golem:forceLevelup(new_level)
-            self.alchemy_golem:incLife(self.alchemy_golem.max_life / 2, true)
-        else
-            self.alchemy_golem.life = math.max(self.alchemy_golem.life, self.alchemy_golem.max_life)
-            game.logSeen("%s's golem is fully restored!", self:getName())
         end
+        self.alchemy_golem.life = math.max(self.alchemy_golem.life, self.alchemy_golem.max_life)
+        game.logSeen("%s's golem is fully restored!", self:getName())
 
         local mover, golem = getGolem(self)
         if not golem then
@@ -99,7 +97,7 @@ newTalent {
         local dur = t.getDuration(self, t)
         local speed = t.getSpeedBoost(self, t)
         return ([[You activate a special mode of your golem, boosting its speed by %d%% for %d turns.
-        If your golem is inactive, then it will become resurrected with half hit point, otherwise fully restore the hit point of your golem upon activation.]]):
+        If your golem is inactive, then it will become resurrected. Then fully restore the hit point of your golem upon activation.]]):
         tformat(speed, dur)
     end,
 }

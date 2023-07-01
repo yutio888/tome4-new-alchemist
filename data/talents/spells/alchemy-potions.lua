@@ -510,7 +510,7 @@ newPotion {
         return 6
     end,
     getResists = function(self, t)
-        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 5, 20)
+        return self:combatTalentSpellDamageBase(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 10, 100)
     end,
     getCritShrug = function(self, t)
         return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 15, 45)

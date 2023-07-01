@@ -586,7 +586,7 @@ newTalent {
     require = spells_req3,
     points = 5,
     mana = 20,
-    cooldown = 15,
+    cooldown = 25,
     cant_steal = true,
     tactical = { HEAL = 2 },
     getHeal = function(self, t)

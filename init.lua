@@ -21,8 +21,8 @@
 long_name = "New Alchemist"
 short_name = "new-alchemist"
 for_module = "tome"
-version = { 1, 7, 2 }
-addon_version = { 0, 1, 0 }
+version = { 1, 7, 6 }
+addon_version = { 0, 1, 1 }
 weight = 250
 author = { 'yutio888' }
 homepage = ''

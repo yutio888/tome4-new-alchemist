@@ -258,9 +258,13 @@ newTalent {
     getPp = function(self, t)
         return math.ceil(self:combatTalentLimit(t, 200, 30, 100))
     end,
+    on_pre_use = function(self, t)
+        return (self._potion_pts or 0) > 0
+    end,
     callbackOnPotion = function(self, t)
-        self._potion_pts = self._potion_pts + t.getPp(self, t)
+        self._potion_pts = (self._potion_pts or 0) + t.getPp(self, t)
         self._potion_pts_turns = 6
+        self:setEffect(self.EFF_POTION_RECYCLE, 6, {})
     end,
     callbackOnActBase = function(self, t)
         if self._potion_pts_turns then
@@ -268,6 +272,7 @@ newTalent {
             if self._potion_pts_turns <= 0 then
                 self._potion_pts_turns = nil
                 self._potion_pts = 0
+                self:removeEffect(self.EFF_POTION_RECYCLE)
             else
                 self._potion_pts = math.ceil(self._potion_pts * 0.9)
             end
@@ -301,12 +306,13 @@ newTalent {
             end
         end
         self:heal(pts)
+        return true
     end,
     info = function(self, t)
         return ([[You know how to reuse the remain of your potions.
-        Every time you consume a potion, you store %d power.
+        Every time you consume a potion, you store %d power (current %d ).
         The stored power last 6 turns, and reduces by 10%% each turn not consumed.
         You may activate this talent to release the power as a heal, and every 100 point you heal (before healing mod), you'll regain a potion.
-        The heal can crit.]]):tformat(t.getPp(self, t))
+        The heal can crit.]]):tformat(t.getPp(self, t), self._potion_pts or 0)
     end,
 }

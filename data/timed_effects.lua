@@ -135,7 +135,7 @@ newEffect {
             return
         end
         local d_color = DamageType:get(type).text_color or "#ORCHID#"
-        local reduce = math.max(dam, eff.power)
+        local reduce = math.min(dam, eff.power)
         if reduce > 0 then
             game:delayedLogDamage(src, self, 0, ("%s(%d frost reduce#LAST#%s)#LAST#"):tformat(d_color, reduce, d_color), false)
         else
@@ -437,4 +437,13 @@ newEffect {
             return true
         end
     end,
+}
+newEffect{
+    name = "POTION_RECYCLE", image = "talents/ingredient_recycle.png",
+    desc = _t"Ingredient Recycle",
+    long_desc = function(self, eff) return ("You have %d power stored."):tformat(self._potion_pts or 0) end,
+    type = "other",
+    subtype = { heal=true },
+    status = "beneficial",
+    parameters = { power = 10 },
 }

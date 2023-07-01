@@ -146,11 +146,7 @@ newTalent {
     require = spells_req1,
     points = 5,
     mana = function(self, t)
-        if self:isTalentActive(self.T_CHAIN_BLASTING) then
-            return self:callTalent(self.T_CHAIN_BLASTING, "getManaCost") + 5
-        else
-            return 5
-        end
+        return 5
     end,
     cooldown = 4,
     range = function(self, t)
@@ -259,7 +255,8 @@ newTalent {
     cooldown = function(self, t)
         return 20 - self:combatTalentLimit(t, 18, 0, 10)
     end,
-    mana = 5,
+    mana = 25,
+    no_energy = true,
     getDur = function(self, t) return 8 end,
     passives = function(self, t, ret)
         self:talentTemporaryValue(ret, "resists", {
@@ -275,6 +272,8 @@ newTalent {
             self:removeEffectsFilter(self, { status = "detrimental", subtype = { fire = true, cold = true, lightning = true, acid = true} }, 999)
         end
         self:setEffect(self.EFF_ELEMENTAL_PROTECTION, t.getDur(self, t), {power = t.getResists(self, t), cleanse = cleanse})
+        game:playSoundNear(self, "talents/flame")
+        return true
     end,
     getMana = function(self, t)
         return self:combatTalentLimit(t, 25, 5, 12)
@@ -335,22 +334,22 @@ newTalent {
     mode = "sustained",
     points = 5,
     tactical = {  SPECIAL = 2 },
-    sustain_mana = 5,
+    sustain_mana = 25,
     critResist = function(self, t)
         return self:combatTalentLimit(t, 75, 10, 50)
     end,
     getShieldFlat = function(self, t)
         return self:combatTalentSpellDamageBase(t, 50, 200)
     end,
-    callbackOnAlchemistBomb = function(self, t, tgts, t, x, y, startx, starty, crit)
+    callbackOnAlchemistBomb = function(self, t, tgts, tt, x, y, startx, starty, crit)
         if crit and not self._bomb_shield then
             self._bomb_shield = 4
             local shield_power = self:spellCrit(t.getShieldFlat(self, t))
             if self:hasEffect(self.EFF_DAMAGE_SHIELD) then
                 local shield = self:hasEffect(self.EFF_DAMAGE_SHIELD)
                 shield.power = shield.power + shield_power
-                shield.power_max = shield.power_max + shield_power
-                shield.dur = math.max(2, shield.dur)
+                self.damage_shield_absorb = self.damage_shield_absorb + shield_power
+                self.damage_shield_absorb_max = self.damage_shield_absorb_max + shield_power
             else
                 self:setEffect(self.EFF_DAMAGE_SHIELD, 5, { power = shield_power})
             end

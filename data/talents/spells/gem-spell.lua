@@ -181,7 +181,7 @@ newTalent {
     cooldown = 15,
     mana = -10,
     radius = 10,
-    getDuration = function(self, t)
+    getConfuseDuration = function(self, t)
         return self:combatTalentScale(t, 3, 7)
     end,
     target = function(self, t)
@@ -202,12 +202,16 @@ newTalent {
             dur = t.getConfuseDuration(self, t),
             dam = 50,
         })
+        if self:canBe("confuse") then
+            self:setEffect(self.EFF_CONFUSED, t.getConfuseDuration(self, t), {power = 50})
+        end
         self:triggerGemAreaEffect(gem, nil)
         game:playSoundNear(self, "talents/flame")
+        return true
     end,
     info = function(self, t)
         return ([[Invoke the power of gem, making a flash of light, confuses you and other foes in radius 10 for %d turns.
-        Then trigger the beneficial effect of the gem on yourself.]]):tformat(t.getDuration(self, t))
+        Then trigger the beneficial effect of the gem on yourself.]]):tformat(t.getConfuseDuration(self, t))
     end,
 
 }
@@ -261,7 +265,8 @@ newTalent {
         self:incMana(-cost)
         local proc = { val = true, turns = t.getTurn(self, t) }
         table.set(self, "turn_procs", "multi", "trigger_gem", proc)
-        self:triggerGemEffect(target, gem, 0)
+        self:triggerGemEffect(target, gem, val)
+        self:triggerGemAreaEffect(gem)
     end,
     activate = function(self, t)
         return {}
