@@ -56,7 +56,7 @@ local function newPotion(t)
         end
     end
     t.speed = function(self, t)
-        if self:isTalentActive(self.T_MANAGE_POTION_3) then
+        if self:knowTalent(self.T_MANAGE_POTION_3) then
             return self:getSpeed('spell') * self:callTalent(self.T_MANAGE_POTION_3, "getSpeedUp") / 100
         end
     end

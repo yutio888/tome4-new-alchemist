@@ -155,7 +155,7 @@ t([[When you throw your alchemist bombs, you infuse them with %s.
         你可以选择以下元素：火焰、寒冷、闪电和酸性。]], "tformat")
 t("fire", "火焰", "_t")
 t("Infusion Enchantment", "充能强化", "talent name")
-t([[You alchemist bomb now has a %d%% chance to disable your foes for %d turns, the infliced effect changes with your elemental infusion:
+t([[You alchemist bomb now has a %d%% chance to disable your foes for %d turns, the inflicted effect changes with your elemental infusion:
         -- Fire: Stun
         -- Cold: Frozen feet
         -- Acid: Blind
@@ -169,7 +169,7 @@ t([[You alchemist bomb now has a %d%% chance to disable your foes for %d turns, 
         该效果每 %d 回合只能触发一次。
         ]], "tformat")
 t("Energy Recycle", "能量循环", "talent name")
-t([[If you have chosen your elemental infusion, every time you deal damage the same type as your infusion, you have %d%% chance to reduce the remaining cooldown of your bomb by %d turns. Besides, you may lower your targets' defense, reducing saves and defensed by %d for 3 turns.
+t([[If you have chosen your elemental infusion, every time you deal damage the same type as your infusion, you have %d%% chance to reduce the remaining cooldown of your bomb by %d turns. Besides, you may lower your targets' defense, reducing saves and defense by %d for 3 turns.
         You must deal more than %d damage to trigger this effect.
         Cooldown reduction can happen once per turn.
         ]], [[当你选择充能后，每次造成相同类型伤害时，有 %d%% 概率减少投掷炸弹的冷却时间 %d 回合。此外，你还可以降低敌人的防御能力，豁免和闪避下降 %d ，持续 3 回合。
@@ -206,11 +206,11 @@ t("You need to ready gems in your quiver.", "你需要准备宝石。", "logPlay
 t("Current Damage: %0.2f %s", "当前伤害： %0.2f %s", "tformat")
 t([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
         This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this on cooldown.
-        Each successful activation will increase damage of the following beams by 10%%, up to 50%%.
+        Each successful activation will increase damage of the following beams by 10%%, up to 100%%.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
         %s]], [[向一块宝石内灌输爆炸能量，触发一次宽射线类型的 %0.2f %s 伤害。
         该技能可以连续使用而不进入冷却，但任何非瞬间的其他行为会使该技能进入冷却。
-        每次成功使用，会让后续伤害增加10%%，最多增加50%%。
+        每次成功使用，会让后续伤害增加10%%，最多增加100%%。
         你必须学会炸弹投掷技能才能使用该技能。
         使用其他投掷炸弹的技能会让该技能进入4回合冷却。
         %s]], "tformat")
@@ -263,54 +263,39 @@ section "tome-new-alchemist/data/talents/spells/gem-spell.lua"
 
 t("Gem Blast", "宝石爆破", "talent name")
 t("You need to ready gems in your quiver.", "你需要准备宝石。", "logPlayer")
-t([[Deals %0.2f %s damage to target.
-        If this attack hits, it will trigger the special effect of gem.
-        This talent can be activated even in silence.
-        Using this talent will disable One with Gem for 5 turns.
-        The damage scales with your gem tier, and the damage type changes with your gem.
-        This spell cannot crit.
-        ]], [[对目标造成 %0.2f %s 伤害。
-        如果攻击命中，则会触发宝石的特殊效果。
-        该技能不受沉默影响，但不能暴击。
-        使用该技能将暂时取消宝石协调的效果 5 回合。
-        伤害和伤害类型受宝石影响。
+t([[Activate your gem's power and fire a bolt of energy to target, dealing %0.2f %s damage.
+        If the bolt hits, it will trigger the special effect of gem, and knock the target for 2 tiles.
+        The damage scales with your gem tier and spellpower, and the damage type changes with your gem.
+        ]], [[激活宝石发射能量箭，对目标造成 %0.2f %s 伤害。
+        如果攻击命中，则会触发宝石的特殊效果，并击退对方2格。
+        伤害受宝石和法术强度加成，伤害类型受宝石影响。
         ]], "tformat")
 t("Gem's Radiance", "宝石光辉", "talent name")
-t([[Invoke the power of gem, teleports you to up to %d tiles away, to a targeted location in line of sight.
-        Then deals %0.2f %s damage to all hostile targets in radius %d.
+t( [[Invoke the power of gem, teleports you to up to %d tiles away, to a targeted location (radius %d) in line of sight.
+        Then deals %0.2f %s damage to all hostile targets in that area.
         If this attack hits, it will trigger the special effect of gem.
-        This talent can be activated even in silence.
-        Using this talent will disable One with Gem for 5 turns.
-        The damage scales with your gem tier, and the damage type changes with your gem.
-        This spell cannot crit.
-        ]], [[激活宝石的能量，传送至 %d 格外，然后造成 %0.2f %s 范围伤害，伤害半径 %d 。
+        The damage scales with your gem tier and spellpower, and the damage type changes with your gem.
+        ]], [[激活宝石的能量，传送至 %d 格外（误差范围 %d 格），然后对该范围内所有敌人造成 %0.2f %s伤害。
         如果攻击命中，则会触发宝石的特殊效果。
-        该技能不受沉默影响，但不能暴击。
-        使用该技能将暂时取消宝石协调的效果 5 回合。
-        伤害和伤害类型受宝石影响。
+        伤害受宝石和法术强度加成，伤害类型受宝石影响。
         ]], "tformat")
 t("Flickering Gem", "闪烁宝石", "talent name")
-t([[Invoke the power of your gem, summon %d crystal around you for %d turns.
-        Then randomly select target in radius 10 and trigger the special effect of gem.
-        This talent can be activated even in silence.
-        Using this talent will disable One with Gem for 5 turns.
-        Summon duration scales with your gem.
-        ]], [[激活宝石的能量，在你身边召唤 %d 个水晶，持续 %d 回合。
-        如果周围10格内有敌人，则会触发宝石的特殊效果。
-        该技能不受沉默影响，但不能暴击。
-        使用该技能将暂时取消宝石协调的效果 5 回合。
-        召唤时长受宝石影响。
+t([[Each time you trigger gem effect, you will gather the magical power to protect you, giving you a shield of %d for 3 turns.
+        If you have a damage shield, then the existed shield will be strengthed instead.
+        This can trigger once per turn.
+        ]], [[每次你激活宝石的能量时，可以收集残余的魔法能量，制造 %d 护盾，持续3回合。
+        如果你已经有护盾了，那么则改为增强当前护盾吸收量。
+        这个效果每回合最多触发一次。
         ]], "tformat")
 t("One with Gem", "宝石协调", "talent name")
 t("This has beed disabled for %d turns", "该技能在 %d 回合内不会触发。", "tformat")
 t([[When you dealt damage the same type as your gem, you may trigger the special effect of your gem.
         Each trigger drains you %d mana.
-        This can happen every %d turns.
-        %s]], [[当你造成和宝石的潜在伤害类型一致的伤害时，你可以触发宝石的特殊效果。
+        This can happen once per turn.]], [[当你造成和宝石的潜在伤害类型一致的伤害时，你可以触发宝石的特殊效果。
         每次触发会抽取你 %d 法力。
-        该技能每 %d 回合最多触发一次。
-        %s]], "tformat")
--- untranslated text
+        该技能每回合最多触发一次。
+        ]], "tformat")
+-- untranslated textt
 --[==[
 t("%s's teleport fizzles!", "%s's teleport fizzles!", "logSeen")
 t("You cannot summon; you are suppressed!", "You cannot summon; you are suppressed!", "logPlayer")
@@ -515,6 +500,7 @@ You cannot change your potions in combat. Potions have limited use and can be re
 你不能在战斗中更换药剂。药剂具有有限的使用次数，在战斗外你将自动补充。]], "tformat")
 t("Reproduce", "装填", "talent name")
 t("%s got disrupted by the incoming damage, stopped reproducing potions.", "%s 被伤害干扰，无法继续装填药剂。", "logPlayer")
+t("%s reproduce all the potions.", "%s 装填药剂完毕。", "logPlayer")
 t("Remaining turns: %d .", "剩余回合： %d 。", "tformat")
 t([[Enter the focused state of reproducing potions for %d turns, after which you will recharge all your alchemy potions.
         Reproduing potions need focus, any incoming damage may break this state. Every time you are damaged, you must check your physical or mental save to preverse focus. If you fail to do so, this talent will automatically deactivate.
@@ -524,9 +510,9 @@ t([[Enter the focused state of reproducing potions for %d turns, after which you
 t("Potion Sprayer", "药剂喷射器", "talent name")
 t([[You may spray your potion in cone instead of throw onto a single target.
         However, this will make your potion less effective, your spellpower is considered as half when spraying potions.
-        Besides, your potions cost %d%% less turn in this way.
+        Besides, learning this talent will make your potions cost %d%% less turn.
         ]], [[你可以在锥形范围内喷射药剂。但这么做会降低药剂的效力，喷射药剂时你的法术强度视为减半。
-        此外，喷射药剂消耗的时间减少 %d%% 。
+        此外，学习此技能会让喷射药剂消耗的时间减少 %d%% 。
         ]], "tformat")
 t("Ingredient Recycle", "材料回收", "talent name")
 t("Remaining explosions: %d .", "剩余爆炸数： %d 。", "tformat")
@@ -574,9 +560,9 @@ t([[Your alchemist bombs now affect a radius of %d around them.
 t("Fast Recharge", "快速充能", "talent name")
 t([[Your Throw Bomb talent now have %d%% chance to not go on cooldown.
         Activating this talent will increase the mana cost of Throw Bomb talent by %d .
-        Chances increases with your gem tier.]], [[你的炸弹投掷技能有 %d%% 概率不进入冷却。
+        Chances increases with your gem tier and spellpower.]], [[你的炸弹投掷技能有 %d%% 概率不进入冷却。
         激活该技能会使投掷炸弹技能的法力值消耗增加 %d 。
-        几率受宝石品质加成。]], "tformat")
+        几率受宝石品质和法术强度加成。]], "tformat")
 -- untranslated text
 --[==[
 t("%s is energized by the attack, reducing some talent cooldowns!", "%s is energized by the attack, reducing some talent cooldowns!", "logSeen")

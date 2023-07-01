@@ -210,7 +210,7 @@ newEffect {
     subtype = { nature = true },
     status = "beneficial",
     parameters = { power = 10 },
-    charges = function(self, t)
+    charges = function(self, eff)
         return eff.power
     end,
     on_gain = function(self, err)

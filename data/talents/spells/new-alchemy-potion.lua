@@ -160,12 +160,14 @@ newTalent {
     points = 5,
     require = spells_req2,
     cooldown = function(self, t)
-        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 20, 10, "log")
+        return self:combatTalentScale(t, 20, 8)
     end,
+    mana = 10,
     mode = "sustained",
     no_npc_use = true,
+    no_energy = true,
     getDuration = function(self, t)
-        return math.ceil(15 - util.bound(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 0, 5, "log"), 0, 10))
+        return math.ceil(15 - self:combatTalentLimit(t, 12, 0, 10))
     end,
     iconOverlay = function(self, t, p)
         if not p then
@@ -179,9 +181,6 @@ newTalent {
         }
     end,
     deactivate = function(self, t, p)
-        if p.dur <= 0 then
-            self:restoreAllPotions()
-        end
         return true
     end,
     callbackPriorities = { callbackOnHit = 100 },
@@ -201,6 +200,8 @@ newTalent {
         end
         p.dur = p.dur - 1
         if p.dur <= 0 then
+            game.logPlayer(self, "%s reproduce all the potions.", self:getName())
+            self:restoreAllPotions()
             self:forceUseTalent(t.id, { ignore_energy = true })
             return
         end
@@ -240,7 +241,7 @@ newTalent {
     info = function(self, t)
         return ([[You may spray your potion in cone instead of throw onto a single target.
         However, this will make your potion less effective, your spellpower is considered as half when spraying potions.
-        Besides, your potions cost %d%% less turn in this way.
+        Besides, learning this talent will make your potions cost %d%% less turn.
         ]]):tformat(100 - t.getSpeedUp(self, t))
     end,
 }

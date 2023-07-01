@@ -326,9 +326,7 @@ newTalent {
         return 20
     end,
     getChance = function(self, t)
-        local ammo = self:hasAlchemistWeapon()
-        local power = self:combatGemPower(ammo)
-        return self:combatTalentLimit(t, 35, 5, 25) * (1 + power * 0.005)
+        return self:combatTalentLimit(t, 35, 5, 25) * (1 + self:combatGemPower() * 0.003 + self:combatSpellpower() * 0.002)
     end,
     activate = function(self, t)
         return {}
@@ -339,7 +337,7 @@ newTalent {
     info = function(self, t)
         return ([[Your Throw Bomb talent now have %d%% chance to not go on cooldown.
         Activating this talent will increase the mana cost of Throw Bomb talent by %d .
-        Chances increases with your gem tier.]])
+        Chances increases with your gem tier and spellpower.]])
                 :tformat(t.getChance(self, t), t.getManaCost(self, t))
     end,
 }

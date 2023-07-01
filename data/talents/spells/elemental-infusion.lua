@@ -78,10 +78,10 @@ newTalent {
     require = spells_req_high2,
     points = 5,
     cooldown = function(self, t)
-        return math.floor(self:combatTalentLimit(t, 1, 10, 4))
+        return math.ceil(self:combatTalentLimit(t, 1, 10, 2.5))
     end,
     getChance = function(self, t)
-        return math.floor(self:combatTalentLimit(t, 100, 25, 75))
+        return math.floor(math.min(100, self:combatTalentScale(t, 25, 75)))
     end,
     getDuration = function(self, t)
         return math.floor(self:combatTalentScale(t, 1, 3))
@@ -124,7 +124,7 @@ newTalent {
         end
     end,
     info = function(self, t)
-        return ([[You alchemist bomb now has a %d%% chance to disable your foes for %d turns, the infliced effect changes with your elemental infusion:
+        return ([[You alchemist bomb now has a %d%% chance to disable your foes for %d turns, the inflicted effect changes with your elemental infusion:
         -- Fire: Stun
         -- Cold: Frozen feet
         -- Acid: Blind
@@ -196,7 +196,7 @@ newTalent {
         end
     end,
     info = function(self, t)
-        return ([[If you have chosen your elemental infusion, every time you deal damage the same type as your infusion, you have %d%% chance to reduce the remaining cooldown of your bomb by %d turns. Besides, you may lower your targets' defense, reducing saves and defensed by %d for 3 turns.
+        return ([[If you have chosen your elemental infusion, every time you deal damage the same type as your infusion, you have %d%% chance to reduce the remaining cooldown of your bomb by %d turns. Besides, you may lower your targets' defense, reducing saves and defense by %d for 3 turns.
         You must deal more than %d damage to trigger this effect.
         Cooldown reduction can happen once per turn.
         ]]):tformat(t.getChance(self, t), t.getCDReduce(self, t), t.getExposure(self, t), t.getThreshold(self, t))

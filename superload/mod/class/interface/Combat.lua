@@ -12,8 +12,8 @@ function _M:combatTalentGemDamage(t, base, max)
     if not gem then
         return 0
     end
-    local max = self:combatTalentLimit(self:getTalentLevel(t), max * 1.5, base, max)
-    return self:combatTalentScale(gem.material_level, max / 3, max, 1)
+    local gemPower = gem.material_level * 10
+    return self:combatTalentSpellDamageBase(t, base, max, self:combatSpellpower(1, gemPower))
 end
 
 function _M:combatGemPower()
@@ -30,6 +30,15 @@ function _M:getGemDamageType()
         return DamageType.PHYSICAL
     end
     return gem.color_attributes.damage_type or DamageType.PHYSICAL
+end
+
+function _M:safeSpellCrit(n)
+    local is_crit = self.turn_procs.is_crit
+    local crit_power = self.turn_procs.crit_power
+    local value = self:spellCrit(n)
+    self.turn_procs.is_crit = is_crit
+    self.turn_procs.crit_power = crit_power
+    return value
 end
 
 function _M:triggerGemAreaEffect(gem, grids)
@@ -58,6 +67,19 @@ function _M:triggerGemAreaEffect(gem, grids)
     if gem.alchemist_bomb and gem.alchemist_bomb.special_area then
         gem.alchemist_bomb.special_area(self, gem, grids)
     end
+    if self:isTalentActive(self.T_FLICKERING_GEM) and not self:hasProc("flickering_gem_shield") then
+        self:setProc("flickering_gem_shield")
+        local t = self:getTalentFromId(self.T_FLICKERING_GEM)
+        local shield = self:safeSpellCrit(t.getShield(self, t))
+        if self:hasEffect(self.EFF_DAMAGE_SHIELD) then
+            local eff = self:hasEffect(self.EFF_DAMAGE_SHIELD)
+            eff.power = eff.power + shield
+            self.damage_shield_absorb = self.damage_shield_absorb + shield
+            self.damage_shield_absorb_max = self.damage_shield_absorb_max + shield
+        else
+            self:setEffect(self.EFF_DAMAGE_SHIELD, 3, {power = shield})
+        end
+    end
 end
 
 function _M:triggerGemEffect(target, gem, dam)
@@ -80,7 +102,19 @@ function _M:triggerGemEffect(target, gem, dam)
     if gem.alchemist_bomb and gem.alchemist_bomb.special then
         gem.alchemist_bomb.special(self, gem, target, dam)
     end
-
+    if self:isTalentActive(self.T_FLICKERING_GEM) and not self:hasProc("flickering_gem_shield") then
+        self:setProc("flickering_gem_shield")
+        local t = self:getTalentFromId(self.T_FLICKERING_GEM)
+        local shield = self:safeSpellCrit(t.getShield(self, t))
+        if self:hasEffect(self.EFF_DAMAGE_SHIELD) then
+            local eff = self:hasEffect(self.EFF_DAMAGE_SHIELD)
+            eff.power = eff.power + shield
+            self.damage_shield_absorb = self.damage_shield_absorb + shield
+            self.damage_shield_absorb_max = self.damage_shield_absorb_max + shield
+        else
+            self:setEffect(self.EFF_DAMAGE_SHIELD, 3, {power = shield})
+        end
+    end
     return dam
 end
 return _M
