@@ -1,26 +1,3 @@
-local function getElementalInsufionType(self)
-    if self:knowTalent(self.T_ELEMENTAL_INFUSION) and self.elemental_infusion then
-        local type = self.elemental_infusion
-        if type == "fire" then
-            return DamageType.FIRE
-        elseif type == "acid" then
-            return DamageType.ACID
-        elseif type == "cold" then
-            return DamageType.COLD
-        elseif type == "lightning" then
-            return DamageType.LIGHTNING
-        elseif type == "light" then
-            return DamageType.LIGHT
-        elseif type == "darkness" then
-            return DamageType.DARKNESS
-        elseif type == "arcane" then
-            return DamageType.ARCANE
-        else
-            return DamageType.PHYSICAL
-        end
-    end
-    return nil
-end
 local storms = {
     fire = "firestorm",
     cold = "icestorm",
@@ -50,10 +27,11 @@ newTalent {
         local Chat = require "engine.Chat"
         local chat = Chat.new("choose-elemental_infusion", { name = _t "Choose your element" }, game.player)
         chat:invoke()
+        bombUtil:playSound(self)
         return true
     end,
     info = function(self, t)
-        return (_t [[Manage your elemental infusion.]])
+        return ([[Manage your elemental infusion. Your current infusion is %s.]]):tformat(DamageType:get(bombUtil:getElementalInsufionType(self)).name)
     end,
 }
 
@@ -68,7 +46,7 @@ newTalent {
         return self:combatTalentScale(t, 5, 25)
     end,
     passives = function(self, t, ret)
-        local type = getElementalInsufionType(self)
+        local type = bombUtil:getElementalInsufionType(self)
         if type then
             self:talentTemporaryValue(ret, "inc_damage", { [type] = t.getIncrease(self, t) })
             if self:knowTalent(self.T_BODY_OF_ELEMENT) then
@@ -123,7 +101,7 @@ newTalent {
         else
             return
         end
-        local type = getElementalInsufionType(self)
+        local type = bombUtil:getElementalInsufionType(self)
         local dur = t.getDuration(self, t)
         for _, l in ipairs(targets) do
             local target = l.target
@@ -272,11 +250,14 @@ newTalent {
     target = function(self, t)
         return {type="ball", range=self:getTalentRange(t), radius=self:getTalentRadius(t), selffire=false, friendlyfire=false}
     end,
+    passives = function(self, t)
+        self:updateTalentPassives(self.T_ELEMENTAL_INFUSION)
+    end,
     action = function(self, t)
         -- Add a lasting map effect
         local ef = game.level.map:addEffect(self,
                 self.x, self.y, t.getDuration(self, t),
-                getElementalInsufionType(self),
+                bombUtil:getElementalInsufionType(self),
                 self:spellCrit(t.getDamage(self, t)),
                 self:getTalentRadius(t),
                 5, nil,
@@ -289,7 +270,7 @@ newTalent {
                 0, 0
         )
         ef.name = _t"elemental storm"
-        game:playSoundNear(self, "talents/fire")
+        game:playSoundNear(self, bombUtil:getSound(self, t))
         return true
     end,
     info = function(self, t)
@@ -299,6 +280,6 @@ newTalent {
         end
         return ([[You body turn into pure element. You gain %d%% resistance and %d%% resistance penetration for the specific element you choose.
         You can activate this talent, to conjure a storm of selected element in radius %d for %d turns, dealing %0.2f %s damage each turn.
-        ]]):tformat(t.getResist(self, t), t.getResistPen(self, t), self:getTalentRadius(t), t.getDuration(self, t), damDesc(self, getElementalInsufionType(self), t.getDamage(self, t)), _t(type))
+        ]]):tformat(t.getResist(self, t), t.getResistPen(self, t), self:getTalentRadius(t), t.getDuration(self, t), damDesc(self, bombUtil:getElementalInsufionType(self), t.getDamage(self, t)), _t(type))
     end,
 }

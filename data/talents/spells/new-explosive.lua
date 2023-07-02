@@ -17,147 +17,6 @@
 -- Nicolas Casalini "DarkGod"
 -- darkgod@te4.org
 local DamageType = require "engine.DamageType"
-bombUtil = {}
-local emit_table = {
-    ["ball"] = function(self, particle, tg, x, y, startx, starty)
-        local _, x, y = self:canProject(tg, x, y)
-        game.level.map:particleEmitter(x, y, tg.radius, particle, { radius = tg.radius, tx = x, ty = y })
-    end,
-    ["cone"] = function(self, particle, tg, x, y, startx, starty)
-        if not startx then
-            startx = self.x
-        end
-        if not starty then
-            starty = self.y
-        end
-        game.level.map:particleEmitter(startx, starty, tg.radius, particle, { radius = tg.radius, tx = x - startx, ty = y - starty })
-    end,
-    ["widebeam"] = function(self, particle, tg, x, y, startx, starty)
-        if not startx then
-            startx = self.x
-        end
-        if not starty then
-            starty = self.y
-        end
-        game.level.map:particleEmitter(startx, starty, tg.radius, particle, { radius = tg.radius, tx = x - startx, ty = y - starty })
-    end,
-}
-local dam_table = {
-    ["default"] = {
-        type = DamageType.PHYSICAL,
-        ["ball"] = "ball_physical",
-        ["cone"] = "breath_earth",
-        ["widebeam"] = "earth_beam_wide",
-    },
-    ["arcane"] = {
-        type = DamageType.ARCANE,
-        ["ball"] = "ball_arcane",
-        ["cone"] = "breath_arcane",
-        ["widebeam"] = "mana_beam_wide",
-    },
-    ["light"] = {
-        type = DamageType.LIGHT,
-        ["ball"] = "ball_light",
-        ["cone"] = "breath_light",
-        ["widebeam"] = "light_beam_wide"
-    },
-    ["darkness"] = {
-        type = DamageType.DARKNESS,
-        ["ball"] = "ball_darkness",
-        ["cone"] = "breath_dark",
-        ["widebeam"] = "shadow_beam",
-     },
-    ["fire"] = {
-        type = DamageType.FIRE,
-        ["ball"] = "fireflash",
-        ["cone"] = "breath_fire",
-        ["widebeam"] = "flamebeam_wide",
-    },
-    ["cold"] = {
-        type = DamageType.COLD,
-        ["ball"] = "ball_ice",
-        ["cone"] = "breath_cold",
-        ["widebeam"] = "ice_beam_wide",
-    },
-    ["acid"] = {
-        type = DamageType.ACID,
-        ["ball"] = "ball_acid",
-        ["cone"] = "breath_acid",
-        ["widebeam"] = "acid_beam_wide",
-    },
-    ["lightning"] = {
-        type = DamageType.LIGHTNING,
-        ["ball"] = "ball_lightning_beam",
-        ["cone"] = "breath_lightning",
-        ["widebeam"] = "lightning_beam_wide",
-    },
-}
-function bombUtil:getBaseDamage(self, t, ammo, tg)
-    local inc_dam = 0
-    local damtype = DamageType.PHYSICAL
-    local type = "default"
-    local particle
-    if self:knowTalent(self.T_ELEMENTAL_INFUSION) then
-        type = self.elemental_infusion
-    end
-    damtype = dam_table[type] or dam_table["default"]
-    particle = damtype[tg and tg.type or "ball"] or damtype["ball"]
-    damtype = damtype.type or DamageType.PHYSICAL
-    inc_dam = inc_dam + (ammo.alchemist_bomb and ammo.alchemist_bomb.power or 0) / 100
-    local dam
-    if t.getBaseDamage then
-        dam = t.getBaseDamage(self, t)
-    else
-        dam = self:combatTalentSpellDamageBase(t, 30, 200, self:combatSpellpower(1, self:combatGemPower() / 2))
-    end
-    dam = dam * (1 + inc_dam)
-    local arg = emit_table[tg and tg.type or "ball"] or emit_table["ball"]
-    return dam, damtype, particle, arg
-end
-function bombUtil:throwBomb(self, t, ammo, tg, x, y, startx, starty)
-    local dam, damtype, particle, emit, crit = bombUtil:getBaseDamage(self, t, ammo, tg)
-    dam, crit = self:spellCrit(dam)
-    local golem
-    if self.alchemy_golem then
-        golem = game.level:hasEntity(self.alchemy_golem) and self.alchemy_golem or nil
-    end
-    local grids = self:project(tg, x, y, function(tx, ty)
-    end)
-    self:triggerGemAreaEffect(ammo, grids)
-
-    local tgts = table.values(self:projectCollect(tg, x, y, Map.ACTOR))
-    dam = self:callTalent(t.id, "calcFurtherDamage", tg, ammo, x, y, dam, tgts, grids) or dam
-    table.sort(tgts, "dist")
-    for _, l in ipairs(tgts) do
-        local target = l.target
-        if target:reactionToward(self) < 0 then
-            DamageType:get(damtype).projector(self, target.x, target.y, damtype, dam)
-            self:triggerGemEffect(target, ammo, dam)
-        end
-        if target == self.alchemy_golem and target:knowTalent(target.T_GOLEM_RECHARGE) then
-            local tids = table.keys(golem.talents_cd)
-            local chance = target:callTalent(target.T_GOLEM_RECHARGE, "getChance")
-            local did_something = false
-            local nb = 1
-            for _, tid in ipairs(tids) do
-                if golem.talents_cd[tid] > 0 and rng.percent(chance) then
-                    golem.talents_cd[tid] = golem.talents_cd[tid] - nb
-                    if golem.talents_cd[tid] <= 0 then
-                        golem.talents_cd[tid] = nil
-                    end
-                    did_something = true
-                end
-            end
-            if did_something then
-                game.logSeen(golem, "%s is energized by the attack, reducing some talent cooldowns!", golem.name:capitalize())
-            end
-        end
-    end
-
-    self:fireTalentCheck("callbackOnAlchemistBomb", tgts, t, x, y, startx, starty, crit)
-    emit(self, particle, tg, x, y, startx, starty)
-    return tgts
-end
 newTalent {
     name = "Throw Bomb", short_name = "THROW_BOMB_NEW", image = "talents/throw_bomb.png",
     type = { "spell/new-explosive", 1 },
@@ -244,7 +103,7 @@ newTalent {
             return nil
         end
         bombUtil:throwBomb(self, t, ammo, tg, x, y)
-        game:playSoundNear(self, "talents/arcane")
+        bombUtil:playSound(self)
         return true
     end,
     info = function(self, t)
@@ -290,7 +149,7 @@ newTalent {
             self:removeEffectsFilter(self, { status = "detrimental", subtype = { fire = true, cold = true, lightning = true, acid = true} }, 999)
         end
         self:setEffect(self.EFF_ELEMENTAL_PROTECTION, t.getDur(self, t), {power = t.getResists(self, t), cleanse = cleanse})
-        game:playSoundNear(self, "talents/flame")
+        game:playSoundNear(self, "talents/heal")
         return true
     end,
     getMana = function(self, t)
@@ -309,7 +168,6 @@ newTalent {
     end,
 }
 
-bombUtil["theoretical_nbs"] = { 9, 21, 37, 69, 97, 137, 177, 225, 293, 349, 421, 489, 577, 665, 749, 861, 973, 1085, 1201, 1313 }
 newTalent {
     name = "Explosion Expert", short_name = "EXPLOSION_EXPERT_NEW", image = "talents/explosion_expert.png",
     type = { "spell/new-explosive", 3 },
@@ -384,6 +242,7 @@ newTalent {
     activate = function(self, t)
         local ret = {}
         self:talentTemporaryValue(ret, "ignore_direct_crits", t.critResist(self, t))
+        game:playSoundNear(self, "talents/spell_generic2")
         return ret
     end,
     deactivate = function(self, t)
