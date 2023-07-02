@@ -49,6 +49,24 @@ local dam_table = {
         ["cone"] = "breath_earth",
         ["widebeam"] = "earth_beam_wide",
     },
+    ["arcane"] = {
+        type = DamageType.ARCANE,
+        ["ball"] = "ball_arcane",
+        ["cone"] = "breath_arcane",
+        ["widebeam"] = "mana_beam_wide",
+    },
+    ["light"] = {
+        type = DamageType.LIGHT,
+        ["ball"] = "ball_light",
+        ["cone"] = "breath_light",
+        ["widebeam"] = "light_beam_wide"
+    },
+    ["darkness"] = {
+        type = DamageType.DARKNESS,
+        ["ball"] = "ball_darkness",
+        ["cone"] = "breath_dark",
+        ["widebeam"] = "shadow_beam",
+     },
     ["fire"] = {
         type = DamageType.FIRE,
         ["ball"] = "fireflash",

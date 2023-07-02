@@ -43,8 +43,7 @@ newTalent {
     name = "Manage Elemental Infusion", image = "talents/elemental_infusion.png",
     type = { "spell/other", 1 },
     points = 1,
-    cooldown = 0,
-    no_energy = true,
+    cooldown = 5,
     cant_steal = true,
     no_npc_use = true,
     action = function(self, t)

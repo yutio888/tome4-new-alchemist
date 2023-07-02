@@ -44,10 +44,10 @@ return { generator = function()
         dir = ray.dir, dirv = 0, dira = 0,
         vel = vel, velv = -0.1, vela = 0.01,
 
-        r = rng.range(120, 170)/255,   rv = 0.005, ra = 0.0005,
-        g = rng.range(200, 255)/255,   gv = 0, ga = 0,
-        b = rng.range(0, 50)/255,      bv = 0, ba = 0,
-        a = rng.range(25, 220)/255,    av = static and -0.034 or 0, aa = 0.005,
+        r = rng.range(220, 255)/255,  rv = 0, ra = 0,
+        g = rng.range(200, 230)/255,  gv = 0, ga = 0,
+        b = 0,                        bv = 0, ba = 0,
+        a = rng.range(25, 220)/255,   av = 0, aa = 0,
     }
 end, },
 function(self)

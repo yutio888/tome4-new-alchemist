@@ -1,5 +1,5 @@
 getBirthDescriptor("class", "Mage").descriptor_choices.subclass["New Alchemist"] = "allow"
-getBirthDescriptor("class", "Mage").descriptor_choices.subclass["Alchemist"] = "disallow"
+--getBirthDescriptor("class", "Mage").descriptor_choices.subclass["Alchemist"] = "disallow"
 getBirthDescriptor("subclass", "Alchemist").not_on_random_boss = true
 newBirthDescriptor {
     type = "subclass",
