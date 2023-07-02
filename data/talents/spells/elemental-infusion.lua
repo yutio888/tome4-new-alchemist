@@ -24,11 +24,21 @@ newTalent {
     cant_steal = true,
     no_npc_use = true,
     action = function(self, t)
+        local oldtype = bombUtil:getElementalInsufionType(self)
         local Chat = require "engine.Chat"
         local chat = Chat.new("choose-elemental_infusion", { name = _t "Choose your element" }, game.player)
-        chat:invoke()
-        bombUtil:playSound(self)
-        return true
+
+        local d = chat:invoke()
+
+        self:talentDialog(d)
+        local newtype = bombUtil:getElementalInsufionType(self)
+        if oldtype ~= newtype then
+            game.logPlayer(self, "You have changed your infusion to %s", DamageType:get(newtype).name)
+            bombUtil:playSound(self)
+            return true
+        else
+            return false
+        end
     end,
     info = function(self, t)
         return ([[Manage your elemental infusion. Your current infusion is %s.]]):tformat(DamageType:get(bombUtil:getElementalInsufionType(self)).name)

@@ -82,9 +82,11 @@ t("Dissolving Acid", "溶解之酸", "talent name")
 t("Lightning Ball", "闪电之球", "talent name")
 t("Breath of the Frost", "冰霜之息", "talent name")
 t("Stoned Armour", "岩石护甲", "talent name")
-t("Potion of Magic", "魔法药剂", "talent name")
+t("Potion of Magic", "纯净魔力", "talent name")
 t("Potion of Luck", "幸运药水", "talent name")
+t("Super Lucky Day", "幸运小子", "talent name")
 t("Potion of Swiftness", "迅捷药水", "talent name")
+t("Faster Than Light", "超越光速", "talent name")
 t([[%s
         Left charges: %d]], [[%s
         剩余次数: %d]], "tformat")
@@ -118,7 +120,7 @@ t([[Throw a ball of lightning of radius %d, daze and blind all targets for %d tu
         如果目标免疫了眩晕，则会被闪电震撼，减半震慑和定身免疫，持续 %d 回合。
         ]], "tformat")
 t("Create a frost shield reducing non-fire damage by %d for %d turns.", "制造寒冰护盾，减少 %d 非火焰伤害 ，持续 %d 回合。", "tformat")
-t([[Create a frost shield in range %d, reducing %d%% all incoming damage except fire.
+t([[Create a frost shield in range %d, reducing all incoming damage except fire by %d .
         Frost shield lasts %d turns.
         If you're about to get hit by more than 20%% of your max life, this potion will automatically activate.
         ]],
@@ -127,6 +129,7 @@ t([[Create a frost shield in range %d, reducing %d%% all incoming damage except 
         如果你即将承受超过 20%% 最大生命的伤害，这个药剂会自动激活。]], "tformat")
 t("Increase armor by %d , armor hardiness by %d%%, and decrease defense by %d for 6 turns.", "增加 %d 护甲，%d%% 护甲强度，并减少 %d 闪避，效果持续6回合。", "tformat")
 t("Restore %d mana and gain %d spellpower in 6 turns", "恢复 %d 法力并获得 %d 法术强度，持续6回合。", "tformat")
+t("Becomes super lucky, gain extra %d luck for 6 turns.", "变得非常幸运，6回合内提高 %d 幸运。", "tformat")
 t("Becomes super lucky, have %d%% chance to ignore damage in 6 turns. Chance increases with your luck.", "幸运提升，6回合内 %d%% 无视伤害。几率受幸运加成。", "tformat")
 t("Becomes extremely fast, gain %d%% movement speed and %d%% global speed for %d turns.", "速度大幅提升，增加 %d%% 移动速度和 %d%% 整体速度，持续 %d 回合", "tformat")
 -- old translated text
@@ -145,12 +148,14 @@ t([[Becomes super lucky, have %d%% chance to ignore damage in 6 turns.
         Chance increases with your luck.]], [[幸运提升，6回合内 %d%% 无视伤害。
         几率受幸运加成。]], "tformat")
 
+t("Becomes super lucky, have %d%% chance to ignore damage in 6 turns. Chance increases with your luck.", "幸运提升，6回合内 %d%% 无视伤害。几率受幸运加成。", "tformat")
 ------------------------------------------------
 section "tome-new-alchemist/data/talents/spells/elemental-infusion.lua"
 
 t("Manage Elemental Infusion", "调整元素充能", "talent name")
 t("Choose your element", "选择元素", "_t")
-t("Manage your elemental infusion.", "调整元素充能。", "_t")
+t("Manage your elemental infusion. Your current infusion is %s.", "调整元素充能。当前充能为 %s 。", "tformat")
+t("You have changed your infusion to %s", "你将充能调整至 %s 。", "logPlayer")
 t("Elemental Infusion", "元素充能", "talent name")
 t([[When you throw your alchemist bombs, you infuse them with %s.
 		In addition, %s damage you do is increased by %d%% .
@@ -497,16 +502,19 @@ section "tome-new-alchemist/data/talents/spells/new-alchemy-potion.lua"
 
 t("You can only prepare your potions outside of combat.", "你只能在战斗外准备药剂。", "logPlayer")
 t("Potion Mastery", "药剂精通", "talent name")
-t([[With some advanced preparation, you learn to create and equip %d of a number of useful potions (at #YELLOW#level %d#WHITE#):
-
-%s
+t([[With some advanced preparation, you learn to create and equip %d of a number of useful potions (at #YELLOW#level %d#WHITE#).
+You may throw your potion as far as you can throw bomb.
 Preparing a potion sets its talent level and puts it on cooldown.
 You cannot change your potions in combat. Potions have limited use and can be restored after combat.
-]], [[你知道如何准备至多 %d 瓶炼金药剂（#YELLOW#等级 %d #WHITE#）：
 
 %s
+]], [[你知道如何准备至多 %d 瓶炼金药剂（#YELLOW#等级 %d #WHITE#）.
+你投掷药剂的距离和投掷炸弹一样。
 准备药剂会重设它的技能等级。
-你不能在战斗中更换药剂。药剂具有有限的使用次数，在战斗外你将自动补充。]], "tformat")
+你不能在战斗中更换药剂。药剂具有有限的使用次数，在战斗外你将自动补充。
+
+%s
+]], "tformat")
 t("Reproduce", "装填", "talent name")
 t("%s got disrupted by the incoming damage, stopped reproducing potions.", "%s 被伤害干扰，无法继续装填药剂。", "logPlayer")
 t("%s reproduce all the potions.", "%s 装填药剂完毕。", "logPlayer")
@@ -769,10 +777,12 @@ t("The target's armour has been enchanted, granting %d armour and %d%% armour ha
 t("+Stoned Armour", "+岩石护甲", "_t")
 t("-Stoned Armour", "-岩石护甲", "_t")
 t("Potion of Magic", "魔法药剂", "_t")
+t("Pure Magic", "纯净魔力", "_t")
 t("The target's spellpower has been increased by %d.", "目标的法术强度增加 %d。", "tformat")
 t("+Magic Potion", "+魔法药剂", "_t")
 t("-Magic Potion", "-魔法药剂", "_t")
 t("Super Lucky", "超级幸运", "_t")
+t("Extra %d luck.", "获得额外 %d 幸运。", "tformat")
 t("%d%% chance to fully absorb any damaging actions.", "%d%% 概率无视伤害。", "tformat")
 t("#Target# is super lucky now.", "#Target# 现在超级幸运。", "_t")
 t("+Super Lucky", "+超级幸运", "_t")

@@ -269,6 +269,7 @@ newTalent {
         self:triggerGemAreaEffect(gem)
     end,
     activate = function(self, t)
+        game:playSoundNear(self, "talents/spell_generic2")
         return {}
     end,
     deactivate = function(self, t)

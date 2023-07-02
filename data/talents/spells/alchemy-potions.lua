@@ -9,9 +9,9 @@ local translation_table = {
     _t("Lightning Ball", "talent name"),
     _t("Breath of the Frost", "talent name"),
     _t("Stoned Armour", "talent name"),
-    _t("Potion of Magic", "talent name"),
-    _t("Potion of Luck", "talent name"),
-    _t("Potion of Swiftness", "talent name"),
+    _t("Pure Magic", "talent name"),
+    _t("Super Lucky Boy", "talent name"),
+    _t("Faster Than Light", "talent name"),
 }
 
 local function getFakeTalent(self)
@@ -44,12 +44,13 @@ local function newPotion(t)
     t.direct_hit = true
     t.requires_target = true
     local target = t.target
+    local default_self = t.default_self
     t.target = function(self, t)
         if self:isTalentActive(self.T_MANAGE_POTION_3) then
             return { type = "cone", range = 0, cone_angle = 120, radius = self:getTalentRange(t), talent = t, selffire = true, player_selffire = true }
         end
         if not target then
-            return { type = "hit", range = self:getTalentRange(t), talent = t, nowarning = true }
+            return { type = "hit", range = self:getTalentRange(t), talent = t, nowarning = true, default_target = default_self and self, }
         else
             local checkTarget = target(self, t)
             checkTarget.nowarning = true
@@ -236,8 +237,9 @@ newPotion {
         return t.onAIGetTarget(self, t) and true or false
     end,
     is_heal = true, ignore_is_heal_test = true,
+    default_self = true,
     getHeal = function(self, t)
-        return self:combatTalentSpellDamageBase(t, 20, 300)
+        return self:combatTalentSpellDamageBase(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 20, 1000)
     end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
@@ -286,17 +288,13 @@ newPotion {
         return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 3, 6)
     end,
     getLength = function(self, t)
-        return self:combatTalentScale(t, 5, 12)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 5, 12)
     end,
     getDamage = function(self, t)
-        if self:isTalentActive(self.T_MANAGE_POTION_3) then
-            return self:combatTalentSpellDamageBase(t, 0, 30)
-        else
-            return self:combatTalentSpellDamageBase(t, 0, 50)
-        end
+        return self:combatTalentSpellDamageBase(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 0, 30)
     end,
     getFireRadius = function(self, t)
-        return math.floor(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 1, 3))
+        return math.floor(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 1, 2.8))
     end,
     getReduce = function(self, t)
         if self:isTalentActive(self.T_MANAGE_POTION_3) then
@@ -392,7 +390,7 @@ newPotion {
     name = "Dissolving Acid", short_name = "ACID_POTION", image = "talents/dissolving_acid.png", icon = "object/elixir_of_avoidance.png",
     tactical = { ATTACK = { ACID = 2 }, DISABLE = 2 },
     getDamage = function(self, t)
-        return self:combatTalentSpellDamage(t, 40, 150)
+        return self:combatTalentSpellDamageBase(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 40, 150)
     end,
     getRemoveCount = function(self, t)
         return math.floor(self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 1, 3, "log"))
@@ -506,6 +504,7 @@ newPotion {
     name = "Breath of the Frost", short_name = "FROST_POTION", image = "talents/frost_shield.png", icon = "object/elixir_of_mysticism.png",
     tactical = { DEFEND = 3 },
     no_energy = true,
+    default_self = true,
     getDuration = function(self, t)
         return 6
     end,
@@ -538,33 +537,23 @@ newPotion {
         return ([[Create a frost shield reducing non-fire damage by %d for %d turns.]]):tformat(t.getResists(self, fake_t or t), t.getDuration(self, fake_t or t))
     end,
     info = function(self, t, fake_t)
-        return ([[Create a frost shield in range %d, reducing %d%% all incoming damage except fire.
+        return ([[Create a frost shield in range %d, reducing all incoming damage except fire by %d .
         Frost shield lasts %d turns.
         If you're about to get hit by more than 20%% of your max life, this potion will automatically activate.
         ]])
-                :tformat(t.range(self, fake_t or t), t.getResists(self, fake_t or t), t.getCritShrug(self, fake_t or t), t.getDuration(self, fake_t or t))
+                :tformat(t.range(self, fake_t or t), t.getResists(self, fake_t or t), t.getDuration(self, fake_t or t))
     end,
 }
 
 newPotion {
-    name = "Stoned Armour", short_name = "STONE_POTION", image = "talents/stoneskin.png", icon = "object/elixir_of_invulnerability.png",
+    name = "Stoned Armour", short_name = "STONE_POTION", image = "talents/stoneskin.png", icon = "object/elixir_of_brawn.png",
     tactical = { DEFEND = 2 },
-    no_energy = true,
+    default_self = true,
     getDuration = function(self, t)
         return 6
     end,
     getArmor = function(self, t)
-        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 30, 100)
-    end,
-    allowUse = function(self, t)
-        if self ~= game.player then
-            return false
-        end
-        if config.settings.cheat then
-            return true
-        end
-        local quest = game.player:hasQuest("brotherhood-of-alchemists")
-        return quest and quest.winner == "Ungrol of Last Hope"
+        return self:combatTalentSpellDamageBase(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 30, 100)
     end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
@@ -578,7 +567,7 @@ newPotion {
         end
         return true
     end,
-    isSpecialPotion = 5,
+    
     short_info = function(self, t)
         local fake_t = getFakeTalent(self)
         return ([[Increase armor by %d , armor hardiness by %d%%, and decrease defense by %d for 6 turns.]])
@@ -591,9 +580,9 @@ newPotion {
 }
 
 newPotion {
-    name = "Potion of Magic", short_name = "ARCANE_POTION", image = "talents/arcane_power.png", icon = "object/elixir_of_invulnerability.png",
+    name = "Pure Magic", short_name = "ARCANE_POTION", icon = "object/elixir_of_mysticism.png",
     tactical = { BUFF = 3 },
-    no_energy = true,
+    default_self = true,
     getDuration = function(self, t)
         return 6
     end,
@@ -603,17 +592,6 @@ newPotion {
     getManaRegen = function(self, t)
         return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 80, 300)
     end,
-    allowUse = function(self, t)
-        if self ~= game.player then
-            return false
-        end
-        if config.settings.cheat then
-            return true
-        end
-        local quest = game.player:hasQuest("brotherhood-of-alchemists")
-        return quest and quest.winner == "Marus of Elvala"
-    end,
-    isSpecialPotion = 5,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)
@@ -638,71 +616,50 @@ newPotion {
     end,
 }
 
-newPotion {
-    name = "Potion of Luck", short_name = "LUCK_POTION", image = "talents/lucky_day.png", icon = "object/elixir_of_invulnerability.png",
-    tactical = { DEFEND = 2 },
-    no_energy = true,
-    getDuration = function(self, t)
-        return 6
-    end,
-    getEvasion = function(self, t)
-        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 10, 25) + (self:getLck() - 50)
-    end,
-    allowUse = function(self, t)
-        if self ~= game.player then
-            return false
-        end
-        if config.settings.cheat then
-            return true
-        end
-        local quest = game.player:hasQuest("brotherhood-of-alchemists")
-        return quest and quest.winner == "Agrimley the hermit"
-    end,
-    isSpecialPotion = 5,
-    action = function(self, t)
-        local tg = self:getTalentTarget(t)
-        local x, y = self:getTarget(tg)
-        if not x or not y then
-            return nil
-        end
-        local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
-        for _, target in ipairs(targets) do
-            target:setEffect(target.EFF_SUPER_LUCKY, 6, { power = t.getEvasion(self, t) })
-        end
-        return true
-    end,
-    short_info = function(self, t)
-        return ([[Becomes super lucky, have %d%% chance to ignore damage in 6 turns. Chance increases with your luck.]]):tformat(t.getEvasion(self, getFakeTalent(self) or t))
-    end,
-    info = function(self, t, fake_t)
-        return ([[Becomes super lucky, have %d%% chance to ignore damage in 6 turns. Chance increases with your luck.]]):tformat(t.getEvasion(self, fake_t or t))
-    end,
-}
+--newPotion {
+--    name = "Super Lucky Day", short_name = "LUCK_POTION", image = "talents/lucky_day.png", icon = "talents/bottle_of_luck.png",
+--    tactical = { DEFEND = 2 },
+--    default_self = true,
+--    getDuration = function(self, t)
+--        return 5
+--    end,
+--    getLuck = function(self, t)
+--        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 30, 100)
+--    end,
+--    action = function(self, t)
+--        local tg = self:getTalentTarget(t)
+--        local x, y = self:getTarget(tg)
+--        if not x or not y then
+--            return nil
+--        end
+--        local targets = table.keys(self:projectCollect(tg, x, y, Map.ACTOR))
+--        for _, target in ipairs(targets) do
+--            target:setEffect(target.EFF_SUPER_LUCKY, 6, { power = t.getLuck(self, t) })
+--        end
+--        return true
+--    end,
+--    short_info = function(self, t)
+--        local fake_t = getFakeTalent(self)
+--        return ([[Becomes super lucky, gain extra %d luck for 6 turns.]]):tformat(t.getLuck(self, fake_t or t))
+--    end,
+--    info = function(self, t, fake_t)
+--        return ([[Becomes super lucky, gain extra %d luck for 6 turns.]]):tformat(t.getLuck(self, fake_t or t))
+--    end,
+--}
 
 newPotion {
-    name = "Potion of Swiftness", short_name = "SPEED_POTION", image = "talents/nimble_movements.png", icon = "object/elixir_of_invulnerability.png",
+    name = "Faster Than Light", short_name = "SPEED_POTION", image = "talents/blinding_speed.png", icon = "object/elixir_of_focus.png",
     tactical = { BUFF = 3 },
     no_energy = true,
     getDuration = function(self, t)
         return 6
     end,
     getSpeed = function(self, t)
-        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 20, 50)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 10, 30)
     end,
     getMove = function(self, t)
-        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 100, 400)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 100, 600)
     end,
-    allowUse = function(self, t)
-        if self ~= game.player then
-            return false
-        end
-        if config.settings.cheat then
-            return true
-        end
-        local quest = game.player:hasQuest("brotherhood-of-alchemists")
-        return quest and quest.winner == "Stire of Derth"
-    end,
-    isSpecialPotion = 5,
     action = function(self, t)
         local tg = self:getTalentTarget(t)
         local x, y = self:getTarget(tg)

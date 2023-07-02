@@ -171,7 +171,7 @@ newEffect {
 
 newEffect {
     name = "POTION_OF_MAGIC", image = "talents/gather_the_threads.png",
-    desc = _t "Potion of Magic",
+    desc = _t "Pure Magic",
     long_desc = function(self, eff)
         return ("The target's spellpower has been increased by %d."):tformat(eff.cur_power or eff.power)
     end,
@@ -203,7 +203,7 @@ newEffect {
     name = "SUPER_LUCKY", image = "talents/lucky_day.png",
     desc = _t "Super Lucky",
     long_desc = function(self, eff)
-        return ("%d%% chance to fully absorb any damaging actions."):tformat(eff.power)
+        return ("Extra %d luck."):tformat(eff.power)
     end,
     type = "physical",
     subtype = { nature = true },
@@ -219,10 +219,10 @@ newEffect {
         return _t "#Target# seems less lucky.", _t "-Super Lucky"
     end,
     activate = function(self, eff)
-        eff.tmpid = self:addTemporaryValue("cancel_damage_chance", eff.power)
+        eff.tmpid = self:addTemporaryValue("inc_stats", {[Stats.STAT_LCK] = eff.power })
     end,
     deactivate = function(self, eff)
-        self:removeTemporaryValue("cancel_damage_chance", eff.tmpid)
+        self:removeTemporaryValue("inc_stats", eff.tmpid)
     end,
 }
 

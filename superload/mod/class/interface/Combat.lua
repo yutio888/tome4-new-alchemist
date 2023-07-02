@@ -1,10 +1,11 @@
 local _M = loadPrevious(...)
 local DamageType = require("engine.DamageType")
 function _M:combatTalentSpellDamageBase(t, base, max, spellpower_override)
+    t = type(t) == "number" and t or self:getTalentLevel(t)
     -- Compute at "max"
     local mod = max / ((base + 100) * ((math.sqrt(5) - 1) * 0.8 + 1))
     -- Compute real
-    return (base + (spellpower_override or self:combatSpellpower())) * ((math.sqrt(self:getTalentLevel(t)) - 1) * 0.8 + 1) * mod
+    return (base + (spellpower_override or self:combatSpellpower())) * ((math.sqrt(t) - 1) * 0.8 + 1) * mod
 end
 
 function _M:combatTalentGemDamage(t, base, max)

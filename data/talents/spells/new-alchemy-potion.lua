@@ -15,7 +15,7 @@ alchemy_potion_tids = {
     "T_LIGHTNING_POTION",
     "T_STONE_POTION",
     "T_ARCANE_POTION",
-    "T_LUCK_POTION",
+    --"T_LUCK_POTION",
     "T_SPEED_POTION",
 }
 Talents.alchemy_potion_tids = alchemy_potion_tids
@@ -73,7 +73,7 @@ local function alchemy_potions_get_descs(self, t)
             tool_descs[#tool_descs + 1] = desc
         end
     end
-    return table.concatNice(tool_descs, "\n\t")
+    return table.concatNice(tool_descs, "\n")
 end
 
 --- NPC's automatically pick a tool for each tool slot if needed
@@ -123,6 +123,9 @@ newTalent {
         end
         return nil
     end,
+    passives = function(self, t)
+        self:setTalentTypeMastery("spell/alchemy_potions", self:getTalentMastery(t))
+    end,
     on_learn = function(self, t)
         self:setTalentTypeMastery("spell/alchemy_potions", self:getTalentMastery(t))
         for _, tid in ipairs(alchemy_potion_tids) do
@@ -146,11 +149,12 @@ newTalent {
     end,
     info = function(self, t)
         local descs = alchemy_potions_get_descs(self, t)
-        return ([[With some advanced preparation, you learn to create and equip %d of a number of useful potions (at #YELLOW#level %d#WHITE#):
-
-%s
+        return ([[With some advanced preparation, you learn to create and equip %d of a number of useful potions (at #YELLOW#level %d#WHITE#).
+You may throw your potion as far as you can throw bomb.
 Preparing a potion sets its talent level and puts it on cooldown.
 You cannot change your potions in combat. Potions have limited use and can be restored after combat.
+
+%s
 ]]):tformat(t.getMaxCharges(self, t), self:getTalentLevelRaw(t), descs)
     end,
 }
@@ -203,6 +207,7 @@ newTalent {
         p.dur = p.dur - 1
         if p.dur <= 0 then
             game.logPlayer(self, "%s reproduce all the potions.", self:getName())
+            game:playSoundNear(self, "talents/spell_generic")
             self:restoreAllPotions()
             p.dur = t.getDuration(self, t)
             return
