@@ -66,7 +66,7 @@ newTalent {
 
 newTalent {
     name = "Power", short_name = "GOLEM_POWER_PASSIVE", image = "talents/power.png",
-    type = { "golem/energy", 1 },
+    type = { "golem/energy", 3 },
     require = spells_req3,
     points = 5,
     mode = "passive",
