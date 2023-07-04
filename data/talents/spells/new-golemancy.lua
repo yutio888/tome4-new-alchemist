@@ -643,11 +643,17 @@ newTalent {
     cant_steal = true,
     tactical = { DEFEND = 2, ESCAPE = 2 },
     getDuration = function(self, t)
-        return math.floor(self:combatTalentLimit(t, 8, 2, 5))
-    end, -- Limit < 8
+        return math.floor(self:combatTalentLimit(t, 10, 2, 5))
+    end, -- Limit to > 10
     cooldown = function(self, t)
-        return math.ceil(self:combatTalentLimit(t, 8, 25, 15))
-    end, -- Limit to > 8
+        return math.ceil(self:combatTalentLimit(t, 10, 35, 20))
+    end, -- Limit to > 10
+    no_energy = function(self, t)
+        return self:getTalentLevel(t) >= 3
+    end,
+    getChance = function(self, t)
+        return math.min(100, self:getTalentLevel(t) * 15 + 50)
+    end,
     action = function(self, t)
         local mover, golem = getGolem(self)
         if not golem then
@@ -655,7 +661,7 @@ newTalent {
             return
         end
 
-        local chance = math.min(100, self:getTalentLevel(t) * 15 + 25)
+        local chance = t.getChance(self, t)
         local px, py = self.x, self.y
         local gx, gy = golem.x, golem.y
 
@@ -682,8 +688,11 @@ newTalent {
     end,
     info = function(self, t)
         return ([[Teleport to your golem, while your golem teleports to your location. Your foes will be confused, and those that were attacking you will have a %d%% chance to target your golem instead.
-        After teleportation, you and your golem gain 50%% evasion for %d turns.]]):
-        tformat(math.min(100, self:getTalentLevel(t) * 15 + 25), t.getDuration(self, t))
+        After teleportation, you and your golem gain 50%% evasion for %d turns.
+        At talent level 4, Golem Portal takes no time to cast.
+        At talent level 6, when your auto-exploration is stopped by hostile creatures, you'll immediately cast Golem Portal.
+        ]]):
+        tformat(t.getChance(self, t), t.getDuration(self, t))
     end,
 }
 --newTalent{

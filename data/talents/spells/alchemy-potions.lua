@@ -503,7 +503,6 @@ newPotion {
 newPotion {
     name = "Breath of the Frost", short_name = "FROST_POTION", image = "talents/frost_shield.png", icon = "object/elixir_of_mysticism.png",
     tactical = { DEFEND = 3 },
-    no_energy = true,
     default_self = true,
     getDuration = function(self, t)
         return 6
@@ -587,7 +586,7 @@ newPotion {
         return 6
     end,
     getSpellpower = function(self, t)
-        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 20, 40)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 10, 30)
     end,
     getManaRegen = function(self, t)
         return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 80, 300)
@@ -650,15 +649,14 @@ newPotion {
 newPotion {
     name = "Faster Than Light", short_name = "SPEED_POTION", image = "talents/blinding_speed.png", icon = "object/elixir_of_focus.png",
     tactical = { BUFF = 3 },
-    no_energy = true,
     getDuration = function(self, t)
         return 6
     end,
     getSpeed = function(self, t)
-        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 10, 30)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 10, 25)
     end,
     getMove = function(self, t)
-        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 100, 600)
+        return self:combatTalentScale(self:getTalentLevelRaw(t) * self:getTalentMastery(t), 50, 300)
     end,
     action = function(self, t)
         local tg = self:getTalentTarget(t)

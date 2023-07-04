@@ -1,5 +1,14 @@
 local _M = loadPrevious(...)
 
+local _runStopped = _M.runStopped
+function _M:runStopped()
+    local hostile = _M.spotHostiles(self)
+    if #hostile >= 1 and self:getTalentLevel(self.T_DYNAMIC_RECHARGE_NEW) >= 6 then
+        self:useTalent(self.T_DYNAMIC_RECHARGE_NEW)
+    end
+    return _runStopped(self)
+end
+
 local _restCheck = _M.restCheck
 
 function _M:restCheck()

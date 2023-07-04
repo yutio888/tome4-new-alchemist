@@ -10,7 +10,7 @@ newTalent {
         return t
     end,
     mana = function(self, t)
-        return 5
+        return math.ceil(10 * (1+ t.getInc * 0.01 * (self.consecutive_bombs or 0)))
     end,
     cooldown = 3,
     direct_hit = true,
@@ -61,6 +61,7 @@ newTalent {
 
         return dam * math.min(2, 1 + t.getInc * 0.01 * (self.consecutive_bombs or 0))
     end,
+    bombMod = 0.8,
     action = function(self, t)
         local ammo = self:hasAlchemistWeapon()
         if not ammo then
@@ -103,7 +104,7 @@ newTalent {
         end
         return ([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
         This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this on cooldown.
-        Each successful activation will increase damage of the following beams by %d%%, up to 100%%.
+        Each successful activation will increase damage of the following beams by %d%%, up to 100%%. The mana cost of this beam will also be increased.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
         %s]]):tformat(damDesc(self, damtype, dam), DamageType:get(damtype).name, t.getInc , futher_info)
     end,
@@ -116,7 +117,7 @@ newTalent {
     points = 5,
     no_npc_use = true,
     mana = function(self, t)
-        return 10
+        return 15
     end,
     cooldown = 6,
     fixed_cooldown = true,
@@ -226,8 +227,8 @@ newTalent {
     mana = function(self, t)
         return 20
     end,
-    bombMod = 1.1,
-    cooldown = 9,
+    bombMod = 1.4,
+    cooldown = 12,
     fixed_cooldown = true,
     callbackOnAlchemistBomb = function(self, t, tgts, talent)
         if t == talent then
@@ -262,26 +263,23 @@ newTalent {
     end,
     calcFurtherDamage = function(self, t, tg, ammo, x, y, dam, tgts, grids)
         local nb = 0
+        local all_tgts = 0
         -- Compare theorical AOE zone with actual zone and adjust damage accordingly
         if self:knowTalent(self.T_EXPLOSION_EXPERT_NEW) then
             if grids then
                 for px, ys in pairs(grids or {}) do
                     for py, _ in pairs(ys) do
+                        local tgt = game.level.map(px, py, Map.ACTOR)
+                        if tgt then all_tgts = all_tgts + 1 end
                         nb = nb + 1
                     end
                 end
             end
             if nb > 0 then
-                dam = dam + dam * self:callTalent(self.T_EXPLOSION_EXPERT_NEW, "minmax", nb, bombUtil.theoretical_nbs[5])
+                dam = dam + dam * self:callTalent(self.T_EXPLOSION_EXPERT_NEW, "minmax", nb)
             end
         end
-        local nb = 0
-        for i, l in ipairs(tgts) do
-            if l.target:reactionToward(self) < 0 then
-                nb = nb + 1
-            end
-        end
-        return dam * t.getDamageRadio(self, t, nb) * t.bombMod
+        return dam * t.getDamageRadio(self, t, all_tgts) * t.bombMod
     end,
     getDamageRadio = function(self, t, nb)
         -- 1 target 100%
@@ -334,7 +332,7 @@ newTalent {
     mana = function(self, t)
         return 25
     end,
-    cooldown = 12,
+    cooldown = 24,
     fixed_cooldown = true,
     tactical = function(self, t, aitarget)
         local damtype = self:getGemDamageType()
@@ -349,10 +347,10 @@ newTalent {
         self:startTalentCooldown(t.id, 4)
     end,
     range = function(self, t)
-        return math.floor(self:combatTalentLimit(t, 15, 5.1, 9.1))
+        return 5
     end,
     radius = function(self, t)
-        return util.bound(math.floor(self:getTalentLevel(t) / 2) + 1, 1, 5)
+        return util.bound(math.floor(self:getTalentLevel(t) / 2) + 1, 1, 3)
     end,
     direct_hit = true,
     requires_target = true,
@@ -373,7 +371,11 @@ newTalent {
             return true
         end
     end,
-    bombMod = 0.8,
+    bombMod = 0.5,
+    getReduction = function(self, t, nb)
+        local percent = self:combatTalentLimit(t, 5, 50, 15) / 100
+        return math.ceil(100 * (1 - math.pow(1 - percent, nb or 1)))
+    end,
     calcFurtherDamage = function(self, t, tg, ammo, x, y, dam, tgts, grids)
         local nb = 0
         -- Compare theorical AOE zone with actual zone and adjust damage accordingly
@@ -395,10 +397,6 @@ newTalent {
             return dam
         end
         return dam * (100 - t.getReduction(self, t, blasted_time)) / 100 * t.bombMod
-    end,
-    getReduction = function(self, t, nb)
-        local percent = self:combatTalentLimit(t, 10, 40, 20) / 100
-        return 100 * (1 - math.pow(1 - percent, nb or 1))
     end,
     action = function(self, t)
         local ammo = self:hasAlchemistWeapon()

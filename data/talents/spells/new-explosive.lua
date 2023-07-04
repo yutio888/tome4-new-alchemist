@@ -178,7 +178,7 @@ newTalent {
         return math.max(1, math.floor(self:combatTalentLimit(t, 20, 2.5, 6.6)))
     end,
     mingrids = function(self, t)
-        return math.max(0, self:combatTalentScale(t, 1, 5))
+        return math.max(0, math.ceil(self:combatTalentScale(t, 1, 5)))
     end,
     reduction = 2,
     minmax = function(self, t, grids, expected_grids)

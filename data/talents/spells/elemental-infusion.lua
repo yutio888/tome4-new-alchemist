@@ -89,16 +89,19 @@ newTalent {
     require = spells_req_high2,
     points = 5,
     cooldown = function(self, t)
-        return math.ceil(self:combatTalentLimit(t, 1, 10, 2.5))
+        return 12
     end,
     getChance = function(self, t)
-        return math.floor(math.min(100, self:combatTalentScale(t, 25, 100)))
+        return math.floor(math.min(100, self:combatTalentScale(t, 25, 90)))
     end,
     getDuration = function(self, t)
         return math.floor(self:combatTalentScale(t, 1, 3))
     end,
     callbackOnAlchemistBomb = function(self, t, targets, tt, x, y, startx, starty, crit)
         if self:isTalentCoolingDown(t) then
+            return
+        end
+        if not crit then
             return
         end
         local chance = t.getChance(self, t)
@@ -143,8 +146,8 @@ newTalent {
                         target:setEffect(target.EFF_SILENCED, dur, { src = self, apply_power = self:combatSpellpower() })
                     end
                 else
-                    if target:canBe("pin") then
-                        target:setEffect(target.EFF_PINNED, dur, { src = self, apply_power = self:combatSpellpower() })
+                    if target:canBe("slow") then
+                        target:setEffect(target.EFF_SLOW, dur, {power=0.3, src = self, apply_power = self:combatSpellpower()})
                     end
                 end
             end
@@ -159,7 +162,7 @@ newTalent {
         -- Light: Blind
         -- Darkness: Reduces damage by 30%%
         -- Arcane: Silence
-        -- Physical: Pin
+        -- Physical: Slow by 30%%
         This can trigger every %d turns.]]):tformat(t.getChance(self, t), t.getDuration(self, t), t.cooldown(self, t))
     end,
 }

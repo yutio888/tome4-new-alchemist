@@ -95,7 +95,7 @@ t("Throw a smoke bomb, blocking everyone's line of sight. The smoke dissipates a
 t("Heal %d and get rid of poison and diseases.", "治疗 %d ，并解除毒素和疾病。", "tformat")
 t([[Heal target for %d life and cure all poisons、diseases and wounds.
         The amount healed will increase with your Spellpower.]], [[治疗目标 %d 生命，并解除全部疾病、毒素和伤口状态。
-        治疗量受法术强度加成。]], "tformat")
+治疗量受法术强度加成。]], "tformat")
 t("fire wall", "火墙", "_t")
 t("a summoned, transparent wall of fire", "一堵透明的火焰墙。", "_t")
 t("%s conjures %d walls of fire!", "%s 制造出%d堵火焰之墙！", "logSeen")
@@ -104,29 +104,29 @@ t([[Create a fiery wall of %d length that lasts for %d turns.
         Fire walls may burn any enemy in %d radius, each wall within range deals %d fire damage.
         Burnt enemy will deal %d%% less damage in 3 turns.
         Fire wall does not block movement.]], [[制造出炽热的火焰墙，长度为 %d ，持续 %d 回合。
-        火墙将灼烧周围 %d 格内的目标，每块火焰将造成 %d 伤害。
-        被火焰烧伤的敌人在 3 回合内造成的伤害减少 %d%% 。
-        火墙不会阻挡移动。]], "tformat")
+火墙将灼烧周围 %d 格内的目标，每块火焰将造成 %d 伤害。
+被火焰烧伤的敌人在 3 回合内造成的伤害减少 %d%% 。
+火墙不会阻挡移动。]], "tformat")
 t("Throw bottle of acid that deals %d damage and removes %d sustain", "投掷酸液，造成 %d 伤害并解除对方的 %d 项维持状态。", "tformat")
 t([[Acid erupts all around your target, dealing %0.1f acid damage.
 		The acid attack is extremely distracting, and may remove up to %d sustains (depending on the Spell Save of the target).
 		The damage and chance to remove effects will increase with your Spellpower.]], [[酸液在目标周围爆发，造成 %0.1f 点酸性伤害。
-		酸性伤害具有腐蚀性，有一定概率除去至多 %d 个持续效果（需要通过对方的法术豁免）。
-		受法术强度影响，伤害和几率额外加成。]], "tformat")
+酸性伤害具有腐蚀性，有一定概率除去至多 %d 个持续效果（需要通过对方的法术豁免）。
+受法术强度影响，伤害和几率额外加成。]], "tformat")
 t("Throw a ball of lightning, daze and blind all targets in radius %d for %d turns.", "投掷半径 %d 的闪电球，眩晕并致盲目标 %d 回合。", "tformat")
 t([[Throw a ball of lightning of radius %d, daze and blind all targets for %d turns.
         If the target resists the daze effect it is instead shocked, which halves stun/daze/pin resistance, for %d turns.
         ]], [[投掷半径 %d 的闪电球，眩晕并致盲目标 %d 回合。
-        如果目标免疫了眩晕，则会被闪电震撼，减半震慑和定身免疫，持续 %d 回合。
-        ]], "tformat")
+如果目标免疫了眩晕，则会被闪电震撼，减半震慑和定身免疫，持续 %d 回合。
+]], "tformat")
 t("Create a frost shield reducing non-fire damage by %d for %d turns.", "制造寒冰护盾，减少 %d 非火焰伤害 ，持续 %d 回合。", "tformat")
 t([[Create a frost shield in range %d, reducing all incoming damage except fire by %d .
         Frost shield lasts %d turns.
         If you're about to get hit by more than 20%% of your max life, this potion will automatically activate.
         ]],
 [[投掷药水，为距离 %d 内的目标制造冰霜护盾，减少 %d 非火焰伤害。
-        冰霜护盾持续 %d 回合。
-        如果你即将承受超过 20%% 最大生命的伤害，这个药剂会自动激活。]], "tformat")
+冰霜护盾持续 %d 回合。
+如果你即将承受超过 20%% 最大生命的伤害，这个药剂会自动激活。]], "tformat")
 t("Increase armor by %d , armor hardiness by %d%%, and decrease defense by %d for 6 turns.", "增加 %d 护甲，%d%% 护甲强度，并减少 %d 闪避，效果持续6回合。", "tformat")
 t("Restore %d mana and gain %d spellpower in 6 turns", "恢复 %d 法力并获得 %d 法术强度，持续6回合。", "tformat")
 t("Becomes super lucky, gain extra %d luck for 6 turns.", "变得非常幸运，6回合内提高 %d 幸运。", "tformat")
@@ -221,11 +221,11 @@ t("You need to ready gems in your quiver.", "你需要准备宝石。", "logPlay
 t("Current Damage: %0.2f %s", "当前伤害： %0.2f %s", "tformat")
 t([[Imbue your gem with pure mana and activate its power as a wide beam and deals %0.2f %s damage.
         This talent can be activated consecutively without going on cooldown, but making any non-instant action other than activation will put this on cooldown.
-        Each successful activation will increase damage of the following beams by %d%%, up to 100%%.
+        Each successful activation will increase damage of the following beams by %d%%, up to 100%%. The mana cost of this beam will also be increased.
         Throwing bomb by any means will put this talent on cooldown for 4 turns.
         %s]], [[向一块宝石内灌输爆炸能量，触发一次宽射线类型的 %0.2f %s 伤害。
 该技能可以连续使用而不进入冷却，但任何非瞬间的其他行为会使该技能进入冷却。
-每次成功使用，会让后续伤害增加%d%%，最多增加100%%。
+每次成功使用，会让后续伤害增加 %d%% ，最多增加 100%% 。法力消耗也会随之增加。
 你必须学会炸弹投掷技能才能使用该技能。
 使用其他投掷炸弹的技能会让该技能进入4回合冷却。
 %s]], "tformat")
@@ -668,8 +668,13 @@ t([[You invoke the power of your gem, healing you and your golem for %d.
 t("Golem Portal", "傀儡传送", "talent name")
 t("Your golem is currently inactive.", "你的傀儡暂时处于未激活状态。", "logPlayer")
 t([[Teleport to your golem, while your golem teleports to your location. Your foes will be confused, and those that were attacking you will have a %d%% chance to target your golem instead.
-        After teleportation, you and your golem gain 50%% evasion for %d turns.]], [[交换你和傀儡的位置，敌人有 %d%% 概率选择傀儡为目标。
-        传送后，你和傀儡获得 50%% 闪避， 持续 %d 回合。]], "tformat")
+        After teleportation, you and your golem gain 50%% evasion for %d turns.
+        At talent level 4, Golem Portal takes no time to cast.
+        At talent level 6, when your auto-exploration is stopped by hostile creatures, you'll immediately cast Golem Portal.
+        ]], [[交换你和傀儡的位置，敌人有 %d%% 概率选择傀儡为目标。
+        传送后，你和傀儡获得 50%% 闪避，持续 %d 回合。
+        技能等级 4 以后，傀儡传送技能不再消耗时间。
+        技能等级 6 以后，当你的自动探索被敌对生物打断时，你会立刻使用傀儡传送技能。]], "tformat")
 -- new text
 --[==[
 t("Master's Customize talent too low.", "Master's Customize talent too low.", "_t")

@@ -5,7 +5,7 @@ newTalent {
     points = 5,
     mode = "passive",
     getLife = function(self, t)
-        return self:combatTalentScale(t, 50, 500)
+        return self:combatTalentScale(t, 50, 300)
     end,
     getRegen = function(self, t)
         return self:combatTalentScale(t, 5, 20)
@@ -66,12 +66,12 @@ newTalent {
 
 newTalent {
     name = "Power", short_name = "GOLEM_POWER_PASSIVE", image = "talents/power.png",
-    type = { "golem/energy", 3 },
+    type = { "golem/energy", 1 },
     require = spells_req3,
     points = 5,
     mode = "passive",
     getPower = function(self, t)
-        return self:combatTalentScale(t, 5, 40)
+        return self:combatTalentScale(t, 10, 30)
     end,
     getRegen = function(self, t)
         return self:combatTalentScale(t, 1, 4)
