@@ -172,7 +172,7 @@ t([[If your alchemist bomb crits, it will have a %d%% chance to disable your foe
         -- Light: Blind
         -- Darkness: Reduces damage by 30%%
         -- Arcane: Silence
-        -- Physical: Pin
+        -- Physical: Slow by 30%%
         This can trigger every %d turns.]], [[你的炼金炸弹暴击时，有 %d%% 触发 %d 回合的控制效果:
         -- 火焰：震慑
         -- 寒冷：冻足
@@ -181,7 +181,7 @@ t([[If your alchemist bomb crits, it will have a %d%% chance to disable your foe
         -- 光明：致盲
         -- 黑暗：减少 30%% 伤害
         -- 奥术：沉默
-        -- 物理：定身
+        -- 物理：减速 30%%
         该效果每 %d 回合只能触发一次。
         ]], "tformat")
 t("Energy Recycle", "能量循环", "talent name")
