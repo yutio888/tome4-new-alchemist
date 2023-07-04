@@ -649,7 +649,7 @@ newTalent {
         return math.ceil(self:combatTalentLimit(t, 10, 35, 20))
     end, -- Limit to > 10
     no_energy = function(self, t)
-        return self:getTalentLevel(t) >= 3
+        return self:getTalentLevel(t) >= 4
     end,
     getChance = function(self, t)
         return math.min(100, self:getTalentLevel(t) * 15 + 50)
