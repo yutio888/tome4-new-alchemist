@@ -190,7 +190,7 @@ newTalent {
         return math.floor(self:combatTalentSpellDamageBase(t, 20, 40))
     end,
     getChance = function(self, t)
-        return math.floor(math.min(100, self:combatTalentScale(t, 25, 100)))
+        return math.floor(math.min(100, self:combatTalentScale(t, 25, 90)))
     end,
     activate = function(self, t)
         game:playSoundNear(self, "talents/lightning")
